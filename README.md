@@ -33,6 +33,19 @@ require 'vendor/autoload.php';
 ```
 
 
+Demo
+-----------
+
+```php
+$timezone    = 'America/New_York';
+$startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
+$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+
+print_r($transformer->getComputedArray());
+```
+
+
 Contribute
 ----------
 
