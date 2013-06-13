@@ -520,10 +520,10 @@ class RecurrenceRuleTransformer
 
             switch ($freq) {
                 case RecurrenceRule::FREQ_YEARLY:
-                    $dt->modify('+'.$rule->getInterval().' year');
-                    $year  = $dt->format('Y');
+                    $year += $rule->getInterval();
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
+                    $dt->setDate($year, $month, $day);
                     break;
                 case RecurrenceRule::FREQ_MONTHLY:
                     $month += $rule->getInterval();

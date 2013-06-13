@@ -342,57 +342,45 @@ class DateUtil
     public static function getMonthDaysMask(\DateTime $dt, $negative = false)
     {
         if ($negative) {
-            $m28 = range(-28, -1);
             $m29 = range(-29, -1);
             $m30 = range(-30, -1);
             $m31 = range(-31, -1);
         } else {
-            $m28 = range(1, 28);
             $m29 = range(1, 29);
             $m30 = range(1, 30);
             $m31 = range(1, 31);
         }
 
+        $mask = array_merge(
+            $m31, // Jan (31)
+            $m29, // Feb (28)
+            $m31, // Mar (31)
+            $m30, // Apr (30)
+            $m31, // May (31)
+            $m30, // Jun (30)
+            $m31, // Jul (31)
+            $m31, // Aug (31)
+            $m30, // Sep (30)
+            $m31, // Oct (31)
+            $m30, // Nov (30)
+            $m31, // Dec (31)
+            array_slice(
+                $m31,
+                0,
+                7
+            )
+        );
+
         if (self::isLeapYearDate($dt)) {
-            return array_merge(
-                $m31, // Jan (31)
-                $m29, // Feb (29)
-                $m31, // Mar (31)
-                $m30, // Apr (30)
-                $m31, // May (31)
-                $m30, // Jun (30)
-                $m31, // Jul (31)
-                $m31, // Aug (31)
-                $m30, // Sep (30)
-                $m31, // Oct (31)
-                $m30, // Nov (30)
-                $m31, // Dec (31)
-                array_slice(
-                    $m31,
-                    0,
-                    7
-                )
-            );
+            return $mask;
         } else {
-            return array_merge(
-                $m31, // Jan (31)
-                $m28, // Feb (28)
-                $m31, // Mar (31)
-                $m30, // Apr (30)
-                $m31, // May (31)
-                $m30, // Jun (30)
-                $m31, // Jul (31)
-                $m31, // Aug (31)
-                $m30, // Sep (30)
-                $m31, // Oct (31)
-                $m30, // Nov (30)
-                $m31, // Dec (31)
-                array_slice(
-                    $m31,
-                    0,
-                    7
-                )
-            );
+            if ($negative) {
+                $mask = array_merge(array_slice($mask, 0, 31), array_slice($mask, 32));
+            } else {
+                $mask = array_merge(array_slice($mask, 0, 58), array_slice($mask, 59));
+            }
+
+            return $mask;
         }
     }
 
