@@ -14,7 +14,7 @@ Create a composer.json file
 ```json
 {
     "require": {
-        "simshaun/recurr": "1.0.*@dev"
+        "simshaun/recurr": "dev-master"
     }
 }
 ```
