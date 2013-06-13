@@ -113,6 +113,24 @@ class RecurrenceRuleTransformer
         $byWeekDayRel  = array();
         $bySetPos      = $rule->getBySetPosition();
 
+        if (!(!empty($byWeekNum) || !empty($byYearDay) || !empty($byMonthDay) || !empty($byWeekDay))) {
+            switch ($freq) {
+                case RecurrenceRule::FREQ_YEARLY:
+                    if (empty($byMonth)) {
+                        $byMonth = array($start->format('n'));
+                    }
+
+                    $byMonthDay = array($start->format('j'));
+                    break;
+                case RecurrenceRule::FREQ_MONTHLY:
+                    $byMonthDay = array($start->format('j'));
+                    break;
+                case RecurrenceRule::FREQ_WEEKLY:
+                    $byWeekDay = array(DateUtil::getDayOfWeek($start));
+                    break;
+            }
+        }
+
         if (is_array($byMonthDay) && count($byMonthDay)) {
             foreach ($byMonthDay as $idx => $day) {
                 if ($day < 0) {

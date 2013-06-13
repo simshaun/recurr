@@ -161,6 +161,24 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2014-01-01 02:00:00'), $computed[4]);
     }
 
+    public function testMonthly()
+    {
+        $timezone = new \DateTimeZone('America/New_York');
+
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=3;INTERVAL=1',
+            new \DateTime('2013-06-13 00:00:00', $timezone)
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(3, count($computed));
+        $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezone), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-07-13 00:00:00', $timezone), $computed[1]);
+        $this->assertEquals(new \DateTime('2013-08-13 00:00:00', $timezone), $computed[2]);
+    }
+
     public function testByMinute()
     {
         $rule = new RecurrenceRule(
