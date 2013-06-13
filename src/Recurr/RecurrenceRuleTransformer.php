@@ -68,10 +68,7 @@ class RecurrenceRuleTransformer
             $this->setVirtualLimit($virtualLimit);
         }
 
-        $leapBugTest = \DateTime::createFromFormat('z Y', '80 2016');
-        if ($leapBugTest->format('Y-m-d') == '2016-03-22') {
-            $this->leapBug = true;
-        }
+        $this->leapBug = DateUtil::hasLeapYearBug();
     }
 
     /**
@@ -356,8 +353,6 @@ class RecurrenceRuleTransformer
                 }
             }
 
-            $filtered = false;
-
             foreach ($daySet as $i => $dayOfYear) {
                 $ifByMonth = $byMonth !== null && !in_array(
                     $dtInfo->mMask[$dayOfYear],
@@ -403,7 +398,6 @@ class RecurrenceRuleTransformer
                     $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
 
                 if ($ifByMonth || $ifByWeekNum || $ifByYearDay || $ifByMonthDay || $ifByMonthDayNeg || $ifByDay || $ifWDayMaskRel) {
-                    $filtered = true;
                     unset($daySet[$i]);
                 }
             }
