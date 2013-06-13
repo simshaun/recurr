@@ -1,7 +1,7 @@
 # Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png)
 
 Recurr is a PHP library for working with recurrence rules that results in
-PHP \DateTime objects.
+PHP \DateTime objects. Use it to help build a calendar with recurring events!
 
 Installation
 ------------
