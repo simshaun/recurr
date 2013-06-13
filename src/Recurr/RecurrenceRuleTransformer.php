@@ -462,6 +462,7 @@ class RecurrenceRuleTransformer
                 foreach ($daySet as $dayOfYear) {
                     $dtTmp =
                         DateUtil::getDateTimeByDayOfYear($dayOfYear, $dt->format('Y'));
+                    $dtTmp->setTimezone($start->getTimezone());
 
                     foreach ($timeSet as $time) {
                         /** @var Time $time */
