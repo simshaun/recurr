@@ -126,7 +126,12 @@ class RecurrenceRuleTransformer
                     $byMonthDay = array($start->format('j'));
                     break;
                 case RecurrenceRule::FREQ_WEEKLY:
-                    $byWeekDay = array(DateUtil::getDayOfWeek($start));
+                    $byWeekDay = array(
+                        new Weekday(
+                            DateUtil::getDayOfWeekAsText($start),
+                            DateUtil::getDayOfWeek($start)
+                        )
+                    );
                     break;
             }
         }
@@ -140,14 +145,16 @@ class RecurrenceRuleTransformer
             }
         }
 
-        foreach ($byWeekDay as $idx => $day) {
-            /** @var $day Weekday */
+        if (!empty($byWeekDay)) {
+            foreach ($byWeekDay as $idx => $day) {
+                /** @var $day Weekday */
 
-            if (!empty($day->num)) {
-                $byWeekDayRel[] = $day;
-                unset($byWeekDay[$idx]);
-            } else {
-                $byWeekDay[$idx] = $day->weekday;
+                if (!empty($day->num)) {
+                    $byWeekDayRel[] = $day;
+                    unset($byWeekDay[$idx]);
+                } else {
+                    $byWeekDay[$idx] = $day->weekday;
+                }
             }
         }
 

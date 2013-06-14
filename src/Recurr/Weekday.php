@@ -51,9 +51,7 @@ class Weekday
      */
     public function __construct($weekday, $num)
     {
-        if (0 === $num) {
-            throw new InvalidWeekday('Cant create a weekday where num === 0.');
-        } elseif (is_numeric($weekday) && $weekday > 6 || $weekday < 0) {
+        if (is_numeric($weekday) && $weekday > 6 || $weekday < 0) {
             throw new InvalidWeekday('Day is not a valid weekday (0-6)');
         } elseif (!is_numeric($weekday) && !in_array($weekday, $this->days)) {
             throw new InvalidWeekday('Day is not a valid weekday (SU, MO, ...)');

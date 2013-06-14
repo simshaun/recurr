@@ -111,8 +111,10 @@ class DateUtil
      */
     public static function getDaySetOfWeek(\DateTime $dt, \DateTime $start, $rule = null, $dtInfo = null)
     {
-        $diff = $dt->diff($start);
+        $start = clone $dt;
+        $start->setDate($start->format('Y'), 1, 1);
 
+        $diff  = $dt->diff($start);
         $start = $diff->days;
 
         $set = array();
@@ -154,9 +156,7 @@ class DateUtil
                 return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
                 break;
             case RecurrenceRule::FREQ_WEEKLY:
-                $yearStart = clone $start;
-                $yearStart->setDate($start->format('Y'), 1, 1);
-                return self::getDaySetOfWeek($dt, $yearStart, $rule, $dtInfo);
+                return self::getDaySetOfWeek($dt, $start, $rule, $dtInfo);
             case RecurrenceRule::FREQ_MONTHLY:
                 return self::getDaySetOfMonth($dt, $start, $rule, $dtInfo);
             case RecurrenceRule::FREQ_YEARLY:
@@ -507,6 +507,34 @@ class DateUtil
         }
 
         return $isDivisBy4;
+    }
+
+    /**
+     * Method to determine the day of the week from MO-SU.
+     *
+     * MO = Monday
+     * TU = Tuesday
+     * WE = Wednesday
+     * TH = Thursday
+     * FR = Friday
+     * SA = Saturday
+     * SU = Sunday
+     *
+     * @param \DateTime $dt
+     *
+     * @return string
+     */
+    public static function getDayOfWeekAsText(\DateTime $dt)
+    {
+        $dayOfWeek = $dt->format('w') - 1;
+
+        if ($dayOfWeek < 0) {
+            $dayOfWeek = 6;
+        }
+
+        $map = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+
+        return $map[$dayOfWeek];
     }
 
     /**
