@@ -639,11 +639,6 @@ class RecurrenceRuleTransformer
      */
     public function getVirtualLimit(RecurrenceRule $rule)
     {
-        switch ($rule->getFreq()) {
-            case RecurrenceRule::FREQ_YEARLY:
-                return 100;
-            default:
-                return 500;
-        }
+        return 732;
     }
 }
