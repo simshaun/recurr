@@ -163,20 +163,22 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
 
     public function testMonthly()
     {
-        $timezone = new \DateTimeZone('America/New_York');
+        $timezone = 'America/New_York';
+        $timezoneObj = new \DateTimeZone($timezone);
 
         $rule = new RecurrenceRule(
             'FREQ=MONTHLY;COUNT=3;INTERVAL=1',
-            new \DateTime('2013-06-13 00:00:00', $timezone)
+            new \DateTime('2013-06-13 00:00:00', $timezoneObj),
+            $timezone
         );
 
         $this->transformer->setRule($rule);
         $computed = $this->transformer->getComputedArray();
 
         $this->assertEquals(3, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezone), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-07-13 00:00:00', $timezone), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-08-13 00:00:00', $timezone), $computed[2]);
+        $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezoneObj), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-07-13 00:00:00', $timezoneObj), $computed[1]);
+        $this->assertEquals(new \DateTime('2013-08-13 00:00:00', $timezoneObj), $computed[2]);
     }
 
     public function testYearly()

@@ -450,7 +450,7 @@ class RecurrenceRuleTransformer
                     $time = $timeSet[$timePos];
 
                     $dtTmp =
-                        DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'));
+                        DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
 
                     $dtTmp->setTime(
                         $time->hour,
@@ -486,8 +486,7 @@ class RecurrenceRuleTransformer
             } else {
                 foreach ($daySet as $dayOfYear) {
                     $dtTmp =
-                        DateUtil::getDateTimeByDayOfYear($dayOfYear, $dt->format('Y'));
-                    $dtTmp->setTimezone($start->getTimezone());
+                        DateUtil::getDateTimeByDayOfYear($dayOfYear, $dt->format('Y'), $start->getTimezone());
 
                     foreach ($timeSet as $time) {
                         /** @var Time $time */

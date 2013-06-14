@@ -29,6 +29,8 @@ use Recurr\RecurrenceRule;
  */
 class DateUtil
 {
+    public static $leapBug = null;
+
     public static $monthEndDoY366 = array(
         0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
     );
@@ -421,19 +423,22 @@ class DateUtil
         }
     }
 
-    public static function getDateTimeByDayOfYear($dayOfYear, $year)
+    public static function getDateTimeByDayOfYear($dayOfYear, $year, \DateTimeZone $timezone)
     {
-        $leapBugTest = \DateTime::createFromFormat('z Y', '80 2016');
-        $leapBug     = $leapBugTest->format('Y-m-d') == '2016-03-22';
+        if (null === self::$leapBug) {
+            self::$leapBug = self::hasLeapYearBug();
+        }
+
         $isLeapYear  = self::isLeapYear($year);
 
         $dtTmp = \DateTime::createFromFormat(
             'z Y',
-            ($isLeapYear && $leapBug && $dayOfYear > 59
-                ? $dayOfYear - 1 : $dayOfYear).' '.$year
+            ($isLeapYear && self::$leapBug && $dayOfYear > 59
+                ? $dayOfYear - 1 : $dayOfYear).' '.$year,
+            $timezone
         );
 
-        if ($isLeapYear && $leapBug && $dayOfYear == 59) {
+        if ($isLeapYear && self::$leapBug && $dayOfYear == 59) {
             $dtTmp->modify('-1 day');
         }
 
