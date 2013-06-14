@@ -128,8 +128,8 @@ class RecurrenceRuleTransformer
                 case RecurrenceRule::FREQ_WEEKLY:
                     $byWeekDay = array(
                         new Weekday(
-                            DateUtil::getDayOfWeekAsText($start),
-                            DateUtil::getDayOfWeek($start)
+                            DateUtil::getDayOfWeek($start),
+                            null
                         )
                     );
                     break;
@@ -522,6 +522,11 @@ class RecurrenceRuleTransformer
                         break;
                     }
                 }
+
+                if ($total > $vLimit) {
+                    $continue = false;
+                    break;
+                }
             }
 
             switch ($freq) {
@@ -554,6 +559,7 @@ class RecurrenceRuleTransformer
                     }
 
                     $dt->setDate($year, $month, $day);
+                    ++$total;
                     break;
                 case RecurrenceRule::FREQ_DAILY:
                     $dt->modify('+'.$rule->getInterval().' day');
