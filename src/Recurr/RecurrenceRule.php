@@ -206,6 +206,10 @@ class RecurrenceRule
 
         // Split each piece of the RRULE in to KEY=>VAL
         foreach ($pieces as $piece) {
+            if (false === strpos($piece, '=')) {
+                continue;
+            }
+
             list($key, $val) = explode('=', $piece);
             $parts[$key] = $val;
         }

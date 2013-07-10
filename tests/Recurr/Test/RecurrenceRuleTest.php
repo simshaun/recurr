@@ -65,6 +65,14 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
     }
 
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testCreateFromStringFails()
+    {
+        $this->rule->createFromString('IM AN INVALID RRULE');
+    }
+
     public function testGetString()
     {
         $this->rule->setFreq('YEARLY');
