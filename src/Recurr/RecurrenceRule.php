@@ -84,7 +84,6 @@ use Recurr\Weekday;
  *
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
- * @todo    Ignore BYXXX values that fall out of their allowed ranges.
  */
 class RecurrenceRule
 {
