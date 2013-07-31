@@ -194,8 +194,6 @@ class RecurrenceRuleTransformer
 
             $tmp         = DateUtil::getDaySet($rule, $dt, $dtInfo, $start);
             $daySet      = $tmp->set;
-            $startDay    = $tmp->start;
-            $endDay      = $tmp->end;
             $wNoMask     = array();
             $wDayMaskRel = array();
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
