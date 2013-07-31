@@ -111,7 +111,12 @@ class DateUtil
      *
      * @return DaySet
      */
-    public static function getDaySetOfWeek(\DateTime $dt, \DateTime $start, $rule = null, $dtInfo = null)
+    public static function getDaySetOfWeek(
+        \DateTime $dt,
+        \DateTime $start,
+        RecurrenceRule $rule = null,
+        DateInfo $dtInfo = null
+    )
     {
         $start = clone $dt;
         $start->setDate($start->format('Y'), 1, 1);
