@@ -420,7 +420,12 @@ class RecurrenceRuleTransformer
                 $ifWDayMaskRel =
                     $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
 
-                if ($ifByMonth || $ifByWeekNum || $ifByYearDay || $ifByMonthDay || $ifByMonthDayNeg || $ifByDay || $ifWDayMaskRel) {
+                if ($byMonthDay && $byMonthDayNeg) {
+                    if ($ifByMonthDay && $ifByMonthDayNeg) {
+                        unset($daySet[$i]);
+                    }
+                }
+                elseif ($ifByMonth || $ifByWeekNum || $ifByYearDay || $ifByMonthDay || $ifByMonthDayNeg || $ifByDay || $ifWDayMaskRel) {
                     unset($daySet[$i]);
                 }
             }
