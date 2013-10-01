@@ -489,6 +489,24 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2013-10-22'), $computed[4]);
     }
 
+    public function testByMonthDayPositiveAndNegative()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=15,-1',
+            new \DateTime('2013-10-01')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(5, count($computed));
+        $this->assertEquals(new \DateTime('2013-10-15'), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-10-31'), $computed[1]);
+        $this->assertEquals(new \DateTime('2013-11-15'), $computed[2]);
+        $this->assertEquals(new \DateTime('2013-11-30'), $computed[3]);
+        $this->assertEquals(new \DateTime('2013-12-15'), $computed[4]);
+    }
+
     public function testByWeekDay()
     {
         $rule = new RecurrenceRule(
