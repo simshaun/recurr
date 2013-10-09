@@ -545,7 +545,7 @@ class RecurrenceRuleTransformer
                     $month += $rule->getInterval();
                     if ($month > 12) {
                         $delta = floor($month / 12);
-                        $month = $delta % 12;
+                        $month = $month % 12;
                         $year += $delta;
                         if ($month == 0) {
                             $month = 12;
