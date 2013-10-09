@@ -445,7 +445,10 @@ class RecurrenceRuleTransformer
                         $nextInSet = array_slice($daySet, $dayPos, 1);
                         $nextInSet = $nextInSet[0];
                     } else {
-                        $nextInSet = $daySet[$dayPos];
+                        // $dayPos is a 0-based array index, but $daySet
+                        // is indexed by the day of the year(?)
+                        $daySetKeys = array_keys($daySet);
+                        $nextInSet = $daySet[$daySetKeys[$dayPos]];
                     }
 
                     /** @var Time $time */

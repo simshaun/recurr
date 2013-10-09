@@ -761,6 +761,21 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2016-03-31'), $computed[4]);
     }
 
+    public function testBySetPositionWithInterval()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;INTERVAL=2;BYDAY=MO;BYSETPOS=2;COUNT=2',
+            new \DateTime('2013-10-09')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(2, count($computed));
+        $this->assertEquals(new \DateTime('2013-10-14'), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-12-09'), $computed[1]);
+    }
+
     public function testRfc2445Example()
     {
         $rule = new RecurrenceRule(
