@@ -202,6 +202,7 @@ class DateUtil
         $end   = $dateInfo->mRanges[$monthNum];
 
         $set = range($start, $end - 1);
+        $set = array_combine($set, $set);
         $obj = new DaySet($set, $start, $end - 1);
 
         return $obj;

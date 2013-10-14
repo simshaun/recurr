@@ -194,6 +194,8 @@ class RecurrenceRuleTransformer
 
             $tmp         = DateUtil::getDaySet($rule, $dt, $dtInfo, $start);
             $daySet      = $tmp->set;
+            $daySetStart = $tmp->start;
+            $daySetEnd   = $tmp->end;
             $wNoMask     = array();
             $wDayMaskRel = array();
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
@@ -441,11 +443,20 @@ class RecurrenceRuleTransformer
                         $timePos = DateUtil::pymod(($setPos - 1), count($timeSet));
                     }
 
+                    $tmp = array();
+                    for ($k = $daySetStart; $k <= $daySetEnd; $k++) {
+                        if (!array_key_exists($k, $daySet)) {
+                            continue;
+                        }
+
+                        $tmp[] = $daySet[$k];
+                    }
+
                     if ($dayPos < 0) {
-                        $nextInSet = array_slice($daySet, $dayPos, 1);
+                        $nextInSet = array_slice($tmp, $dayPos, 1);
                         $nextInSet = $nextInSet[0];
                     } else {
-                        $nextInSet = $daySet[$dayPos];
+                        $nextInSet = $tmp[$dayPos];
                     }
 
                     /** @var Time $time */
@@ -542,7 +553,8 @@ class RecurrenceRuleTransformer
                     $month += $rule->getInterval();
                     if ($month > 12) {
                         $delta = floor($month / 12);
-                        $month = $delta % 12;
+                        $mod   = DateUtil::pymod($month, 12);
+                        $month = $mod;
                         $year += $delta;
                         if ($month == 0) {
                             $month = 12;
