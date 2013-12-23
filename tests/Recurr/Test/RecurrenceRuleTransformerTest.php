@@ -199,10 +199,10 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-12-19 00:00:00', $timezoneObj), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-01-02 00:00:00', $timezoneObj), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-01-16 00:00:00', $timezoneObj), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-01-30 00:00:00', $timezoneObj), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-02-13 00:00:00', $timezoneObj), $computed[4]);
+        $this->assertEquals(new \DateTime('2014-01-02 00:00:00', $timezoneObj), $computed[1]);
+        $this->assertEquals(new \DateTime('2014-01-16 00:00:00', $timezoneObj), $computed[2]);
+        $this->assertEquals(new \DateTime('2014-01-30 00:00:00', $timezoneObj), $computed[3]);
+        $this->assertEquals(new \DateTime('2014-02-13 00:00:00', $timezoneObj), $computed[4]);
     }
 
     public function testMonthly()
