@@ -413,6 +413,24 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2016-03-01'), $computed[3]);
     }
 
+    public function testLastDayOfMonth()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=28,29,30,31;BYSETPOS=-1',
+            new \DateTime('2016-01-29')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(5, count($computed));
+        $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]);
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]);
+        $this->assertEquals(new \DateTime('2016-03-31'), $computed[2]);
+        $this->assertEquals(new \DateTime('2016-04-30'), $computed[3]);
+        $this->assertEquals(new \DateTime('2016-05-31'), $computed[4]);
+    }
+
     public function testByWeekNumber()
     {
         $rule = new RecurrenceRule(
@@ -535,6 +553,24 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2013-03-28'), $computed[2]);
         $this->assertEquals(new \DateTime('2013-03-29'), $computed[3]);
         $this->assertEquals(new \DateTime('2013-03-30'), $computed[4]);
+    }
+
+    public function testByMonthDayLeapYear()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=28,29,30',
+            new \DateTime('2016-01-30')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(5, count($computed));
+        $this->assertEquals(new \DateTime('2016-01-30'), $computed[0]);
+        $this->assertEquals(new \DateTime('2016-02-28'), $computed[1]);
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]);
+        $this->assertEquals(new \DateTime('2016-03-28'), $computed[3]);
+        $this->assertEquals(new \DateTime('2016-03-29'), $computed[4]);
     }
 
     public function testByMonthDayNegative()
