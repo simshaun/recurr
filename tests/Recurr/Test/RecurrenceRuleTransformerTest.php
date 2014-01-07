@@ -256,7 +256,7 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
 
         $rule = new RecurrenceRule(
             'FREQ=MONTHLY;COUNT=3;INTERVAL=1',
-            new \DateTime('2013-06-13 00:00:00', $timezoneObj),
+            new \DateTime('2013-01-31 00:00:00', $timezoneObj),
             $timezone
         );
 
@@ -264,9 +264,9 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $computed = $this->transformer->getComputedArray();
 
         $this->assertEquals(3, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezoneObj), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-07-13 00:00:00', $timezoneObj), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-08-13 00:00:00', $timezoneObj), $computed[2]);
+        $this->assertEquals(new \DateTime('2013-01-31 00:00:00', $timezoneObj), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-03-31 00:00:00', $timezoneObj), $computed[1]);
+        $this->assertEquals(new \DateTime('2013-05-31 00:00:00', $timezoneObj), $computed[2]);
     }
 
     public function testYearly()
