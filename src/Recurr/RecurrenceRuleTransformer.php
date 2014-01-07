@@ -565,19 +565,20 @@ class RecurrenceRuleTransformer
                     break;
                 case RecurrenceRule::FREQ_WEEKLY:
                     if ($weekStart > $dtInfo->dayOfWeek) {
-                        $day += -($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) +
+                        $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 +
                             $rule->getInterval() * 7;
                     } else {
-                        $day += -($dtInfo->dayOfWeek - $weekStart) +
+                        $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 +
                             $rule->getInterval() * 7;
                     }
 
-                    $dt->setDate($year, $month, $day);
-                    ++$total;
+                    $dt->modify("+$delta day");
+                    $year  = $dt->format('Y');
+                    $month = $dt->format('n');
+                    $day   = $dt->format('j');
                     break;
                 case RecurrenceRule::FREQ_DAILY:
                     $dt->modify('+'.$rule->getInterval().' day');
-                    $day = $dt->format('j');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $day   = $dt->format('j');

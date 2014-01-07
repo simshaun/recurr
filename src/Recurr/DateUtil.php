@@ -431,22 +431,9 @@ class DateUtil
 
     public static function getDateTimeByDayOfYear($dayOfYear, $year, \DateTimeZone $timezone)
     {
-        if (null === self::$leapBug) {
-            self::$leapBug = self::hasLeapYearBug();
-        }
-
-        $isLeapYear  = self::isLeapYear($year);
-
-        $dtTmp = \DateTime::createFromFormat(
-            'z Y',
-            ($isLeapYear && self::$leapBug && $dayOfYear > 59
-                ? $dayOfYear - 1 : $dayOfYear).' '.$year,
-            $timezone
-        );
-
-        if ($isLeapYear && self::$leapBug && $dayOfYear == 59) {
-            $dtTmp->modify('-1 day');
-        }
+        $dtTmp = new \DateTime('now', $timezone);
+        $dtTmp->setDate($year, 1, 1);
+        $dtTmp->modify("+$dayOfYear day");
 
         return $dtTmp;
     }
