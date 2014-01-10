@@ -47,6 +47,33 @@ print_r($transformer->getComputedArray());
 ```
 
 
+Warnings
+---------------
+
+- Monthly recurring rules: **If your start date is on the 29th, 30th, or 31st, Recurr will skip the months that have less than that number of days.** This behavior is configurable:
+
+```php
+$timezone    = 'America/New_York';
+$startDate   = new \DateTime('2013-01-31 20:00:00', new \DateTimeZone($timezone));
+$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+
+$transformerConfig = new \Recurr\TransformerConfig();
+$transformerConfig->enableLastDayOfMonthFix();
+$transformer->setTransformerConfig($transformerConfig);
+
+print_r($transformer->getComputedArray());
+
+/* Outputs:
+ * 2013-01-31
+ * 2013-02-28
+ * 2013-03-31
+ * 2013-04-30
+ * 2013-05-31
+ */
+```
+
+
 Contribute
 ----------
 

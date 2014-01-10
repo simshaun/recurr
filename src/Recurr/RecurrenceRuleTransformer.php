@@ -44,6 +44,9 @@ class RecurrenceRuleTransformer
     /** @var int */
     protected $virtualLimit;
 
+    /** @var TransformerConfig */
+    protected $config;
+
     /**
      * Some versions of PHP are affected by a bug where
      * \DateTime::createFromFormat('z Y', ...) does not account for leap years.
@@ -55,10 +58,11 @@ class RecurrenceRuleTransformer
     /**
      * Construct a new RecurrenceRuleTransformer
      *
-     * @param null $recurrenceRule The RecurrenceRule
-     * @param null $virtualLimit   The virtual limit imposed upon infinite recurrence
+     * @param null              $recurrenceRule The RecurrenceRule
+     * @param null              $virtualLimit   The virtual limit imposed upon infinite recurrence
+     * @param TransformerConfig $config
      */
-    public function __construct($recurrenceRule = null, $virtualLimit = null)
+    public function __construct($recurrenceRule = null, $virtualLimit = null, TransformerConfig $config = null)
     {
         if (null !== $recurrenceRule) {
             $this->setRule($recurrenceRule);
@@ -68,7 +72,21 @@ class RecurrenceRuleTransformer
             $this->setVirtualLimit($virtualLimit);
         }
 
+        if (!$config instanceof TransformerConfig) {
+            $config = new TransformerConfig();
+        }
+
+        $this->config = $config;
+
         $this->leapBug = DateUtil::hasLeapYearBug();
+    }
+
+    /**
+     * @param TransformerConfig $config
+     */
+    public function setTransformerConfig($config)
+    {
+        $this->config = $config;
     }
 
     /**
@@ -93,6 +111,10 @@ class RecurrenceRuleTransformer
                 $until instanceof \DateTime ? $until->getTimezone() : null
             );
         }
+
+        $startDay          = $start->format('j');
+        $startMonthLength  = $start->format('t');
+        $fixLastDayOfMonth = false;
 
         $dt = clone $start;
 
@@ -120,10 +142,14 @@ class RecurrenceRuleTransformer
                         $byMonth = array($start->format('n'));
                     }
 
-                    $byMonthDay = array($start->format('j'));
+                    $byMonthDay = array($startDay);
                     break;
                 case RecurrenceRule::FREQ_MONTHLY:
-                    $byMonthDay = array($start->format('j'));
+                    if ($startDay > 28) {
+                        $fixLastDayOfMonth = true;
+                    }
+
+                    $byMonthDay = array($startDay);
                     break;
                 case RecurrenceRule::FREQ_WEEKLY:
                     $byWeekDay = array(
@@ -134,6 +160,10 @@ class RecurrenceRuleTransformer
                     );
                     break;
             }
+        }
+
+        if (!$this->config->isLastDayOfMonthFixEnabled()) {
+            $fixLastDayOfMonth = false;
         }
 
         if (is_array($byMonthDay) && count($byMonthDay)) {
@@ -409,6 +439,10 @@ class RecurrenceRuleTransformer
                     $byMonthDay
                 );
 
+                if ($ifByMonthDay && $fixLastDayOfMonth && $i < $startMonthLength && $i == $dtInfo->monthLength) {
+                    $ifByMonthDay = false;
+                }
+
                 $ifByMonthDayNeg = $byMonthDayNeg !== null && !in_array(
                     $dtInfo->mDayMaskNeg[$dayOfYear],
                     $byMonthDayNeg
@@ -432,7 +466,8 @@ class RecurrenceRuleTransformer
             }
 
             if (!empty($bySetPos)) {
-                $datesAdj = array();
+                $datesAdj  = array();
+                $tmpDaySet = array_combine($daySet, $daySet);
 
                 foreach ($bySetPos as $setPos) {
                     if ($setPos < 0) {
@@ -445,11 +480,11 @@ class RecurrenceRuleTransformer
 
                     $tmp = array();
                     for ($k = $daySetStart; $k <= $daySetEnd; $k++) {
-                        if (!array_key_exists($k, $daySet)) {
+                        if (!array_key_exists($k, $tmpDaySet)) {
                             continue;
                         }
 
-                        $tmp[] = $daySet[$k];
+                        $tmp[] = $tmpDaySet[$k];
                     }
 
                     if ($dayPos < 0) {
@@ -498,8 +533,7 @@ class RecurrenceRuleTransformer
                 }
             } else {
                 foreach ($daySet as $dayOfYear) {
-                    $dtTmp =
-                        DateUtil::getDateTimeByDayOfYear($dayOfYear, $dt->format('Y'), $start->getTimezone());
+                    $dtTmp = DateUtil::getDateTimeByDayOfYear($dayOfYear, $dt->format('Y'), $start->getTimezone());
 
                     foreach ($timeSet as $time) {
                         /** @var Time $time */

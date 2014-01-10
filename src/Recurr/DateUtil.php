@@ -70,14 +70,15 @@ class DateUtil
      */
     public static function getDateInfo(\DateTime $dt)
     {
-        $i                 = new DateInfo();
-        $i->dt             = $dt;
-        $i->dayOfWeek      = self::getDayOfWeek($dt);
-        $i->yearLength     = self::getYearLength($dt);
+        $i              = new DateInfo();
+        $i->dt          = $dt;
+        $i->dayOfWeek   = self::getDayOfWeek($dt);
+        $i->monthLength = $dt->format('t');
+        $i->yearLength  = self::getYearLength($dt);
 
-        $i->mMask          = self::getMonthMask($dt);
-        $i->mDayMask       = self::getMonthDaysMask($dt);
-        $i->mDayMaskNeg    = self::getMonthDaysMask($dt, true);
+        $i->mMask       = self::getMonthMask($dt);
+        $i->mDayMask    = self::getMonthDaysMask($dt);
+        $i->mDayMaskNeg = self::getMonthDaysMask($dt, true);
 
         if ($i->yearLength == 365) {
             $i->mRanges = self::$monthEndDoY365;
@@ -201,9 +202,10 @@ class DateUtil
         $start = $dateInfo->mRanges[$monthNum - 1];
         $end   = $dateInfo->mRanges[$monthNum];
 
-        $set = range($start, $end - 1);
-        $set = array_combine($set, $set);
-        $obj = new DaySet($set, $start, $end - 1);
+        $days = range(1, $dt->format('t'));
+        $set  = range($start, $end - 1);
+        $set  = array_combine($days, $set);
+        $obj  = new DaySet($set, $start, $end - 1);
 
         return $obj;
     }

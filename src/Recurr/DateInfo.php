@@ -26,6 +26,11 @@ class DateInfo
     public $dt;
 
     /**
+     * @var int Number of days in the month.
+     */
+    public $monthLength;
+
+    /**
      * @var int Number of days in the year (365 normally, 366 on leap years)
      */
     public $yearLength;

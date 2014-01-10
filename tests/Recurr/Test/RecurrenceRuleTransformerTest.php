@@ -4,6 +4,7 @@ namespace Recurr\Test;
 
 use Recurr\RecurrenceRule;
 use Recurr\RecurrenceRuleTransformer;
+use Recurr\TransformerConfig;
 
 class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -267,6 +268,58 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2013-01-31 00:00:00', $timezoneObj), $computed[0]);
         $this->assertEquals(new \DateTime('2013-03-31 00:00:00', $timezoneObj), $computed[1]);
         $this->assertEquals(new \DateTime('2013-05-31 00:00:00', $timezoneObj), $computed[2]);
+    }
+
+    public function testMonthlyWithLastDayFixEnabled()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=10',
+            new \DateTime('2013-11-30')
+        );
+
+        $transformerConfig = new TransformerConfig();
+        $transformerConfig->enableLastDayOfMonthFix();
+
+        $this->transformer->setRule($rule);
+        $this->transformer->setTransformerConfig($transformerConfig);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(10, count($computed));
+        $this->assertEquals(new \DateTime('2013-11-30'), $computed[0]);
+        $this->assertEquals(new \DateTime('2013-12-30'), $computed[1]);
+        $this->assertEquals(new \DateTime('2014-01-30'), $computed[2]);
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[3]);
+        $this->assertEquals(new \DateTime('2014-03-30'), $computed[4]);
+        $this->assertEquals(new \DateTime('2014-04-30'), $computed[5]);
+        $this->assertEquals(new \DateTime('2014-05-30'), $computed[6]);
+        $this->assertEquals(new \DateTime('2014-06-30'), $computed[7]);
+        $this->assertEquals(new \DateTime('2014-07-30'), $computed[8]);
+        $this->assertEquals(new \DateTime('2014-08-30'), $computed[9]);
+    }
+
+    public function testMonthlyWithLastDayFixEnabledOnLeapYear()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=MONTHLY;COUNT=8',
+            new \DateTime('2016-01-31')
+        );
+
+        $transformerConfig = new TransformerConfig();
+        $transformerConfig->enableLastDayOfMonthFix();
+
+        $this->transformer->setRule($rule);
+        $this->transformer->setTransformerConfig($transformerConfig);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(8, count($computed));
+        $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]);
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]);
+        $this->assertEquals(new \DateTime('2016-03-31'), $computed[2]);
+        $this->assertEquals(new \DateTime('2016-04-30'), $computed[3]);
+        $this->assertEquals(new \DateTime('2016-05-31'), $computed[4]);
+        $this->assertEquals(new \DateTime('2016-06-30'), $computed[5]);
+        $this->assertEquals(new \DateTime('2016-07-31'), $computed[6]);
+        $this->assertEquals(new \DateTime('2016-08-31'), $computed[7]);
     }
 
     public function testYearly()
