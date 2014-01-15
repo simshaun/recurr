@@ -432,6 +432,22 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2013-06-15 14:00:00'), $computed[4]);
     }
 
+    public function testByDayYearly()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=YEARLY;COUNT=3;BYDAY=20MO',
+            new \DateTime('1997-05-19 16:00:00')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(3, count($computed));
+        $this->assertEquals(new \DateTime('1997-05-19 16:00:00'), $computed[0]);
+        $this->assertEquals(new \DateTime('1998-05-18 16:00:00'), $computed[1]);
+        $this->assertEquals(new \DateTime('1999-05-17 16:00:00'), $computed[2]);
+    }
+
     public function testByMonth()
     {
         $rule = new RecurrenceRule(

@@ -767,7 +767,7 @@ class RecurrenceRule
             if (strlen($day) == 2) {
                 $byDay[$idx] = new Weekday($day, null);
             } else {
-                preg_match('/^([+-]?[0-9])([A-Z]{2})$/', $day, $dayParts);
+                preg_match('/^([+-]?[0-9]+)([A-Z]{2})$/', $day, $dayParts);
                 $byDay[$idx] = new Weekday($dayParts[2], $dayParts[1]);
             }
         }
