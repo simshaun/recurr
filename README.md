@@ -40,8 +40,8 @@ Demo
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$transformer = new \Recurr\RuleTransformer($rule);
 
 print_r($transformer->getComputedArray());
 ```
@@ -55,12 +55,12 @@ Warnings
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-01-31 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$transformer = new \Recurr\RuleTransformer($rule);
 
-$transformerConfig = new \Recurr\TransformerConfig();
+$transformerConfig = new \Recurr\RuleTransformerConfig();
 $transformerConfig->enableLastDayOfMonthFix();
-$transformer->setTransformerConfig($transformerConfig);
+$transformer->setConfig($transformerConfig);
 
 print_r($transformer->getComputedArray());
 

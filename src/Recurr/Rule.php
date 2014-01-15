@@ -85,16 +85,8 @@ use Recurr\Weekday;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class RecurrenceRule
+class Rule
 {
-    const FREQ_SECONDLY = 6;
-    const FREQ_MINUTELY = 5;
-    const FREQ_HOURLY   = 4;
-    const FREQ_DAILY    = 3;
-    const FREQ_WEEKLY   = 2;
-    const FREQ_MONTHLY  = 1;
-    const FREQ_YEARLY   = 0;
-
     public static $freqs = array(
         'YEARLY'   => 0,
         'MONTHLY'  => 1,
@@ -165,7 +157,7 @@ class RecurrenceRule
     protected $bySetPosition;
 
     /**
-     * Construct a new RecurrenceRule.
+     * Construct a new Rule.
      *
      * @param null|string    $rrule RRULE string
      * @param null|\DateTime $startDate
@@ -445,19 +437,19 @@ class RecurrenceRule
      * Identifies the type of recurrence rule.
      *
      * May be one of:
-     *  - RecurrenceRule::FREQ_SECONDLY to specify repeating events based on an
+     *  - Frequency::SECONDLY to specify repeating events based on an
      *    interval of a second or more.
-     *  - RecurrenceRule::FREQ_MINUTELY to specify repeating events based on an
+     *  - Frequency::MINUTELY to specify repeating events based on an
      *    interval of a minute or more.
-     *  - RecurrenceRule::FREQ_HOURLY to specify repeating events based on an
+     *  - Frequency::HOURLY to specify repeating events based on an
      *    interval of an hour or more.
-     *  - RecurrenceRule::FREQ_DAILY to specify repeating events based on an
+     *  - Frequency::DAILY to specify repeating events based on an
      *    interval of a day or more.
-     *  - RecurrenceRule::FREQ_WEEKLY to specify repeating events based on an
+     *  - Frequency::WEEKLY to specify repeating events based on an
      *    interval of a week or more.
-     *  - RecurrenceRule::FREQ_MONTHLY to specify repeating events based on an
+     *  - Frequency::MONTHLY to specify repeating events based on an
      *    interval of a month or more.
-     *  - RecurrenceRule::FREQ_YEAR to specify repeating events based on an
+     *  - Frequency::YEAR to specify repeating events based on an
      *    interval of a year or more.
      *
      * @param string $freq Frequency of recurrence.

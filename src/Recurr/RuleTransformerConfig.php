@@ -9,7 +9,7 @@
 
 namespace Recurr;
 
-class TransformerConfig {
+class RuleTransformerConfig {
     protected $lastDayOfMonthFix = false;
 
     /**

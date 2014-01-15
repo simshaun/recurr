@@ -20,7 +20,7 @@ use Recurr\DateUtil;
 use Recurr\Exception\MissingData;
 
 /**
- * This class is responsible for transforming a RecurrenceRule in to an array
+ * This class is responsible for transforming a Rule in to an array
  * of \DateTime() objects.
  *
  * If a recurrence rule is infinitely recurring, a virtual limit is imposed.
@@ -28,23 +28,15 @@ use Recurr\Exception\MissingData;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class RecurrenceRuleTransformer
+class RuleTransformer
 {
-    const FREQ_YEARLY   = 0;
-    const FREQ_MONTHLY  = 1;
-    const FREQ_WEEKLY   = 2;
-    const FREQ_DAILY    = 3;
-    const FREQ_HOURLY   = 4;
-    const FREQ_MINUTELY = 5;
-    const FREQ_SECONDLY = 6;
-
-    /** @var RecurrenceRule */
+    /** @var Rule */
     protected $rule;
 
     /** @var int */
     protected $virtualLimit;
 
-    /** @var TransformerConfig */
+    /** @var RuleTransformerConfig */
     protected $config;
 
     /**
@@ -56,24 +48,24 @@ class RecurrenceRuleTransformer
     protected $leapBug = false;
 
     /**
-     * Construct a new RecurrenceRuleTransformer
+     * Construct a new RuleTransformer
      *
-     * @param null              $recurrenceRule The RecurrenceRule
-     * @param null              $virtualLimit   The virtual limit imposed upon infinite recurrence
-     * @param TransformerConfig $config
+     * @param null                  $rule         The Rule
+     * @param null                  $virtualLimit The virtual limit imposed upon infinite recurrence
+     * @param RuleTransformerConfig $config
      */
-    public function __construct($recurrenceRule = null, $virtualLimit = null, TransformerConfig $config = null)
+    public function __construct($rule = null, $virtualLimit = null, RuleTransformerConfig $config = null)
     {
-        if (null !== $recurrenceRule) {
-            $this->setRule($recurrenceRule);
+        if (null !== $rule) {
+            $this->setRule($rule);
         }
 
         if (is_int($virtualLimit)) {
             $this->setVirtualLimit($virtualLimit);
         }
 
-        if (!$config instanceof TransformerConfig) {
-            $config = new TransformerConfig();
+        if (!$config instanceof RuleTransformerConfig) {
+            $config = new RuleTransformerConfig();
         }
 
         $this->config = $config;
@@ -82,15 +74,15 @@ class RecurrenceRuleTransformer
     }
 
     /**
-     * @param TransformerConfig $config
+     * @param RuleTransformerConfig $config
      */
-    public function setTransformerConfig($config)
+    public function setConfig($config)
     {
         $this->config = $config;
     }
 
     /**
-     * Transform a RecurrenceRule in to an array of \DateTimes
+     * Transform a Rule in to an array of \DateTimes
      *
      * @return array
      * @throws MissingData
@@ -99,7 +91,7 @@ class RecurrenceRuleTransformer
     {
         $rule = $this->getRule();
         if (null === $rule) {
-            throw new MissingData('RecurrenceRule has not been set');
+            throw new MissingData('Rule has not been set');
         }
 
         $start = $rule->getStartDate();
@@ -137,21 +129,21 @@ class RecurrenceRuleTransformer
 
         if (!(!empty($byWeekNum) || !empty($byYearDay) || !empty($byMonthDay) || !empty($byWeekDay))) {
             switch ($freq) {
-                case RecurrenceRule::FREQ_YEARLY:
+                case Frequency::YEARLY:
                     if (empty($byMonth)) {
                         $byMonth = array($start->format('n'));
                     }
 
                     $byMonthDay = array($startDay);
                     break;
-                case RecurrenceRule::FREQ_MONTHLY:
+                case Frequency::MONTHLY:
                     if ($startDay > 28) {
                         $fixLastDayOfMonth = true;
                     }
 
                     $byMonthDay = array($startDay);
                     break;
-                case RecurrenceRule::FREQ_WEEKLY:
+                case Frequency::WEEKLY:
                     $byWeekDay = array(
                         new Weekday(
                             DateUtil::getDayOfWeek($start),
@@ -230,21 +222,21 @@ class RecurrenceRuleTransformer
             $wDayMaskRel = array();
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
 
-            if ($freq >= RecurrenceRule::FREQ_HOURLY) {
-                if (($freq >= RecurrenceRule::FREQ_HOURLY   && !empty($byHour)   && !in_array($hour, $byHour)) ||
-                    ($freq >= RecurrenceRule::FREQ_MINUTELY && !empty($byMinute) && !in_array($minute, $byMinute)) ||
-                    ($freq >= RecurrenceRule::FREQ_SECONDLY && !empty($bySecond) && !in_array($second, $bySecond)))
+            if ($freq >= Frequency::HOURLY) {
+                if (($freq >= Frequency::HOURLY   && !empty($byHour)   && !in_array($hour, $byHour)) ||
+                    ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array($minute, $byMinute)) ||
+                    ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond)))
                 {
                     $timeSet = array();
                 } else {
                     switch ($freq) {
-                        case RecurrenceRule::FREQ_HOURLY:
+                        case Frequency::HOURLY:
                             $timeSet = DateUtil::getTimeSetOfHour($rule, $dt);
                             break;
-                        case RecurrenceRule::FREQ_MINUTELY:
+                        case Frequency::MINUTELY:
                             $timeSet = DateUtil::getTimeSetOfMinute($rule, $dt);
                             break;
-                        case RecurrenceRule::FREQ_SECONDLY:
+                        case Frequency::SECONDLY:
                             $timeSet = DateUtil::getTimeSetOfSecond($dt);
                             break;
                     }
@@ -364,7 +356,7 @@ class RecurrenceRuleTransformer
             if (!empty($byWeekDayRel)) {
                 $ranges = array();
 
-                if (RecurrenceRule::FREQ_YEARLY == $freq) {
+                if (Frequency::YEARLY == $freq) {
                     if (!empty($byMonth)) {
                         foreach ($byMonth as $mo) {
                             $ranges[] = array_slice($dtInfo->mRanges, $mo - 1, 2);
@@ -372,7 +364,7 @@ class RecurrenceRuleTransformer
                     } else {
                         $ranges[] = array(0, $dtInfo->yearLength);
                     }
-                } elseif (RecurrenceRule::FREQ_MONTHLY == $freq) {
+                } elseif (Frequency::MONTHLY == $freq) {
                     $ranges[] = array_slice($dtInfo->mRanges, $month - 1, 2);
                 }
 
@@ -577,13 +569,13 @@ class RecurrenceRuleTransformer
             }
 
             switch ($freq) {
-                case RecurrenceRule::FREQ_YEARLY:
+                case Frequency::YEARLY:
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     $dt->setDate($year, $month, $day);
                     break;
-                case RecurrenceRule::FREQ_MONTHLY:
+                case Frequency::MONTHLY:
                     $month += $rule->getInterval();
                     if ($month > 12) {
                         $delta = floor($month / 12);
@@ -597,7 +589,7 @@ class RecurrenceRuleTransformer
                     }
                     $dt->setDate($year, $month, 1);
                     break;
-                case RecurrenceRule::FREQ_WEEKLY:
+                case Frequency::WEEKLY:
                     if ($weekStart > $dtInfo->dayOfWeek) {
                         $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 +
                             $rule->getInterval() * 7;
@@ -611,20 +603,20 @@ class RecurrenceRuleTransformer
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     break;
-                case RecurrenceRule::FREQ_DAILY:
+                case Frequency::DAILY:
                     $dt->modify('+'.$rule->getInterval().' day');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     break;
-                case RecurrenceRule::FREQ_HOURLY:
+                case Frequency::HOURLY:
                     $dt->modify('+'.$rule->getInterval().' hours');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     $hour  = $dt->format('G');
                     break;
-                case RecurrenceRule::FREQ_MINUTELY:
+                case Frequency::MINUTELY:
                     $dt->modify('+'.$rule->getInterval().' minutes');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
@@ -632,7 +624,7 @@ class RecurrenceRuleTransformer
                     $hour   = $dt->format('G');
                     $minute = $dt->format('i');
                     break;
-                case RecurrenceRule::FREQ_SECONDLY:
+                case Frequency::SECONDLY:
                     $dt->modify('+'.$rule->getInterval().' seconds');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
@@ -648,9 +640,9 @@ class RecurrenceRuleTransformer
     }
 
     /**
-     * Set the RecurrenceRule
+     * Set the Rule
      *
-     * @param RecurrenceRule $rule The RecurrenceRule
+     * @param Rule $rule The Rule
      *
      * @return $this
      */
@@ -662,9 +654,9 @@ class RecurrenceRuleTransformer
     }
 
     /**
-     * Get the RecurrenceRule
+     * Get the Rule
      *
-     * @return RecurrenceRule
+     * @return Rule
      */
     public function getRule()
     {
@@ -688,11 +680,11 @@ class RecurrenceRuleTransformer
     /**
      * Get the virtual limit imposed upon infinitely recurring events.
      *
-     * @param RecurrenceRule $rule
+     * @param Rule $rule
      *
      * @return int
      */
-    public function getVirtualLimit(RecurrenceRule $rule)
+    public function getVirtualLimit(Rule $rule)
     {
         return 732;
     }

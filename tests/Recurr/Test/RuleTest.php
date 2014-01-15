@@ -2,18 +2,19 @@
 
 namespace Recurr\Test;
 
-use Recurr\RecurrenceRule;
+use Recurr\Frequency;
+use Recurr\Rule;
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
 
-class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RecurrenceRule */
+    /** @var Rule */
     protected $rule;
 
     public function setUp()
     {
-        $this->rule = new RecurrenceRule;
+        $this->rule = new Rule;
     }
 
     /**
@@ -50,7 +51,7 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
 
         $this->rule->createFromString($string);
 
-        $this->assertEquals(RecurrenceRule::FREQ_YEARLY, $this->rule->getFreq());
+        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
         $this->assertEquals(2, $this->rule->getCount());
         $this->assertEquals(2, $this->rule->getInterval());
         $this->assertEquals(array(30), $this->rule->getBySecond());

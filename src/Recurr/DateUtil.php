@@ -19,10 +19,10 @@ namespace Recurr;
 
 use Recurr\DaySet;
 use Recurr\Time;
-use Recurr\RecurrenceRule;
+use Recurr\Rule;
 
 /**
- * Class DateUtil is responsible for providing utilities applicable to RecurrenceRules.
+ * Class DateUtil is responsible for providing utilities applicable to Rules.
  *
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
@@ -105,17 +105,17 @@ class DateUtil
     /**
      * Get an array of DOY (Day of Year) for each day in a particular week.
      *
-     * @param \DateTime           $dt
-     * @param \DateTime           $start
-     * @param null|RecurrenceRule $rule
-     * @param null|DateInfo       $dtInfo
+     * @param \DateTime     $dt
+     * @param \DateTime     $start
+     * @param null|Rule     $rule
+     * @param null|DateInfo $dtInfo
      *
      * @return DaySet
      */
     public static function getDaySetOfWeek(
         \DateTime $dt,
         \DateTime $start,
-        RecurrenceRule $rule = null,
+        Rule $rule = null,
         DateInfo $dtInfo = null
     )
     {
@@ -141,33 +141,33 @@ class DateUtil
     }
 
     /**
-     * @param RecurrenceRule $rule
-     * @param \DateTime      $dt
-     * @param DateInfo       $dtInfo
-     * @param \DateTime      $start
+     * @param Rule      $rule
+     * @param \DateTime $dt
+     * @param DateInfo  $dtInfo
+     * @param \DateTime $start
      *
      * @return DaySet
      */
-    public static function getDaySet(RecurrenceRule $rule, \DateTime $dt, DateInfo $dtInfo, $start)
+    public static function getDaySet(Rule $rule, \DateTime $dt, DateInfo $dtInfo, $start)
     {
         switch ($rule->getFreq()) {
-            case RecurrenceRule::FREQ_SECONDLY:
+            case Frequency::SECONDLY:
                 return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
                 break;
-            case RecurrenceRule::FREQ_MINUTELY:
+            case Frequency::MINUTELY:
                 return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
                 break;
-            case RecurrenceRule::FREQ_HOURLY:
+            case Frequency::HOURLY:
                 return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
                 break;
-            case RecurrenceRule::FREQ_DAILY:
+            case Frequency::DAILY:
                 return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
                 break;
-            case RecurrenceRule::FREQ_WEEKLY:
+            case Frequency::WEEKLY:
                 return self::getDaySetOfWeek($dt, $start, $rule, $dtInfo);
-            case RecurrenceRule::FREQ_MONTHLY:
+            case Frequency::MONTHLY:
                 return self::getDaySetOfMonth($dt, $start, $rule, $dtInfo);
-            case RecurrenceRule::FREQ_YEARLY:
+            case Frequency::YEARLY:
                 return self::getDaySetOfYear($dt, $start, $rule, $dtInfo);
         }
     }
@@ -235,12 +235,12 @@ class DateUtil
     }
 
     /**
-     * @param RecurrenceRule $rule
-     * @param \DateTime      $dt
+     * @param Rule      $rule
+     * @param \DateTime $dt
      *
      * @return array
      */
-    public static function getTimeSetOfHour(RecurrenceRule $rule, \DateTime $dt)
+    public static function getTimeSetOfHour(Rule $rule, \DateTime $dt)
     {
         $set = array();
 
@@ -266,12 +266,12 @@ class DateUtil
     }
 
     /**
-     * @param RecurrenceRule $rule
-     * @param \DateTime      $dt
+     * @param Rule      $rule
+     * @param \DateTime $dt
      *
      * @return array
      */
-    public static function getTimeSetOfMinute(RecurrenceRule $rule, \DateTime $dt)
+    public static function getTimeSetOfMinute(Rule $rule, \DateTime $dt)
     {
         $set = array();
 
@@ -301,16 +301,16 @@ class DateUtil
     }
 
     /**
-     * @param RecurrenceRule $rule
-     * @param \DateTime      $dt
+     * @param Rule      $rule
+     * @param \DateTime $dt
      *
      * @return array
      */
-    public static function getTimeSet(RecurrenceRule $rule, \DateTime $dt)
+    public static function getTimeSet(Rule $rule, \DateTime $dt)
     {
         $set = array();
 
-        if (null === $rule || $rule->getFreq() >= RecurrenceRule::FREQ_HOURLY) {
+        if (null === $rule || $rule->getFreq() >= Frequency::HOURLY) {
             return $set;
         }
 
