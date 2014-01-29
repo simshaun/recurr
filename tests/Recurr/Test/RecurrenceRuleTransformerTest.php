@@ -250,6 +250,44 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2014-01-15 00:00:00', $timezoneObj), $computed[2]);
     }
 
+    public function testWeeklyByDay()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=WEEKLY;COUNT=25;BYDAY=MO,WE,FR',
+            new \DateTime('2014-01-28 07:00:00')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertEquals(25, count($computed));
+        $this->assertEquals(new \DateTime('2014-01-29 07:00:00'), $computed[0]);
+        $this->assertEquals(new \DateTime('2014-01-31 07:00:00'), $computed[1]);
+        $this->assertEquals(new \DateTime('2014-02-03 07:00:00'), $computed[2]);
+        $this->assertEquals(new \DateTime('2014-02-05 07:00:00'), $computed[3]);
+        $this->assertEquals(new \DateTime('2014-02-07 07:00:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2014-02-10 07:00:00'), $computed[5]);
+        $this->assertEquals(new \DateTime('2014-02-12 07:00:00'), $computed[6]);
+        $this->assertEquals(new \DateTime('2014-02-14 07:00:00'), $computed[7]);
+        $this->assertEquals(new \DateTime('2014-02-17 07:00:00'), $computed[8]);
+        $this->assertEquals(new \DateTime('2014-02-19 07:00:00'), $computed[9]);
+        $this->assertEquals(new \DateTime('2014-02-21 07:00:00'), $computed[10]);
+        $this->assertEquals(new \DateTime('2014-02-24 07:00:00'), $computed[11]);
+        $this->assertEquals(new \DateTime('2014-02-26 07:00:00'), $computed[12]);
+        $this->assertEquals(new \DateTime('2014-02-28 07:00:00'), $computed[13]);
+        $this->assertEquals(new \DateTime('2014-03-03 07:00:00'), $computed[14]);
+        $this->assertEquals(new \DateTime('2014-03-05 07:00:00'), $computed[15]);
+        $this->assertEquals(new \DateTime('2014-03-07 07:00:00'), $computed[16]);
+        $this->assertEquals(new \DateTime('2014-03-10 07:00:00'), $computed[17]);
+        $this->assertEquals(new \DateTime('2014-03-12 07:00:00'), $computed[18]);
+        $this->assertEquals(new \DateTime('2014-03-14 07:00:00'), $computed[19]);
+        $this->assertEquals(new \DateTime('2014-03-17 07:00:00'), $computed[20]);
+        $this->assertEquals(new \DateTime('2014-03-19 07:00:00'), $computed[21]);
+        $this->assertEquals(new \DateTime('2014-03-21 07:00:00'), $computed[22]);
+        $this->assertEquals(new \DateTime('2014-03-24 07:00:00'), $computed[23]);
+        $this->assertEquals(new \DateTime('2014-03-26 07:00:00'), $computed[24]);
+    }
+
     public function testMonthly()
     {
         $timezone = 'America/New_York';
