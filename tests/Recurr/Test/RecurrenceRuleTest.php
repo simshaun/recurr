@@ -110,4 +110,80 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
     {
         $this->rule->setWeekStart('monday');
     }
+
+    public function testStartDateDefault()
+    {
+        $this->assertNull($this->rule->getStartDate());
+    }
+
+    public function testStartDateToString()
+    {
+        $now = new \DateTime;
+
+        $rule = new RecurrenceRule(null, $now);
+        $this->assertSame($rule->getStartDate(), $now);
+
+        $rule = new RecurrenceRule();
+        $rule->setStartDate($now);
+        $this->assertSame($rule->getStartDate(), $now);
+        $this->assertContains(
+            'DTSTART='.$now->format('Ymd\THis'),
+            explode(';', $rule->getString())
+        );
+
+        $rule = new RecurrenceRule(null, clone $now, 'UTC');
+        $now->setTimezone(new \DateTimeZone('UTC'));
+        $this->assertNotContains(
+            'DTSTART='.$now->format('Ymd\THis'),
+            explode(';', $rule->getString())
+        );
+    }
+
+    public function testStartDateFromString()
+    {
+        $now = new \DateTime;
+        $string = 'FREQ=YEARLY;DTSTART='.$now->format('Ymd\THis');
+
+        $this->rule->createFromString($string);
+        $this->assertEquals($this->rule->getStartDate(), $now);
+    }
+
+    public function testUntilToString()
+    {
+        $now = new \DateTime;
+
+        $rule = new RecurrenceRule();
+        $rule->setUntil($now);
+        $this->assertSame($rule->getUntil(), $now);
+        $this->assertContains(
+            'UNTIL='.$now->format('Ymd\THis'),
+            explode(';', $rule->getString())
+        );
+
+        $rule = new RecurrenceRule(null, clone $now, 'UTC');
+        $now->setTimezone(new \DateTimeZone('UTC'));
+        $this->assertNotContains(
+            'UNTIL='.$now->format('Ymd\THis'),
+            explode(';', $rule->getString())
+        );
+    }
+
+    public function testUntilFromString()
+    {
+        $now = new \DateTime;
+        $string = 'FREQ=YEARLY;UNTIL='.$now->format('Ymd\THis');
+
+        $this->rule->createFromString($string);
+        $this->assertEquals($this->rule->getUntil(), $now);
+    }
+
+    public function testTimezone()
+    {
+        $timezone = date_default_timezone_get();
+        $this->assertSame($this->rule->getTimezone(), $timezone);
+
+        $this->rule->setTimezone('UTC');
+        $this->assertSame($this->rule->getTimezone(), 'UTC');
+    }
+
 }
