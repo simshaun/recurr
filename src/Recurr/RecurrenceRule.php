@@ -171,16 +171,17 @@ class RecurrenceRule
      * @param null|\DateTime $startDate
      * @param string         $timezone
      */
-    public function __construct($rrule = null, $startDate = null, $timezone = 'UTC')
+    public function __construct($rrule = null, $startDate = null, $timezone = null)
     {
-        if (!empty($timezone)) {
-            $this->setTimezone($timezone);
+        if ($timezone === null) {
+            $timezone = date_default_timezone_get();
         }
-
-        $this->setStartDate(empty($startDate) ? new \DateTime() : $startDate);
-
-        if (!empty($rrule)) {
+        $this->setTimezone($timezone);
+        if ($rrule !== null) {
             $this->createFromString($rrule);
+        }
+        if ($startDate !== null) {
+            $this->setStartDate($startDate);
         }
     }
 
@@ -222,6 +223,16 @@ class RecurrenceRule
             }
 
             $this->setFreq(self::$freqs[$parts['FREQ']]);
+        }
+
+        // DTSTART
+        if (isset($parts['DTSTART'])) {
+            $this->setStartDate(
+                new \DateTime(
+                    $parts['DTSTART'],
+                    new \DateTimeZone($this->getTimezone())
+                )
+            );
         }
 
         // UNTIL or COUNT
@@ -305,6 +316,12 @@ class RecurrenceRule
 
         // FREQ
         $parts[] = 'FREQ='.$this->getFreqAsText();
+
+        // DTSTART
+        $startDate = $this->getStartDate();
+        if (!empty($startDate)) {
+            $parts[] = 'DTSTART='.$startDate->format('Ymd\THis');
+        }
 
         // UNTIL or COUNT
         $until = $this->getUntil();
