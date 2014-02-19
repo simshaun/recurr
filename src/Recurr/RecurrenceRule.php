@@ -173,16 +173,16 @@ class RecurrenceRule
      */
     public function __construct($rrule = null, $startDate = null, $timezone = null)
     {
+        if ($timezone === null) {
+            $timezone = date_default_timezone_get();
+        }
+        $this->setTimezone($timezone);
         if ($rrule !== null) {
             $this->createFromString($rrule);
         }
         if ($startDate !== null) {
             $this->setStartDate($startDate);
         }
-        if ($timezone === null) {
-            $timezone = date_default_timezone_get();
-        }
-        $this->setTimezone($timezone);
     }
 
     /**
