@@ -17,6 +17,11 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule = new Rule;
     }
 
+    public function testTimezone()
+    {
+        $this->assertEquals(date_default_timezone_get(), $this->rule->getTimezone());
+    }
+
     /**
      * @expectedException \Recurr\Exception\InvalidRRule
      */
@@ -66,6 +71,19 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
     }
 
+    public function testCreateFromStringWithDtstart()
+    {
+        $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
+
+        $this->rule->setTimezone('America/Los_Angeles');
+        $this->rule->createFromString($string);
+
+        $expectedStartDate = new \DateTime('2014-02-22 07:30:00', new \DateTimeZone('America/Los_Angeles'));
+
+        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
+        $this->assertEquals($expectedStartDate, $this->rule->getStartDate());
+    }
+
     /**
      * @expectedException \Recurr\Exception\InvalidRRule
      */
@@ -94,6 +112,15 @@ class RuleTest extends \PHPUnit_Framework_TestCase
             'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU',
             $this->rule->getString()
         );
+    }
+
+    public function testGetStringWithDtstart()
+    {
+        $string = 'FREQ=MONTHLY;DTSTART=20140210T083045;INTERVAL=1;WKST=MO';
+
+        $this->rule->createFromString($string);
+
+        $this->assertEquals($string, $this->rule->getString());
     }
 
     /**

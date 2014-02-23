@@ -97,11 +97,14 @@ class Rule
         'SECONDLY' => 6,
     );
 
-    /** @var string|null */
+    /** @var string */
     protected $timezone;
 
     /** @var \DateTime|null */
     protected $startDate;
+
+    /** @var bool */
+    protected $isStartDateFromDtstart = false;
 
     /** @var string */
     protected $freq;
@@ -159,17 +162,21 @@ class Rule
     /**
      * Construct a new Rule.
      *
-     * @param null|string    $rrule RRULE string
-     * @param null|\DateTime $startDate
-     * @param string         $timezone
+     * @param string    $rrule RRULE string
+     * @param \DateTime $startDate
+     * @param string    $timezone
      */
-    public function __construct($rrule = null, $startDate = null, $timezone = 'UTC')
+    public function __construct($rrule = null, \DateTime $startDate = null, $timezone = null)
     {
-        if (!empty($timezone)) {
-            $this->setTimezone($timezone);
+        if (empty($timezone)) {
+            $timezone = date_default_timezone_get();
         }
+        $this->setTimezone($timezone);
 
-        $this->setStartDate(empty($startDate) ? new \DateTime() : $startDate);
+        if (!$startDate instanceof \DateTime) {
+            $startDate  = new \DateTime('now', new \DateTimeZone($timezone));
+        }
+        $this->setStartDate($startDate);
 
         if (!empty($rrule)) {
             $this->createFromString($rrule);
@@ -214,6 +221,12 @@ class Rule
             }
 
             $this->setFreq(self::$freqs[$parts['FREQ']]);
+        }
+
+        // DTSTART
+        if (isset($parts['DTSTART'])) {
+            $this->isStartDateFromDtstart = true;
+            $this->setStartDate(new \DateTime($parts['DTSTART'], new \DateTimeZone($this->getTimezone())));
         }
 
         // UNTIL or COUNT
@@ -307,6 +320,11 @@ class Rule
             $parts[] = 'COUNT='.$count;
         }
 
+        // DTSTART
+        if ($this->isStartDateFromDtstart) {
+            $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\This');
+        }
+
         // INTERVAL
         $interval = $this->getInterval();
         if (!empty($interval)) {
@@ -377,10 +395,9 @@ class Rule
     }
 
     /**
-     * This is the timezone to use in \DateTime() objects.
+     * @param string $timezone
      *
-     * @param null|string $timezone Timezone Identifier
-     *
+     * @see http://www.php.net/manual/en/timezones.php
      * @return $this
      */
     public function setTimezone($timezone)
@@ -415,22 +432,11 @@ class Rule
     }
 
     /**
-     * Get the user-provided date of the first instance in the recurrence set.
-     *
-     * @return \DateTime|null
+     * @return \DateTime
      */
     public function getStartDate()
     {
-        $date = $this->startDate;
-
-        if (!empty($date)
-            && $date->getTimezone()->getName() == 'UTC'
-            && $this->getTimezone() != 'UTC'
-        ) {
-            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
-        }
-
-        return $date;
+        return $this->startDate;
     }
 
     /**
