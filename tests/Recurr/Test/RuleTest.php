@@ -17,9 +17,17 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule = new Rule;
     }
 
-    public function testTimezone()
+    public function testDefaultTimezone()
     {
         $this->assertEquals(date_default_timezone_get(), $this->rule->getTimezone());
+    }
+
+    public function testTimezoneObtainedFromStartDate()
+    {
+        $startDate = new \DateTime('2014-01-25 05:20:30', new \DateTimeZone('America/Los_Angeles'));
+
+        $this->rule = new Rule(null, $startDate);
+        $this->assertEquals($startDate->getTimezone()->getName(), $this->rule->getTimezone());
     }
 
     /**

@@ -169,7 +169,11 @@ class Rule
     public function __construct($rrule = null, $startDate = null, $timezone = null)
     {
         if (empty($timezone)) {
-            $timezone = date_default_timezone_get();
+            if ($startDate instanceof \DateTime) {
+                $timezone = $startDate->getTimezone()->getName();
+            } else {
+                $timezone = date_default_timezone_get();
+            }
         }
         $this->setTimezone($timezone);
 
