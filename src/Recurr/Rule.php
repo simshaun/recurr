@@ -162,11 +162,11 @@ class Rule
     /**
      * Construct a new Rule.
      *
-     * @param string    $rrule RRULE string
-     * @param \DateTime $startDate
-     * @param string    $timezone
+     * @param string           $rrule RRULE string
+     * @param string|\DateTime $startDate
+     * @param string           $timezone
      */
-    public function __construct($rrule = null, \DateTime $startDate = null, $timezone = null)
+    public function __construct($rrule = null, $startDate = null, $timezone = null)
     {
         if (empty($timezone)) {
             $timezone = date_default_timezone_get();
@@ -174,7 +174,7 @@ class Rule
         $this->setTimezone($timezone);
 
         if (!$startDate instanceof \DateTime) {
-            $startDate  = new \DateTime('now', new \DateTimeZone($timezone));
+            $startDate  = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
         $this->setStartDate($startDate);
 
