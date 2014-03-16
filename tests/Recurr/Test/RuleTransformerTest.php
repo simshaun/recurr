@@ -6,6 +6,20 @@ use Recurr\Rule;
 
 class RuleTransformerTest extends RuleTransformerBase
 {
+    public function testVirtualLimit()
+    {
+        $rule = new Rule(
+            'FREQ=YEARLY;COUNT=30',
+            new \DateTime('2014-03-16 04:00:00')
+        );
+
+        $this->transformer->setRule($rule);
+        $this->transformer->setVirtualLimit(5);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertCount(5, $computed);
+    }
+
     public function testRfc2445Example()
     {
         $rule = new Rule(
