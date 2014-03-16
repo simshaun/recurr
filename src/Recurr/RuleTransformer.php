@@ -684,8 +684,8 @@ class RuleTransformer
      *
      * @return int
      */
-    public function getVirtualLimit(Rule $rule)
+    public function getVirtualLimit()
     {
-        return 732;
+        return $this->virtualLimit;
     }
 }
