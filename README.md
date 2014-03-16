@@ -46,11 +46,11 @@ $transformer = new \Recurr\RuleTransformer($rule);
 print_r($transformer->getComputedArray());
 ```
 
-Converting to Text
-----------------------
+Recurrence Rule to Text
+--------------------------
 
-Recurr supports converting some recurrence rules in to human readable text.
-This feature is still in beta and only support yearly, monthly, weekly, and daily frequencies.
+Recurr supports transforming some recurrence rules in to human readable text.
+This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies.
 
 ```php
 $rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
