@@ -17,6 +17,19 @@ class RecurrenceRuleTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $this->transformer = new RecurrenceRuleTransformer;
     }
+    public function testVirtualLimit()
+    {
+        $rule = new RecurrenceRule(
+            'FREQ=YEARLY;COUNT=30',
+            new \DateTime('2014-03-16 04:00:00')
+        );
+
+        $this->transformer->setRule($rule);
+        $this->transformer->setVirtualLimit(5);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertCount(5, $computed);
+    }
 
     public function testSecondly()
     {

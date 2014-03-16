@@ -42,7 +42,7 @@ class RecurrenceRuleTransformer
     protected $rule;
 
     /** @var int */
-    protected $virtualLimit;
+    protected $virtualLimit = 732;
 
     /** @var TransformerConfig */
     protected $config;
@@ -119,7 +119,7 @@ class RecurrenceRuleTransformer
         $dt = clone $start;
 
         $maxCount = $rule->getCount();
-        $vLimit   = $this->getVirtualLimit($rule);
+        $vLimit   = $this->getVirtualLimit();
 
         $freq          = $rule->getFreq();
         $weekStart     = $rule->getWeekStartAsNum();
@@ -688,12 +688,10 @@ class RecurrenceRuleTransformer
     /**
      * Get the virtual limit imposed upon infinitely recurring events.
      *
-     * @param RecurrenceRule $rule
-     *
      * @return int
      */
-    public function getVirtualLimit(RecurrenceRule $rule)
+    public function getVirtualLimit()
     {
-        return 732;
+        return $this->virtualLimit;
     }
 }
