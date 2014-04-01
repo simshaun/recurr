@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <phpunit bootstrap="./tests/bootstrap.php" colors="true">
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
     <testsuites>
         <testsuite name="Recurr Test Suite">
             <directory suffix="Test.php">./tests/Recurr/Test/</directory>

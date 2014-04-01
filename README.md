@@ -1,4 +1,4 @@
-# Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png)
+# Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png) [![Coverage Status](https://coveralls.io/repos/simshaun/recurr/badge.png?branch=master)](https://coveralls.io/r/simshaun/recurr?branch=master)
 
 Recurr is a PHP library for working with recurrence rules ([RRULE](http://tools.ietf.org/html/rfc2445)) and converting them in to DateTime objects.
 
