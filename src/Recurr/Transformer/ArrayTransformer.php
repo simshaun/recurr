@@ -84,7 +84,7 @@ class ArrayTransformer
      * @return array
      * @throws MissingData
      */
-    public function getComputedArray($rule, $virtualLimit = null)
+    public function transform($rule, $virtualLimit = null)
     {
         if (null === $rule) {
             throw new MissingData('Rule has not been set');

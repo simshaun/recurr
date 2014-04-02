@@ -13,7 +13,7 @@ class ArrayTransformerSecondlyTest extends ArrayTransformerBase
             new \DateTime('2016-02-29 23:58:00')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-02-29 23:58:00'), $computed[0]);
@@ -30,7 +30,7 @@ class ArrayTransformerSecondlyTest extends ArrayTransformerBase
             new \DateTime('2016-02-29 23:58:00')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-02-29 23:58:00'), $computed[0]);

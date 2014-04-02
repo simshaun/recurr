@@ -43,7 +43,7 @@ $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone)
 $rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
 $transformer = new \Recurr\Transformer\ArrayTransformer();
 
-print_r($transformer->getComputedArray($rule));
+print_r($transformer->transform($rule));
 ```
 
 Recurrence Rule to Text
@@ -75,7 +75,7 @@ $transformerConfig = new \Recurr\Transformer\ArrayTransformerConfig();
 $transformerConfig->enableLastDayOfMonthFix();
 $transformer->setConfig($transformerConfig);
 
-print_r($transformer->getComputedArray($rule));
+print_r($transformer->transform($rule));
 
 /* Outputs:
  * 2013-01-31

@@ -13,7 +13,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-01-28')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-01-28'), $computed[0]);
@@ -30,7 +30,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-01-23')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-01-23'), $computed[0]);
@@ -46,7 +46,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-01-24')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-02-05'), $computed[0]);
@@ -63,7 +63,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-04')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-07-01'), $computed[0]);
@@ -80,7 +80,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-04')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-06-24'), $computed[0]);
@@ -96,7 +96,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-05')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-07-01'), $computed[0]);
@@ -113,7 +113,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-04')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(10, count($computed));
         $this->assertEquals(new \DateTime('2013-06-21'), $computed[0]);
@@ -135,7 +135,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2017-01-01')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(6, count($computed));
         $this->assertEquals(new \DateTime('2017-01-02'), $computed[0]);
@@ -152,7 +152,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2017-01-01')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(6, count($computed));
         $this->assertEquals(new \DateTime('2017-01-16'), $computed[0]);
@@ -170,7 +170,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-04')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2014-01-06'), $computed[0]);
@@ -187,7 +187,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-04')
         );
 
-        $computed = $this->transformer->getComputedArray($rule);
+        $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-12-30'), $computed[0]);
