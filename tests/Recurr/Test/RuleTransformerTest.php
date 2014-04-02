@@ -20,6 +20,22 @@ class RuleTransformerTest extends RuleTransformerBase
         $this->assertCount(5, $computed);
     }
 
+    public function testUntil()
+    {
+        $rule = new Rule(
+            'FREQ=YEARLY;UNTIL=20160316T040000',
+            new \DateTime('2014-03-16 04:00:00')
+        );
+
+        $this->transformer->setRule($rule);
+        $computed = $this->transformer->getComputedArray();
+
+        $this->assertCount(3, $computed);
+        $this->assertEquals(new \DateTime('2014-03-16 04:00:00'), $computed[0]);
+        $this->assertEquals(new \DateTime('2015-03-16 04:00:00'), $computed[1]);
+        $this->assertEquals(new \DateTime('2016-03-16 04:00:00'), $computed[2]);
+    }
+
     public function testRfc2445Example()
     {
         $rule = new Rule(
