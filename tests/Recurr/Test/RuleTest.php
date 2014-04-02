@@ -46,6 +46,22 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->createFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
     }
 
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testCreateFromStringWithBothCountAndDtend()
+    {
+        $this->rule->createFromString('FREQ=DAILY;COUNT=2;DTEND=20130510');
+    }
+
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testCreateFromStringWithBothUntilAndDtend()
+    {
+        $this->rule->createFromString('FREQ=DAILY;UNTIL=20130510;DTEND=20130511');
+    }
+
     public function testCreateFromString()
     {
         $string = 'FREQ=YEARLY;';

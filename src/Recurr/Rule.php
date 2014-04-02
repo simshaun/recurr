@@ -233,13 +233,17 @@ class Rule
             $this->setStartDate(new \DateTime($parts['DTSTART'], new \DateTimeZone($this->getTimezone())));
         }
 
-        // UNTIL or COUNT
-        if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
-            throw new InvalidRRule('UNTIL or COUNT may not both be in the RRULE');
-        } elseif (isset($parts['UNTIL'])) {
+        // UNTIL, DTEND, or COUNT
+        $numSet = 0;
+        $numSet += isset($parts['UNTIL']) ? 1 : 0;
+        $numSet += isset($parts['DTEND']) ? 1 : 0;
+        $numSet += isset($parts['COUNT']) ? 1 : 0;
+        if ($numSet > 1) {
+            throw new InvalidRRule('UNTIL, DTEND, and COUNT must not exist together in the same RRULE');
+        } elseif (isset($parts['UNTIL']) || isset($parts['DTEND'])) {
             $this->setUntil(
                 new \DateTime(
-                    $parts['UNTIL'],
+                    isset($parts['UNTIL']) ? $parts['UNTIL'] : $parts['DTEND'],
                     new \DateTimeZone($this->getTimezone())
                 )
             );
