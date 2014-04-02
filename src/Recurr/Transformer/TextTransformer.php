@@ -35,7 +35,7 @@ class TextTransformer
         $count = $rule->getCount();
         if ($until instanceof \DateTime) {
             $this->addFragment('until');
-            $this->addFragment(strftime('%B %#d, %Y', $until->getTimestamp()));
+            $this->addFragment($until->format('F j, Y'));
         } else if (!empty($count)) {
             $this->addFragment('for');
             $this->addFragment($count);
@@ -254,7 +254,7 @@ class TextTransformer
 
         $byMonth = array_map(
             function ($monthInt) {
-                return strftime('%B', mktime(1, 1, 1, $monthInt, 1));
+                return date('F', mktime(1, 1, 1, $monthInt, 1));
             },
             $byMonth
         );
@@ -280,7 +280,7 @@ class TextTransformer
 
         $timestamp = mktime(1, 1, 1, 1, 12, 2014); // A Sunday
         foreach (array_keys($map) as $short) {
-            $long        = strftime('%A', $timestamp);
+            $long        = date('l', $timestamp);
             $map[$short] = $long;
             $timestamp += 86400;
         }
