@@ -183,8 +183,25 @@ class Rule
         $this->setStartDate($startDate);
 
         if (!empty($rrule)) {
-            $this->createFromString($rrule);
+            $this->loadFromString($rrule);
         }
+    }
+
+    /**
+     * Create a Rule object based on a RRULE string.
+     *
+     * @param string           $rrule RRULE string
+     * @param string|\DateTime $startDate
+     * @param string           $timezone
+     *
+     * @return Rule
+     * @throws InvalidRRule
+     */
+    public static function createFromString($rrule, $startDate = null, $timezone = null)
+    {
+        $rule = new static($rrule, $startDate, $timezone);
+
+        return $rule;
     }
 
     /**
@@ -192,10 +209,10 @@ class Rule
      *
      * @param string $rrule RRULE string
      *
-     * @return void
+     * @return Rule
      * @throws InvalidRRule
      */
-    public function createFromString($rrule)
+    public function loadFromString($rrule)
     {
         $rrule  = strtoupper($rrule);
         $rrule  = trim($rrule, ';');
