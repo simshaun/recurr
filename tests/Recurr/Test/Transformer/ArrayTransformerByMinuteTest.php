@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerByMinuteTest extends RuleTransformerBase
+class ArrayTransformerByMinuteTest extends ArrayTransformerBase
 {
     public function testByMinuteMinutely()
     {

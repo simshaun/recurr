@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerBySetPositionTest extends RuleTransformerBase
+class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 {
     public function testBySetPosition()
     {

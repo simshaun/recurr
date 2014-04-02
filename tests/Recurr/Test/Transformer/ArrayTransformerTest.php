@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerTest extends RuleTransformerBase
+class ArrayTransformerTest extends ArrayTransformerBase
 {
     public function testVirtualLimit()
     {

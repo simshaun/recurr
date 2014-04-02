@@ -12,8 +12,10 @@
  * https://github.com/jkbr/rrule/blob/master/LICENCE
  */
 
-namespace Recurr;
+namespace Recurr\Transformer;
 
+use Recurr\Frequency;
+use Recurr\Rule;
 use Recurr\Time;
 use Recurr\Weekday;
 use Recurr\DateUtil;
@@ -28,7 +30,7 @@ use Recurr\Exception\MissingData;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class RuleTransformer
+class ArrayTransformer
 {
     /** @var Rule */
     protected $rule;
@@ -36,7 +38,7 @@ class RuleTransformer
     /** @var int */
     protected $virtualLimit = 732;
 
-    /** @var RuleTransformerConfig */
+    /** @var ArrayTransformerConfig */
     protected $config;
 
     /**
@@ -48,13 +50,13 @@ class RuleTransformer
     protected $leapBug = false;
 
     /**
-     * Construct a new RuleTransformer
+     * Construct a new ArrayTransformer
      *
-     * @param null                  $rule         The Rule
-     * @param null                  $virtualLimit The virtual limit imposed upon infinite recurrence
-     * @param RuleTransformerConfig $config
+     * @param null                   $rule         The Rule
+     * @param null                   $virtualLimit The virtual limit imposed upon infinite recurrence
+     * @param ArrayTransformerConfig $config
      */
-    public function __construct($rule = null, $virtualLimit = null, RuleTransformerConfig $config = null)
+    public function __construct($rule = null, $virtualLimit = null, ArrayTransformerConfig $config = null)
     {
         if (null !== $rule) {
             $this->setRule($rule);
@@ -64,8 +66,8 @@ class RuleTransformer
             $this->setVirtualLimit($virtualLimit);
         }
 
-        if (!$config instanceof RuleTransformerConfig) {
-            $config = new RuleTransformerConfig();
+        if (!$config instanceof ArrayTransformerConfig) {
+            $config = new ArrayTransformerConfig();
         }
 
         $this->config = $config;
@@ -74,7 +76,7 @@ class RuleTransformer
     }
 
     /**
-     * @param RuleTransformerConfig $config
+     * @param ArrayTransformerConfig $config
      */
     public function setConfig($config)
     {
@@ -99,8 +101,7 @@ class RuleTransformer
 
         if (null === $start) {
             $start = new \DateTime(
-                'now',
-                $until instanceof \DateTime ? $until->getTimezone() : null
+                'now', $until instanceof \DateTime ? $until->getTimezone() : null
             );
         }
 
@@ -146,8 +147,7 @@ class RuleTransformer
                 case Frequency::WEEKLY:
                     $byWeekDay = array(
                         new Weekday(
-                            DateUtil::getDayOfWeek($start),
-                            null
+                            DateUtil::getDayOfWeek($start), null
                         )
                     );
                     break;
@@ -212,7 +212,7 @@ class RuleTransformer
         $count    = $maxCount;
         $continue = true;
         while ($continue) {
-            $dtInfo      = DateUtil::getDateInfo($dt);
+            $dtInfo = DateUtil::getDateInfo($dt);
 
             $tmp         = DateUtil::getDaySet($rule, $dt, $dtInfo, $start);
             $daySet      = $tmp->set;
@@ -223,10 +223,14 @@ class RuleTransformer
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
 
             if ($freq >= Frequency::HOURLY) {
-                if (($freq >= Frequency::HOURLY   && !empty($byHour)   && !in_array($hour, $byHour)) ||
-                    ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array($minute, $byMinute)) ||
-                    ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond)))
-                {
+                if (($freq >= Frequency::HOURLY && !empty($byHour) && !in_array(
+                            $hour,
+                            $byHour
+                        )) || ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array(
+                            $minute,
+                            $byMinute
+                        )) || ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond))
+                ) {
                     $timeSet = array();
                 } else {
                     switch ($freq) {
@@ -245,22 +249,21 @@ class RuleTransformer
 
             // Handle byWeekNum
             if (!empty($byWeekNum)) {
-                $no1WeekStart = $firstWeekStart =
-                    DateUtil::pymod(7 - $dtInfo->dayOfWeekYearDay1 + $weekStart, 7);
+                $no1WeekStart = $firstWeekStart = DateUtil::pymod(7 - $dtInfo->dayOfWeekYearDay1 + $weekStart, 7);
 
                 if ($no1WeekStart >= 4) {
                     $no1WeekStart = 0;
 
                     $wYearLength = $dtInfo->yearLength + DateUtil::pymod(
-                        $dtInfo->dayOfWeekYearDay1 - $weekStart,
-                        7
-                    );
+                            $dtInfo->dayOfWeekYearDay1 - $weekStart,
+                            7
+                        );
                 } else {
                     $wYearLength = $dtInfo->yearLength - $no1WeekStart;
                 }
 
-                $div = floor($wYearLength / 7);
-                $mod = DateUtil::pymod($wYearLength, 7);
+                $div      = floor($wYearLength / 7);
+                $mod      = DateUtil::pymod($wYearLength, 7);
                 $numWeeks = floor($div + ($mod / 4));
 
                 foreach ($byWeekNum as $weekNum) {
@@ -318,12 +321,12 @@ class RuleTransformer
                     if (!in_array(-1, $byWeekNum)) {
                         $dtTmp = new \DateTime();
                         $dtTmp->setDate($year - 1, 1, 1);
-                        $lastYearWeekDay = DateUtil::getDayOfWeek($dtTmp);
+                        $lastYearWeekDay      = DateUtil::getDayOfWeek($dtTmp);
                         $lastYearNo1WeekStart = DateUtil::pymod(7 - $lastYearWeekDay + $weekStart, 7);
-                        $lastYearLength = DateUtil::getYearLength($dtTmp);
+                        $lastYearLength       = DateUtil::getYearLength($dtTmp);
                         if ($lastYearNo1WeekStart >= 4) {
                             $lastYearNo1WeekStart = 0;
-                            $lastYearNumWeeks = floor(
+                            $lastYearNumWeeks     = floor(
                                 52 + DateUtil::pymod(
                                     $lastYearLength + DateUtil::pymod(
                                         $lastYearWeekDay - $weekStart,
@@ -402,51 +405,49 @@ class RuleTransformer
 
             foreach ($daySet as $i => $dayOfYear) {
                 $ifByMonth = $byMonth !== null && !in_array(
-                    $dtInfo->mMask[$dayOfYear],
-                    $byMonth
-                );
+                        $dtInfo->mMask[$dayOfYear],
+                        $byMonth
+                    );
 
                 $ifByWeekNum = $byWeekNum !== null && !in_array(
-                    $i,
-                    $wNoMask
-                );
+                        $i,
+                        $wNoMask
+                    );
 
-                $ifByYearDay =
-                    $byYearDay !== null && (($i < $dtInfo->yearLength && !in_array(
-                        $i + 1,
-                        $byYearDay
-                    ) && !in_array(
-                        -$dtInfo->yearLength + $i,
-                        $byYearDay
-                    )) || ($i >= $dtInfo->yearLength && !in_array(
-                        $i + 1 - $dtInfo->yearLength,
-                        $byYearDay
-                    ) && !in_array(
-                        -$dtInfo->nextYearLength + $i - $dtInfo->yearLength,
-                        $byYearDay
-                    )));
+                $ifByYearDay = $byYearDay !== null && (($i < $dtInfo->yearLength && !in_array(
+                                $i + 1,
+                                $byYearDay
+                            ) && !in_array(
+                                -$dtInfo->yearLength + $i,
+                                $byYearDay
+                            )) || ($i >= $dtInfo->yearLength && !in_array(
+                                $i + 1 - $dtInfo->yearLength,
+                                $byYearDay
+                            ) && !in_array(
+                                -$dtInfo->nextYearLength + $i - $dtInfo->yearLength,
+                                $byYearDay
+                            )));
 
                 $ifByMonthDay = $byMonthDay !== null && !in_array(
-                    $dtInfo->mDayMask[$dayOfYear],
-                    $byMonthDay
-                );
+                        $dtInfo->mDayMask[$dayOfYear],
+                        $byMonthDay
+                    );
 
                 if ($ifByMonthDay && $fixLastDayOfMonth && $i < $startMonthLength && $i == $dtInfo->monthLength) {
                     $ifByMonthDay = false;
                 }
 
                 $ifByMonthDayNeg = $byMonthDayNeg !== null && !in_array(
-                    $dtInfo->mDayMaskNeg[$dayOfYear],
-                    $byMonthDayNeg
-                );
+                        $dtInfo->mDayMaskNeg[$dayOfYear],
+                        $byMonthDayNeg
+                    );
 
                 $ifByDay = $byWeekDay !== null && count($byWeekDay) && !in_array(
-                    $dtInfo->wDayMask[$dayOfYear],
-                    $byWeekDay
-                );
+                        $dtInfo->wDayMask[$dayOfYear],
+                        $byWeekDay
+                    );
 
-                $ifWDayMaskRel =
-                    $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
+                $ifWDayMaskRel = $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
 
                 if ($byMonthDay !== null && $byMonthDayNeg !== null) {
                     if ($ifByMonthDay && $ifByMonthDayNeg) {
@@ -466,7 +467,7 @@ class RuleTransformer
                         $dayPos  = floor($setPos / count($timeSet));
                         $timePos = DateUtil::pymod($setPos, count($timeSet));
                     } else {
-                        $dayPos = floor(($setPos - 1) / count($timeSet));
+                        $dayPos  = floor(($setPos - 1) / count($timeSet));
                         $timePos = DateUtil::pymod(($setPos - 1), count($timeSet));
                     }
 
@@ -489,8 +490,7 @@ class RuleTransformer
                     /** @var Time $time */
                     $time = $timeSet[$timePos];
 
-                    $dtTmp =
-                        DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
+                    $dtTmp = DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
 
                     $dtTmp->setTime(
                         $time->hour,
@@ -591,11 +591,9 @@ class RuleTransformer
                     break;
                 case Frequency::WEEKLY:
                     if ($weekStart > $dtInfo->dayOfWeek) {
-                        $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 +
-                            $rule->getInterval() * 7;
+                        $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 + $rule->getInterval() * 7;
                     } else {
-                        $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 +
-                            $rule->getInterval() * 7;
+                        $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 + $rule->getInterval() * 7;
                     }
 
                     $dt->modify("+$delta day");

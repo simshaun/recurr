@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerYearlyTest extends RuleTransformerBase
+class ArrayTransformerYearlyTest extends ArrayTransformerBase
 {
     public function testYearly()
     {

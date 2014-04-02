@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerByWeekNumberTest extends RuleTransformerBase
+class ArrayTransformerByWeekNumberTest extends ArrayTransformerBase
 {
     public function testByWeekNumber()
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class RuleTransformerSecondlyTest extends RuleTransformerBase
+class ArrayTransformerSecondlyTest extends ArrayTransformerBase
 {
     public function testSecondly()
     {

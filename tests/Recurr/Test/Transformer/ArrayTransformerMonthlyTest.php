@@ -1,11 +1,11 @@
 <?php
 
-namespace Recurr\Test;
+namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
-use Recurr\RuleTransformerConfig;
+use Recurr\Transformer\ArrayTransformerConfig;
 
-class RuleTransformerMonthsTest extends RuleTransformerBase
+class ArrayTransformerMonthsTest extends ArrayTransformerBase
 {
     public function testMonthly()
     {
@@ -34,7 +34,7 @@ class RuleTransformerMonthsTest extends RuleTransformerBase
             new \DateTime('2013-11-30')
         );
 
-        $transformerConfig = new RuleTransformerConfig();
+        $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
 
         $this->transformer->setRule($rule);
@@ -61,7 +61,7 @@ class RuleTransformerMonthsTest extends RuleTransformerBase
             new \DateTime('2016-01-31')
         );
 
-        $transformerConfig = new RuleTransformerConfig();
+        $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
 
         $this->transformer->setRule($rule);
