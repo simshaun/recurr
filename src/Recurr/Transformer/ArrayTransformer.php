@@ -79,11 +79,12 @@ class ArrayTransformer
      * Transform a Rule in to an array of \DateTimes
      *
      * @param Rule $rule the Rule
+     * @param int|null $virtualLimit imposed upon infinitely recurring events.
      *
      * @return array
      * @throws MissingData
      */
-    public function getComputedArray($rule)
+    public function getComputedArray($rule, $virtualLimit = null)
     {
         if (null === $rule) {
             throw new MissingData('Rule has not been set');
@@ -105,7 +106,7 @@ class ArrayTransformer
         $dt = clone $start;
 
         $maxCount = $rule->getCount();
-        $vLimit   = $this->getVirtualLimit();
+        $vLimit   = !empty($virtualLimit) && is_int($virtualLimit) ? $virtualLimit : $this->getVirtualLimit();
 
         $freq          = $rule->getFreq();
         $weekStart     = $rule->getWeekStartAsNum();

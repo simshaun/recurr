@@ -15,7 +15,12 @@ class ArrayTransformerTest extends ArrayTransformerBase
 
         $this->transformer->setVirtualLimit(5);
         $computed = $this->transformer->getComputedArray($rule);
+        $this->assertCount(5, $computed);
 
+        $computed = $this->transformer->getComputedArray($rule, 10);
+        $this->assertCount(10, $computed);
+
+        $computed = $this->transformer->getComputedArray($rule);
         $this->assertCount(5, $computed);
     }
 
