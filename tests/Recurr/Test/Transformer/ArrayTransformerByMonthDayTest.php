@@ -13,8 +13,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
             new \DateTime('2013-01-30')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-01-30'), $computed[0]);
@@ -31,8 +30,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
             new \DateTime('2013-06-07')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-06-21'), $computed[0]);
@@ -49,8 +47,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
             new \DateTime('2013-10-01')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-10-15'), $computed[0]);
@@ -67,8 +64,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
             new \DateTime('2016-01-30')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-01-30'), $computed[0]);
@@ -85,8 +81,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
             new \DateTime('1996-11-05 09:00:00')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(3, count($computed));
         $this->assertEquals(new \DateTime('1996-11-05 09:00:00'), $computed[0]);

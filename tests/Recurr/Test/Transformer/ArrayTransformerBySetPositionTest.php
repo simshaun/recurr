@@ -13,8 +13,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
             new \DateTime('2013-01-24')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-01-31'), $computed[0]);
@@ -30,8 +29,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
             new \DateTime('2016-01-24')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]);
@@ -47,8 +45,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
             new \DateTime('2016-01-24')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]);
@@ -65,8 +62,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
             new \DateTime('2013-10-09')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(10, count($computed));
         $this->assertEquals(new \DateTime('2013-10-14'), $computed[0]);

@@ -17,8 +17,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
             $timezone
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezoneObj), $computed[0]);
@@ -39,8 +38,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
             $timezone
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2013-12-19 00:00:00', $timezoneObj), $computed[0]);
@@ -61,8 +59,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
             $timezone
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(7, count($computed));
         $this->assertEquals(new \DateTime('2015-12-21 00:00:00', $timezoneObj), $computed[0]);
@@ -85,8 +82,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
             $timezone
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(3, count($computed));
         $this->assertEquals(new \DateTime('2013-12-18 00:00:00', $timezoneObj), $computed[0]);

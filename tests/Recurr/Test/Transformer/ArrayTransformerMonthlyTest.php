@@ -18,8 +18,7 @@ class ArrayTransformerMonthsTest extends ArrayTransformerBase
             $timezone
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(3, count($computed));
         $this->assertEquals(new \DateTime('2013-01-31 00:00:00', $timezoneObj), $computed[0]);
@@ -37,9 +36,8 @@ class ArrayTransformerMonthsTest extends ArrayTransformerBase
         $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
 
-        $this->transformer->setRule($rule);
         $this->transformer->setConfig($transformerConfig);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(10, count($computed));
         $this->assertEquals(new \DateTime('2013-11-30'), $computed[0]);
@@ -64,9 +62,8 @@ class ArrayTransformerMonthsTest extends ArrayTransformerBase
         $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
 
-        $this->transformer->setRule($rule);
         $this->transformer->setConfig($transformerConfig);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(8, count($computed));
         $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]);
@@ -86,8 +83,7 @@ class ArrayTransformerMonthsTest extends ArrayTransformerBase
             new \DateTime('2016-01-29')
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]);

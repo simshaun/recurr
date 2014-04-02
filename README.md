@@ -41,9 +41,9 @@ Demo
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
 $rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\Transformer\ArrayTransformer($rule);
+$transformer = new \Recurr\Transformer\ArrayTransformer();
 
-print_r($transformer->getComputedArray());
+print_r($transformer->getComputedArray($rule));
 ```
 
 Recurrence Rule to Text
@@ -69,13 +69,13 @@ Warnings
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-01-31 20:00:00', new \DateTimeZone($timezone));
 $rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\Transformer\ArrayTransformer($rule);
+$transformer = new \Recurr\Transformer\ArrayTransformer();
 
 $transformerConfig = new \Recurr\Transformer\ArrayTransformerConfig();
 $transformerConfig->enableLastDayOfMonthFix();
 $transformer->setConfig($transformerConfig);
 
-print_r($transformer->getComputedArray());
+print_r($transformer->getComputedArray($rule));
 
 /* Outputs:
  * 2013-01-31

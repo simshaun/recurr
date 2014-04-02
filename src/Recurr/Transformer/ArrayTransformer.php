@@ -32,9 +32,6 @@ use Recurr\Exception\MissingData;
  */
 class ArrayTransformer
 {
-    /** @var Rule */
-    protected $rule;
-
     /** @var int */
     protected $virtualLimit = 732;
 
@@ -52,16 +49,11 @@ class ArrayTransformer
     /**
      * Construct a new ArrayTransformer
      *
-     * @param null                   $rule         The Rule
      * @param null                   $virtualLimit The virtual limit imposed upon infinite recurrence
      * @param ArrayTransformerConfig $config
      */
-    public function __construct($rule = null, $virtualLimit = null, ArrayTransformerConfig $config = null)
+    public function __construct($virtualLimit = null, ArrayTransformerConfig $config = null)
     {
-        if (null !== $rule) {
-            $this->setRule($rule);
-        }
-
         if (is_int($virtualLimit)) {
             $this->setVirtualLimit($virtualLimit);
         }
@@ -86,12 +78,13 @@ class ArrayTransformer
     /**
      * Transform a Rule in to an array of \DateTimes
      *
+     * @param Rule $rule the Rule
+     *
      * @return array
      * @throws MissingData
      */
-    public function getComputedArray()
+    public function getComputedArray($rule)
     {
-        $rule = $this->getRule();
         if (null === $rule) {
             throw new MissingData('Rule has not been set');
         }
@@ -635,30 +628,6 @@ class ArrayTransformer
         }
 
         return $dates;
-    }
-
-    /**
-     * Set the Rule
-     *
-     * @param Rule $rule The Rule
-     *
-     * @return $this
-     */
-    public function setRule($rule)
-    {
-        $this->rule = $rule;
-
-        return $this;
-    }
-
-    /**
-     * Get the Rule
-     *
-     * @return Rule
-     */
-    public function getRule()
-    {
-        return $this->rule;
     }
 
     /**

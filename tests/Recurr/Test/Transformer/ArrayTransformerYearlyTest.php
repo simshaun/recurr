@@ -15,8 +15,7 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
             new \DateTime('2013-06-13 00:00:00', $timezone)
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(3, count($computed));
         $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezone), $computed[0]);
@@ -33,8 +32,7 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
             new \DateTime('2016-02-29 00:00:00', $timezone)
         );
 
-        $this->transformer->setRule($rule);
-        $computed = $this->transformer->getComputedArray();
+        $computed = $this->transformer->getComputedArray($rule);
 
         $this->assertEquals(5, count($computed));
         $this->assertEquals(new \DateTime('2016-02-29 00:00:00', $timezone), $computed[0]);
