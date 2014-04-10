@@ -7,50 +7,55 @@ Recurr was developed as a precursor for a calendar with recurring events, and is
 Installation
 ------------
 
-Recurr is hosted on [packagist](http://packagist.org), meaning you can install
-it with [Composer](http://getcomposer.org/).
+Recurr is hosted on [packagist](http://packagist.org), meaning you can install it with [Composer](http://getcomposer.org/).
 
-Create a composer.json file
+1. Create a composer.json file
 
-```json
-{
-    "require": {
-        "simshaun/recurr": "dev-master"
+    ```json
+    {
+        "require": {
+            "simshaun/recurr": "dev-master"
+        }
     }
-}
-```
+    ```
+   *We recommend using a stable version instead of dev-master.*
 
-Install composer and run it
+2. Install composer and run it
 
-```sh
-wget http://getcomposer.org/composer.phar
-php composer.phar install
-```
+    ```sh
+    wget http://getcomposer.org/composer.phar
+    php composer.phar install
+    ```
 
-(Optional) Autoload Recurr
+3. (Optional) Autoload Recurr
 
-```php
-require 'vendor/autoload.php';
-```
+    ```php
+    require 'vendor/autoload.php';
+    ```
 
 
-Demo
+RRULE to DateTime objects
 -----------
 
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$endDate     = new \DateTime('2013-06-14 20:00:00', new \DateTimeZone($timezone)); // Optional
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $endDate, $timezone);
 $transformer = new \Recurr\Transformer\ArrayTransformer();
 
 print_r($transformer->transform($rule));
 ```
 
-Recurrence Rule to Text
+1. `$transformer->transform(...)` returns an array of `Recurrence` objects.
+2. Each `Recurrence` has `getStart()` and `getEnd()` methods, each returning a `\DateTime` object.
+3. If the transformed `Rule` lacks an end date, `getEnd()` will return a `\DateTime` object equal to that of `getStart()`.
+
+RRULE to Text
 --------------------------
 
 Recurr supports transforming some recurrence rules in to human readable text.
-This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies.
+This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies. It is not yet localized and only supports English.
 
 ```php
 $rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
@@ -68,7 +73,7 @@ Warnings
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-01-31 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, null, $timezone);
 $transformer = new \Recurr\Transformer\ArrayTransformer();
 
 $transformerConfig = new \Recurr\Transformer\ArrayTransformerConfig();
@@ -77,7 +82,7 @@ $transformer->setConfig($transformerConfig);
 
 print_r($transformer->transform($rule));
 
-/* Outputs:
+/* Recurrences:
  * 2013-01-31
  * 2013-02-28
  * 2013-03-31

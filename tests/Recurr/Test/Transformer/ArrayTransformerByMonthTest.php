@@ -16,10 +16,10 @@ class ArrayTransformerByMonthTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(4, count($computed));
-        $this->assertEquals(new \DateTime('2013-02-26'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-02-27'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-02-28'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-03-01'), $computed[3]);
+        $this->assertEquals(new \DateTime('2013-02-26'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-02-27'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-02-28'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-03-01'), $computed[3]->getStart());
     }
 
     public function testByMonthLeapYear()
@@ -32,9 +32,9 @@ class ArrayTransformerByMonthTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(4, count($computed));
-        $this->assertEquals(new \DateTime('2016-02-27'), $computed[0]);
-        $this->assertEquals(new \DateTime('2016-02-28'), $computed[1]);
-        $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]);
-        $this->assertEquals(new \DateTime('2016-03-01'), $computed[3]);
+        $this->assertEquals(new \DateTime('2016-02-27'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-01'), $computed[3]->getStart());
     }
 }

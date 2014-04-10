@@ -103,6 +103,9 @@ class Rule
     /** @var \DateTime|null */
     protected $startDate;
 
+    /** @var \DateTime|null */
+    protected $endDate;
+
     /** @var bool */
     protected $isStartDateFromDtstart = false;
 
@@ -164,9 +167,10 @@ class Rule
      *
      * @param string           $rrule RRULE string
      * @param string|\DateTime $startDate
+     * @param \DateTime|null   $endDate
      * @param string           $timezone
      */
-    public function __construct($rrule = null, $startDate = null, $timezone = null)
+    public function __construct($rrule = null, $startDate = null, $endDate = null, $timezone = null)
     {
         if (empty($timezone)) {
             if ($startDate instanceof \DateTime) {
@@ -180,7 +184,9 @@ class Rule
         if (!$startDate instanceof \DateTime) {
             $startDate  = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
+
         $this->setStartDate($startDate);
+        $this->setEndDate($endDate);
 
         if (!empty($rrule)) {
             $this->loadFromString($rrule);
@@ -192,14 +198,15 @@ class Rule
      *
      * @param string           $rrule RRULE string
      * @param string|\DateTime $startDate
+     * @param \DateTime|null   $endDate
      * @param string           $timezone
      *
      * @return Rule
      * @throws InvalidRRule
      */
-    public static function createFromString($rrule, $startDate = null, $timezone = null)
+    public static function createFromString($rrule, $startDate = null, $endDate = null, $timezone = null)
     {
-        $rule = new static($rrule, $startDate, $timezone);
+        $rule = new static($rrule, $startDate, $endDate, $timezone);
 
         return $rule;
     }
@@ -250,19 +257,17 @@ class Rule
             $this->setStartDate(new \DateTime($parts['DTSTART'], new \DateTimeZone($this->getTimezone())));
         }
 
-        // UNTIL, DTEND, or COUNT
-        $numSet = 0;
-        $numSet += isset($parts['UNTIL']) ? 1 : 0;
-        $numSet += isset($parts['DTEND']) ? 1 : 0;
-        $numSet += isset($parts['COUNT']) ? 1 : 0;
-        if ($numSet > 1) {
-            throw new InvalidRRule('UNTIL, DTEND, and COUNT must not exist together in the same RRULE');
-        } elseif (isset($parts['UNTIL']) || isset($parts['DTEND'])) {
+        // DTEND
+        if (isset($parts['DTEND'])) {
+            $this->setEndDate(new \DateTime($parts['DTEND'], new \DateTimeZone($this->getTimezone())));
+        }
+
+        // UNTIL or COUNT
+        if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
+            throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
+        } elseif (isset($parts['UNTIL'])) {
             $this->setUntil(
-                new \DateTime(
-                    isset($parts['UNTIL']) ? $parts['UNTIL'] : $parts['DTEND'],
-                    new \DateTimeZone($this->getTimezone())
-                )
+                new \DateTime($parts['UNTIL'], new \DateTimeZone($this->getTimezone()))
             );
         } elseif (isset($parts['COUNT'])) {
             $this->setCount($parts['COUNT']);
@@ -348,6 +353,11 @@ class Rule
         // DTSTART
         if ($this->isStartDateFromDtstart) {
             $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\This');
+        }
+
+        // DTEND
+        if ($this->endDate instanceof \DateTime) {
+            $parts[] = 'DTEND='.$this->getEndDate()->format('Ymd\This');
         }
 
         // INTERVAL
@@ -462,6 +472,28 @@ class Rule
     public function getStartDate()
     {
         return $this->startDate;
+    }
+
+    /**
+     * This date specifies the last possible instance in the recurrence set.
+     *
+     * @param \DateTime|null $endDate Date of the last possible instance in the recurrence
+     *
+     * @return $this
+     */
+    public function setEndDate($endDate)
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
     }
 
     /**
@@ -607,21 +639,6 @@ class Rule
         }
 
         return $date;
-    }
-
-    /**
-     * This is a convenience method meant to complement setStartDate().
-     *
-     * It is just an alias of setUntil
-     *
-     * @param \DateTime $endDate The upper bound of the recurrence.
-     *
-     * @return $this
-     * @see setUntil
-     */
-    public function setEndDate(\DateTime $endDate)
-    {
-        return $this->setUntil($endDate);
     }
 
     /**

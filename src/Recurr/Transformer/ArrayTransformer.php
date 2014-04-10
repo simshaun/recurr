@@ -15,6 +15,7 @@
 namespace Recurr\Transformer;
 
 use Recurr\Frequency;
+use Recurr\Recurrence;
 use Recurr\Rule;
 use Recurr\Time;
 use Recurr\Weekday;
@@ -81,7 +82,7 @@ class ArrayTransformer
      * @param Rule $rule the Rule
      * @param int|null $virtualLimit imposed upon infinitely recurring events.
      *
-     * @return array
+     * @return Recurrence[]
      * @throws MissingData
      */
     public function transform($rule, $virtualLimit = null)
@@ -91,6 +92,7 @@ class ArrayTransformer
         }
 
         $start = $rule->getStartDate();
+        $end   = $rule->getEndDate();
         $until = $rule->getUntil();
 
         if (null === $start) {
@@ -98,6 +100,12 @@ class ArrayTransformer
                 'now', $until instanceof \DateTime ? $until->getTimezone() : null
             );
         }
+
+        if (null === $end) {
+            $end = $start;
+        }
+
+        $durationInterval = $start->diff($end);
 
         $startDay          = $start->format('j');
         $startMonthLength  = $start->format('t');
@@ -628,7 +636,15 @@ class ArrayTransformer
             }
         }
 
-        return $dates;
+        $recurrences = array();
+        foreach ($dates as $start) {
+            /** @var \DateTime $end */
+            $end = clone $start;
+
+            $recurrences[] = new Recurrence($start, $end->add($durationInterval));
+        }
+
+        return $recurrences;
     }
 
     /**

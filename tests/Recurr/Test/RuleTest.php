@@ -46,22 +46,6 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->loadFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
-    public function testLoadFromStringWithBothCountAndDtend()
-    {
-        $this->rule->loadFromString('FREQ=DAILY;COUNT=2;DTEND=20130510');
-    }
-
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
-    public function testLoadFromStringWithBothUntilAndDtend()
-    {
-        $this->rule->loadFromString('FREQ=DAILY;UNTIL=20130510;DTEND=20130511');
-    }
-
     public function testLoadFromString()
     {
         $string = 'FREQ=YEARLY;';
@@ -108,6 +92,19 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedStartDate, $this->rule->getStartDate());
     }
 
+    public function testLoadFromStringWithDtend()
+    {
+        $string = 'FREQ=MONTHLY;DTEND=20140422T140000';
+
+        $this->rule->setTimezone('America/Los_Angeles');
+        $this->rule->loadFromString($string);
+
+        $expectedEndDate = new \DateTime('2014-04-22 14:00:00', new \DateTimeZone('America/Los_Angeles'));
+
+        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
+        $this->assertEquals($expectedEndDate, $this->rule->getEndDate());
+    }
+
     /**
      * @expectedException \Recurr\Exception\InvalidRRule
      */
@@ -141,6 +138,15 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     public function testGetStringWithDtstart()
     {
         $string = 'FREQ=MONTHLY;DTSTART=20140210T083045;INTERVAL=1;WKST=MO';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertEquals($string, $this->rule->getString());
+    }
+
+    public function testGetStringWithDtend()
+    {
+        $string = 'FREQ=MONTHLY;DTEND=20140410T083045;INTERVAL=1;WKST=MO';
 
         $this->rule->loadFromString($string);
 

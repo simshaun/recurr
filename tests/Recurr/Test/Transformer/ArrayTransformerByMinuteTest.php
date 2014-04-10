@@ -16,11 +16,11 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-06-12 17:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-06-12 17:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 17:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 17:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]->getStart());
     }
 
     public function testByMinuteHourly()
@@ -33,11 +33,11 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-06-12 17:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-06-12 17:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 17:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 17:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]->getStart());
     }
 
     public function testByMinuteDaily()
@@ -50,11 +50,11 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-06-13 16:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-06-13 16:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-06-14 16:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-13 16:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-13 16:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-14 16:14:00'), $computed[4]->getStart());
     }
 
     public function testByMinuteWeekly()
@@ -67,11 +67,11 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-06-19 16:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-06-19 16:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-06-26 16:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-19 16:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-19 16:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-26 16:14:00'), $computed[4]->getStart());
     }
 
     public function testByMinuteMonthly()
@@ -84,11 +84,11 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2013-07-12 16:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2013-07-12 16:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2013-08-12 16:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-07-12 16:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-07-12 16:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-08-12 16:14:00'), $computed[4]->getStart());
     }
 
     public function testByMinuteYearly()
@@ -101,10 +101,10 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(5, count($computed));
-        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]);
-        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]);
-        $this->assertEquals(new \DateTime('2014-06-12 16:14:00'), $computed[2]);
-        $this->assertEquals(new \DateTime('2014-06-12 16:15:00'), $computed[3]);
-        $this->assertEquals(new \DateTime('2015-06-12 16:14:00'), $computed[4]);
+        $this->assertEquals(new \DateTime('2013-06-12 16:14:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-06-12 16:15:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-12 16:14:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-12 16:15:00'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2015-06-12 16:14:00'), $computed[4]->getStart());
     }
 }

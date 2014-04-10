@@ -16,10 +16,10 @@ class ArrayTransformerByYearDayTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(4, count($computed));
-        $this->assertEquals(new \DateTime('2013-05-05'), $computed[0]);
-        $this->assertEquals(new \DateTime('2014-05-05'), $computed[1]);
-        $this->assertEquals(new \DateTime('2015-05-05'), $computed[2]);
-        $this->assertEquals(new \DateTime('2016-05-04'), $computed[3]);
+        $this->assertEquals(new \DateTime('2013-05-05'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-05-05'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2015-05-05'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-05-04'), $computed[3]->getStart());
     }
 
     public function testByYearDayNegative()
@@ -32,9 +32,9 @@ class ArrayTransformerByYearDayTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertEquals(4, count($computed));
-        $this->assertEquals(new \DateTime('2014-02-28'), $computed[0]);
-        $this->assertEquals(new \DateTime('2015-02-28'), $computed[1]);
-        $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]);
-        $this->assertEquals(new \DateTime('2017-02-28'), $computed[3]);
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2015-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2017-02-28'), $computed[3]->getStart());
     }
 }
