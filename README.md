@@ -52,7 +52,6 @@ foreach($recurrDates as $recurrDate) {
 
     echo $recurrDate->format('Y-m-d H:i:s');
 }
-
 ```
 
 
