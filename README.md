@@ -44,6 +44,15 @@ $rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $t
 $transformer = new \Recurr\RecurrenceRuleTransformer($rule);
 
 print_r($transformer->getComputedArray());
+
+// or access each date in loop
+$recurrDates = $transformer->getComputedArray();
+
+foreach($recurrDates as $recurrDate) {
+
+    echo $recurrDate->format('Y-m-d H:i:s');
+}
+
 ```
 
 
