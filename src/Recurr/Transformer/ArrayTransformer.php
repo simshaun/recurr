@@ -16,6 +16,7 @@ namespace Recurr\Transformer;
 
 use Recurr\Frequency;
 use Recurr\Recurrence;
+use Recurr\RecurrenceCollection;
 use Recurr\Rule;
 use Recurr\Time;
 use Recurr\Weekday;
@@ -82,7 +83,7 @@ class ArrayTransformer
      * @param Rule $rule the Rule
      * @param int|null $virtualLimit imposed upon infinitely recurring events.
      *
-     * @return Recurrence[]
+     * @return RecurrenceCollection
      * @throws MissingData
      */
     public function transform($rule, $virtualLimit = null)
@@ -644,7 +645,7 @@ class ArrayTransformer
             $recurrences[] = new Recurrence($start, $end->add($durationInterval));
         }
 
-        return $recurrences;
+        return new RecurrenceCollection($recurrences);
     }
 
     /**
