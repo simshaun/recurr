@@ -51,6 +51,10 @@ print_r($transformer->transform($rule));
 2. Each `Recurrence` has `getStart()` and `getEnd()` methods that return a `\DateTime` object.
 3. If the transformed `Rule` lacks an end date, `getEnd()` will return a `\DateTime` object equal to that of `getStart()`.
 
+> Note: The transformer has a "virtual" limit (default 732) on the number of objects it generates.
+> This prevents the script from crashing on an infinitely recurring rule.
+> You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor. 
+
 ### Filtering Recurrences in a RecurrenceCollection ###
 
 `RecurrenceCollection` provides the following **chainable** helper methods to filter out recurrences:
