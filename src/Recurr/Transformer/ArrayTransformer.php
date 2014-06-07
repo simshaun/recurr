@@ -14,6 +14,7 @@
 
 namespace Recurr\Transformer;
 
+use Recurr\DateExclusion;
 use Recurr\Frequency;
 use Recurr\Recurrence;
 use Recurr\RecurrenceCollection;
@@ -637,6 +638,7 @@ class ArrayTransformer
             }
         }
 
+        /** @var Recurrence[] $recurrences */
         $recurrences = array();
         foreach ($dates as $start) {
             /** @var \DateTime $end */
@@ -645,7 +647,44 @@ class ArrayTransformer
             $recurrences[] = new Recurrence($start, $end->add($durationInterval));
         }
 
+        $recurrences = $this->handleExclusions($rule->getExDates(), $recurrences);
+
         return new RecurrenceCollection($recurrences);
+    }
+
+    /**
+     * @param DateExclusion[] $exclusions
+     * @param Recurrence[]    $recurrences
+     *
+     * @return DateExclusion[]
+     */
+    protected function handleExclusions(array $exclusions, array $recurrences)
+    {
+        foreach ($exclusions as $exclusion) {
+            $exclusionDate     = $exclusion->date->format('Ymd');
+            $exclusionTime     = $exclusion->date->format('Ymd\THis');
+            $exclusionTimezone = $exclusion->date->getTimezone();
+
+            foreach ($recurrences as $key => $recurrence) {
+                $recurrenceDate = $recurrence->getStart();
+
+                if ($recurrenceDate->getTimezone()->getName() !== $exclusionTimezone->getName()) {
+                    $recurrenceDate = clone $recurrenceDate;
+                    $recurrenceDate->setTimezone($exclusionTimezone);
+                }
+
+                if (!$exclusion->hasTime && $recurrenceDate->format('Ymd') == $exclusionDate) {
+                    unset($recurrences[$key]);
+                    continue;
+                }
+
+                if ($exclusion->hasTime && $recurrenceDate->format('Ymd\THis') == $exclusionTime) {
+                    unset($recurrences[$key]);
+                }
+            }
+        }
+
+        return array_values($recurrences);
     }
 
     /**

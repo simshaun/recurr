@@ -2,6 +2,7 @@
 
 namespace Recurr\Test;
 
+use Recurr\DateExclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
 use Recurr\Exception\InvalidArgument;
@@ -61,6 +62,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $string .= 'BYMONTH=7,8;';
         $string .= 'BYSETPOS=1,3;';
         $string .= 'WKST=TU;';
+        $string .= 'EXDATE=20140607,20140620T010000,20140620T040000Z;';
 
         $this->rule->loadFromString($string);
 
@@ -77,6 +79,14 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(7, 8), $this->rule->getByMonth());
         $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
         $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140620T010000'), true),
+                new DateExclusion(new \DateTime('20140620 04:00:00 UTC'), true)
+            ),
+            $this->rule->getExDates()
+        );
     }
 
     public function testLoadFromStringWithDtstart()
@@ -128,9 +138,10 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->setByMonth(array(7, 8));
         $this->rule->setBySetPosition(array(1, 3));
         $this->rule->setWeekStart('TU');
+        $this->rule->setExDates(array('20140607', '20140620T010000Z', '20140620T010000'));
 
         $this->assertEquals(
-            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU',
+            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;EXDATE=20140607,20140620T010000Z,20140620T010000',
             $this->rule->getString()
         );
     }

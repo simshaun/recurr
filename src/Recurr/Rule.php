@@ -162,6 +162,9 @@ class Rule
     /** @var int */
     protected $bySetPosition;
 
+    /** @var array */
+    protected $exDates = array();
+
     /**
      * Construct a new Rule.
      *
@@ -327,6 +330,11 @@ class Rule
         if (isset($parts['WKST'])) {
             $this->setWeekStart($parts['WKST']);
         }
+
+        // EXDATE
+        if (isset($parts['EXDATE'])) {
+            $this->setExDates(explode(',', $parts['EXDATE']));
+        }
     }
 
     /**
@@ -424,6 +432,22 @@ class Rule
         $weekStart = $this->getWeekStart();
         if (!empty($weekStart)) {
             $parts[] = 'WKST='.$weekStart;
+        }
+
+        // EXDATE
+        $exDates = $this->getExDates();
+        if (!empty($exDates)) {
+            foreach ($exDates as $key => $exclusion) {
+                $format = 'Ymd';
+                if ($exclusion->hasTime) {
+                    $format .= '\This';
+                    if ($exclusion->date->getTimezone()->getName() == 'UTC') {
+                        $format .= '\Z';
+                    }
+                }
+                $exDates[$key] = $exclusion->date->format($format);
+            }
+            $parts[] = 'EXDATE='.implode(',', $exDates);
         }
 
         return implode(';', $parts);
@@ -1025,5 +1049,61 @@ class Rule
     public function getBySetPosition()
     {
         return $this->bySetPosition;
+    }
+
+    /**
+     * This rule specifies an array of exception dates that will not be
+     * included in a recurrence set.
+     *
+     * @param string[]|DateExclusion[] $exDates Array of dates that will not be
+     *                                          included in the recurrence set.
+     *
+     * @return $this
+     */
+    public function setExDates(array $exDates)
+    {
+        $timezone = new \DateTimeZone($this->getTimezone());
+
+        foreach ($exDates as $key => $val) {
+            if ($val instanceof DateExclusion) {
+                $val->date = $this->convertZtoUtc($val->date);
+            }
+
+            $date          = new \DateTime($val, $timezone);
+            $exDates[$key] = new DateExclusion($this->convertZtoUtc($date), strpos($val, 'T') !== false);
+        }
+
+        $this->exDates = $exDates;
+    }
+
+    /**
+     * DateTime::setTimezone fails if the timezone does not have an ID.
+     * "Z" is the same as "UTC", but "Z" does not have an ID.
+     *
+     * This is necessary for exclusion dates to be handled properly.
+     *
+     * @param \DateTime $date
+     *
+     * @return \DateTime
+     */
+    private function convertZtoUtc(\DateTime $date)
+    {
+        if ($date->getTimezone()->getName() !== 'Z') {
+            return $date;
+        }
+
+        $date->setTimezone(new \DateTimeZone('UTC'));
+
+        return $date;
+    }
+
+    /**
+     * Get the array of dates that will not be included in a recurrence set.
+     *
+     * @return DateExclusion[]
+     */
+    public function getExDates()
+    {
+        return $this->exDates;
     }
 }
