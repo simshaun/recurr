@@ -12,15 +12,20 @@
  * https://github.com/jkbr/rrule/blob/master/LICENCE
  */
 
-namespace Recurr;
+namespace Recurr\Transformer;
 
+use Recurr\DateExclusion;
+use Recurr\Frequency;
+use Recurr\Recurrence;
+use Recurr\RecurrenceCollection;
+use Recurr\Rule;
 use Recurr\Time;
 use Recurr\Weekday;
 use Recurr\DateUtil;
 use Recurr\Exception\MissingData;
 
 /**
- * This class is responsible for transforming a RecurrenceRule in to an array
+ * This class is responsible for transforming a Rule in to an array
  * of \DateTime() objects.
  *
  * If a recurrence rule is infinitely recurring, a virtual limit is imposed.
@@ -28,23 +33,12 @@ use Recurr\Exception\MissingData;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class RecurrenceRuleTransformer
+class ArrayTransformer
 {
-    const FREQ_YEARLY   = 0;
-    const FREQ_MONTHLY  = 1;
-    const FREQ_WEEKLY   = 2;
-    const FREQ_DAILY    = 3;
-    const FREQ_HOURLY   = 4;
-    const FREQ_MINUTELY = 5;
-    const FREQ_SECONDLY = 6;
-
-    /** @var RecurrenceRule */
-    protected $rule;
-
     /** @var int */
     protected $virtualLimit = 732;
 
-    /** @var TransformerConfig */
+    /** @var ArrayTransformerConfig */
     protected $config;
 
     /**
@@ -56,24 +50,19 @@ class RecurrenceRuleTransformer
     protected $leapBug = false;
 
     /**
-     * Construct a new RecurrenceRuleTransformer
+     * Construct a new ArrayTransformer
      *
-     * @param null              $recurrenceRule The RecurrenceRule
-     * @param null              $virtualLimit   The virtual limit imposed upon infinite recurrence
-     * @param TransformerConfig $config
+     * @param null                   $virtualLimit The virtual limit imposed upon infinite recurrence
+     * @param ArrayTransformerConfig $config
      */
-    public function __construct($recurrenceRule = null, $virtualLimit = null, TransformerConfig $config = null)
+    public function __construct($virtualLimit = null, ArrayTransformerConfig $config = null)
     {
-        if (null !== $recurrenceRule) {
-            $this->setRule($recurrenceRule);
-        }
-
         if (is_int($virtualLimit)) {
             $this->setVirtualLimit($virtualLimit);
         }
 
-        if (!$config instanceof TransformerConfig) {
-            $config = new TransformerConfig();
+        if (!$config instanceof ArrayTransformerConfig) {
+            $config = new ArrayTransformerConfig();
         }
 
         $this->config = $config;
@@ -82,35 +71,43 @@ class RecurrenceRuleTransformer
     }
 
     /**
-     * @param TransformerConfig $config
+     * @param ArrayTransformerConfig $config
      */
-    public function setTransformerConfig($config)
+    public function setConfig($config)
     {
         $this->config = $config;
     }
 
     /**
-     * Transform a RecurrenceRule in to an array of \DateTimes
+     * Transform a Rule in to an array of \DateTimes
      *
-     * @return array
+     * @param Rule $rule the Rule
+     * @param int|null $virtualLimit imposed upon infinitely recurring events.
+     *
+     * @return RecurrenceCollection
      * @throws MissingData
      */
-    public function getComputedArray()
+    public function transform($rule, $virtualLimit = null)
     {
-        $rule = $this->getRule();
         if (null === $rule) {
-            throw new MissingData('RecurrenceRule has not been set');
+            throw new MissingData('Rule has not been set');
         }
 
         $start = $rule->getStartDate();
+        $end   = $rule->getEndDate();
         $until = $rule->getUntil();
 
         if (null === $start) {
             $start = new \DateTime(
-                'now',
-                $until instanceof \DateTime ? $until->getTimezone() : null
+                'now', $until instanceof \DateTime ? $until->getTimezone() : null
             );
         }
+
+        if (null === $end) {
+            $end = $start;
+        }
+
+        $durationInterval = $start->diff($end);
 
         $startDay          = $start->format('j');
         $startMonthLength  = $start->format('t');
@@ -119,7 +116,7 @@ class RecurrenceRuleTransformer
         $dt = clone $start;
 
         $maxCount = $rule->getCount();
-        $vLimit   = $this->getVirtualLimit();
+        $vLimit   = !empty($virtualLimit) && is_int($virtualLimit) ? $virtualLimit : $this->getVirtualLimit();
 
         $freq          = $rule->getFreq();
         $weekStart     = $rule->getWeekStartAsNum();
@@ -137,25 +134,24 @@ class RecurrenceRuleTransformer
 
         if (!(!empty($byWeekNum) || !empty($byYearDay) || !empty($byMonthDay) || !empty($byWeekDay))) {
             switch ($freq) {
-                case RecurrenceRule::FREQ_YEARLY:
+                case Frequency::YEARLY:
                     if (empty($byMonth)) {
                         $byMonth = array($start->format('n'));
                     }
 
                     $byMonthDay = array($startDay);
                     break;
-                case RecurrenceRule::FREQ_MONTHLY:
+                case Frequency::MONTHLY:
                     if ($startDay > 28) {
                         $fixLastDayOfMonth = true;
                     }
 
                     $byMonthDay = array($startDay);
                     break;
-                case RecurrenceRule::FREQ_WEEKLY:
+                case Frequency::WEEKLY:
                     $byWeekDay = array(
                         new Weekday(
-                            DateUtil::getDayOfWeek($start),
-                            null
+                            DateUtil::getDayOfWeek($start), null
                         )
                     );
                     break;
@@ -220,7 +216,7 @@ class RecurrenceRuleTransformer
         $count    = $maxCount;
         $continue = true;
         while ($continue) {
-            $dtInfo      = DateUtil::getDateInfo($dt);
+            $dtInfo = DateUtil::getDateInfo($dt);
 
             $tmp         = DateUtil::getDaySet($rule, $dt, $dtInfo, $start);
             $daySet      = $tmp->set;
@@ -230,21 +226,25 @@ class RecurrenceRuleTransformer
             $wDayMaskRel = array();
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
 
-            if ($freq >= RecurrenceRule::FREQ_HOURLY) {
-                if (($freq >= RecurrenceRule::FREQ_HOURLY   && !empty($byHour)   && !in_array($hour, $byHour)) ||
-                    ($freq >= RecurrenceRule::FREQ_MINUTELY && !empty($byMinute) && !in_array($minute, $byMinute)) ||
-                    ($freq >= RecurrenceRule::FREQ_SECONDLY && !empty($bySecond) && !in_array($second, $bySecond)))
-                {
+            if ($freq >= Frequency::HOURLY) {
+                if (($freq >= Frequency::HOURLY && !empty($byHour) && !in_array(
+                            $hour,
+                            $byHour
+                        )) || ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array(
+                            $minute,
+                            $byMinute
+                        )) || ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond))
+                ) {
                     $timeSet = array();
                 } else {
                     switch ($freq) {
-                        case RecurrenceRule::FREQ_HOURLY:
+                        case Frequency::HOURLY:
                             $timeSet = DateUtil::getTimeSetOfHour($rule, $dt);
                             break;
-                        case RecurrenceRule::FREQ_MINUTELY:
+                        case Frequency::MINUTELY:
                             $timeSet = DateUtil::getTimeSetOfMinute($rule, $dt);
                             break;
-                        case RecurrenceRule::FREQ_SECONDLY:
+                        case Frequency::SECONDLY:
                             $timeSet = DateUtil::getTimeSetOfSecond($dt);
                             break;
                     }
@@ -253,22 +253,21 @@ class RecurrenceRuleTransformer
 
             // Handle byWeekNum
             if (!empty($byWeekNum)) {
-                $no1WeekStart = $firstWeekStart =
-                    DateUtil::pymod(7 - $dtInfo->dayOfWeekYearDay1 + $weekStart, 7);
+                $no1WeekStart = $firstWeekStart = DateUtil::pymod(7 - $dtInfo->dayOfWeekYearDay1 + $weekStart, 7);
 
                 if ($no1WeekStart >= 4) {
                     $no1WeekStart = 0;
 
                     $wYearLength = $dtInfo->yearLength + DateUtil::pymod(
-                        $dtInfo->dayOfWeekYearDay1 - $weekStart,
-                        7
-                    );
+                            $dtInfo->dayOfWeekYearDay1 - $weekStart,
+                            7
+                        );
                 } else {
                     $wYearLength = $dtInfo->yearLength - $no1WeekStart;
                 }
 
-                $div = floor($wYearLength / 7);
-                $mod = DateUtil::pymod($wYearLength, 7);
+                $div      = floor($wYearLength / 7);
+                $mod      = DateUtil::pymod($wYearLength, 7);
                 $numWeeks = floor($div + ($mod / 4));
 
                 foreach ($byWeekNum as $weekNum) {
@@ -326,12 +325,12 @@ class RecurrenceRuleTransformer
                     if (!in_array(-1, $byWeekNum)) {
                         $dtTmp = new \DateTime();
                         $dtTmp->setDate($year - 1, 1, 1);
-                        $lastYearWeekDay = DateUtil::getDayOfWeek($dtTmp);
+                        $lastYearWeekDay      = DateUtil::getDayOfWeek($dtTmp);
                         $lastYearNo1WeekStart = DateUtil::pymod(7 - $lastYearWeekDay + $weekStart, 7);
-                        $lastYearLength = DateUtil::getYearLength($dtTmp);
+                        $lastYearLength       = DateUtil::getYearLength($dtTmp);
                         if ($lastYearNo1WeekStart >= 4) {
                             $lastYearNo1WeekStart = 0;
-                            $lastYearNumWeeks = floor(
+                            $lastYearNumWeeks     = floor(
                                 52 + DateUtil::pymod(
                                     $lastYearLength + DateUtil::pymod(
                                         $lastYearWeekDay - $weekStart,
@@ -364,7 +363,7 @@ class RecurrenceRuleTransformer
             if (!empty($byWeekDayRel)) {
                 $ranges = array();
 
-                if (RecurrenceRule::FREQ_YEARLY == $freq) {
+                if (Frequency::YEARLY == $freq) {
                     if (!empty($byMonth)) {
                         foreach ($byMonth as $mo) {
                             $ranges[] = array_slice($dtInfo->mRanges, $mo - 1, 2);
@@ -372,7 +371,7 @@ class RecurrenceRuleTransformer
                     } else {
                         $ranges[] = array(0, $dtInfo->yearLength);
                     }
-                } elseif (RecurrenceRule::FREQ_MONTHLY == $freq) {
+                } elseif (Frequency::MONTHLY == $freq) {
                     $ranges[] = array_slice($dtInfo->mRanges, $month - 1, 2);
                 }
 
@@ -410,51 +409,49 @@ class RecurrenceRuleTransformer
 
             foreach ($daySet as $i => $dayOfYear) {
                 $ifByMonth = $byMonth !== null && !in_array(
-                    $dtInfo->mMask[$dayOfYear],
-                    $byMonth
-                );
+                        $dtInfo->mMask[$dayOfYear],
+                        $byMonth
+                    );
 
                 $ifByWeekNum = $byWeekNum !== null && !in_array(
-                    $i,
-                    $wNoMask
-                );
+                        $i,
+                        $wNoMask
+                    );
 
-                $ifByYearDay =
-                    $byYearDay !== null && (($i < $dtInfo->yearLength && !in_array(
-                        $i + 1,
-                        $byYearDay
-                    ) && !in_array(
-                        -$dtInfo->yearLength + $i,
-                        $byYearDay
-                    )) || ($i >= $dtInfo->yearLength && !in_array(
-                        $i + 1 - $dtInfo->yearLength,
-                        $byYearDay
-                    ) && !in_array(
-                        -$dtInfo->nextYearLength + $i - $dtInfo->yearLength,
-                        $byYearDay
-                    )));
+                $ifByYearDay = $byYearDay !== null && (($i < $dtInfo->yearLength && !in_array(
+                                $i + 1,
+                                $byYearDay
+                            ) && !in_array(
+                                -$dtInfo->yearLength + $i,
+                                $byYearDay
+                            )) || ($i >= $dtInfo->yearLength && !in_array(
+                                $i + 1 - $dtInfo->yearLength,
+                                $byYearDay
+                            ) && !in_array(
+                                -$dtInfo->nextYearLength + $i - $dtInfo->yearLength,
+                                $byYearDay
+                            )));
 
                 $ifByMonthDay = $byMonthDay !== null && !in_array(
-                    $dtInfo->mDayMask[$dayOfYear],
-                    $byMonthDay
-                );
+                        $dtInfo->mDayMask[$dayOfYear],
+                        $byMonthDay
+                    );
 
                 if ($ifByMonthDay && $fixLastDayOfMonth && $i < $startMonthLength && $i == $dtInfo->monthLength) {
                     $ifByMonthDay = false;
                 }
 
                 $ifByMonthDayNeg = $byMonthDayNeg !== null && !in_array(
-                    $dtInfo->mDayMaskNeg[$dayOfYear],
-                    $byMonthDayNeg
-                );
+                        $dtInfo->mDayMaskNeg[$dayOfYear],
+                        $byMonthDayNeg
+                    );
 
                 $ifByDay = $byWeekDay !== null && count($byWeekDay) && !in_array(
-                    $dtInfo->wDayMask[$dayOfYear],
-                    $byWeekDay
-                );
+                        $dtInfo->wDayMask[$dayOfYear],
+                        $byWeekDay
+                    );
 
-                $ifWDayMaskRel =
-                    $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
+                $ifWDayMaskRel = $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
 
                 if ($byMonthDay !== null && $byMonthDayNeg !== null) {
                     if ($ifByMonthDay && $ifByMonthDayNeg) {
@@ -474,7 +471,7 @@ class RecurrenceRuleTransformer
                         $dayPos  = floor($setPos / count($timeSet));
                         $timePos = DateUtil::pymod($setPos, count($timeSet));
                     } else {
-                        $dayPos = floor(($setPos - 1) / count($timeSet));
+                        $dayPos  = floor(($setPos - 1) / count($timeSet));
                         $timePos = DateUtil::pymod(($setPos - 1), count($timeSet));
                     }
 
@@ -497,8 +494,7 @@ class RecurrenceRuleTransformer
                     /** @var Time $time */
                     $time = $timeSet[$timePos];
 
-                    $dtTmp =
-                        DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
+                    $dtTmp = DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
 
                     $dtTmp->setTime(
                         $time->hour,
@@ -577,13 +573,13 @@ class RecurrenceRuleTransformer
             }
 
             switch ($freq) {
-                case RecurrenceRule::FREQ_YEARLY:
+                case Frequency::YEARLY:
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     $dt->setDate($year, $month, $day);
                     break;
-                case RecurrenceRule::FREQ_MONTHLY:
+                case Frequency::MONTHLY:
                     $month += $rule->getInterval();
                     if ($month > 12) {
                         $delta = floor($month / 12);
@@ -597,13 +593,11 @@ class RecurrenceRuleTransformer
                     }
                     $dt->setDate($year, $month, 1);
                     break;
-                case RecurrenceRule::FREQ_WEEKLY:
+                case Frequency::WEEKLY:
                     if ($weekStart > $dtInfo->dayOfWeek) {
-                        $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 +
-                            $rule->getInterval() * 7;
+                        $delta = ($dtInfo->dayOfWeek + 1 + (6 - $weekStart)) * -1 + $rule->getInterval() * 7;
                     } else {
-                        $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 +
-                            $rule->getInterval() * 7;
+                        $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 + $rule->getInterval() * 7;
                     }
 
                     $dt->modify("+$delta day");
@@ -611,20 +605,20 @@ class RecurrenceRuleTransformer
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     break;
-                case RecurrenceRule::FREQ_DAILY:
+                case Frequency::DAILY:
                     $dt->modify('+'.$rule->getInterval().' day');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     break;
-                case RecurrenceRule::FREQ_HOURLY:
+                case Frequency::HOURLY:
                     $dt->modify('+'.$rule->getInterval().' hours');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
                     $hour  = $dt->format('G');
                     break;
-                case RecurrenceRule::FREQ_MINUTELY:
+                case Frequency::MINUTELY:
                     $dt->modify('+'.$rule->getInterval().' minutes');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
@@ -632,7 +626,7 @@ class RecurrenceRuleTransformer
                     $hour   = $dt->format('G');
                     $minute = $dt->format('i');
                     break;
-                case RecurrenceRule::FREQ_SECONDLY:
+                case Frequency::SECONDLY:
                     $dt->modify('+'.$rule->getInterval().' seconds');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
@@ -644,31 +638,53 @@ class RecurrenceRuleTransformer
             }
         }
 
-        return $dates;
+        /** @var Recurrence[] $recurrences */
+        $recurrences = array();
+        foreach ($dates as $start) {
+            /** @var \DateTime $end */
+            $end = clone $start;
+
+            $recurrences[] = new Recurrence($start, $end->add($durationInterval));
+        }
+
+        $recurrences = $this->handleExclusions($rule->getExDates(), $recurrences);
+
+        return new RecurrenceCollection($recurrences);
     }
 
     /**
-     * Set the RecurrenceRule
+     * @param DateExclusion[] $exclusions
+     * @param Recurrence[]    $recurrences
      *
-     * @param RecurrenceRule $rule The RecurrenceRule
-     *
-     * @return $this
+     * @return DateExclusion[]
      */
-    public function setRule($rule)
+    protected function handleExclusions(array $exclusions, array $recurrences)
     {
-        $this->rule = $rule;
+        foreach ($exclusions as $exclusion) {
+            $exclusionDate     = $exclusion->date->format('Ymd');
+            $exclusionTime     = $exclusion->date->format('Ymd\THis');
+            $exclusionTimezone = $exclusion->date->getTimezone();
 
-        return $this;
-    }
+            foreach ($recurrences as $key => $recurrence) {
+                $recurrenceDate = $recurrence->getStart();
 
-    /**
-     * Get the RecurrenceRule
-     *
-     * @return RecurrenceRule
-     */
-    public function getRule()
-    {
-        return $this->rule;
+                if ($recurrenceDate->getTimezone()->getName() !== $exclusionTimezone->getName()) {
+                    $recurrenceDate = clone $recurrenceDate;
+                    $recurrenceDate->setTimezone($exclusionTimezone);
+                }
+
+                if (!$exclusion->hasTime && $recurrenceDate->format('Ymd') == $exclusionDate) {
+                    unset($recurrences[$key]);
+                    continue;
+                }
+
+                if ($exclusion->hasTime && $recurrenceDate->format('Ymd\THis') == $exclusionTime) {
+                    unset($recurrences[$key]);
+                }
+            }
+        }
+
+        return array_values($recurrences);
     }
 
     /**

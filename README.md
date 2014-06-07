@@ -7,45 +7,85 @@ Recurr was developed as a precursor for a calendar with recurring events, and is
 Installation
 ------------
 
-Recurr is hosted on [packagist](http://packagist.org), meaning you can install
-it with [Composer](http://getcomposer.org/).
+Recurr is hosted on [packagist](http://packagist.org), meaning you can install it with [Composer](http://getcomposer.org/).
 
-Create a composer.json file
+1. Create a composer.json file
 
-```json
-{
-    "require": {
-        "simshaun/recurr": "dev-master"
+    ```json
+    {
+        "require": {
+            "simshaun/recurr": "dev-master"
+        }
     }
-}
-```
+    ```
+   > *We recommend using a [stable version](https://packagist.org/packages/simshaun/recurr) instead of dev-master.*
 
-Install composer and run it
+2. Install Composer and run the install command
 
-```sh
-wget http://getcomposer.org/composer.phar
-php composer.phar install
-```
+    ```sh
+    wget http://getcomposer.org/composer.phar
+    php composer.phar install
+    ```
 
-(Optional) Autoload Recurr
+3. Include Composer's autoloader
 
-```php
-require 'vendor/autoload.php';
-```
+    ```php
+    require 'vendor/autoload.php';
+    ```
 
 
-Demo
+RRULE to DateTime objects
 -----------
 
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+$endDate     = new \DateTime('2013-06-14 20:00:00', new \DateTimeZone($timezone)); // Optional
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $endDate, $timezone);
+$transformer = new \Recurr\Transformer\ArrayTransformer();
 
-print_r($transformer->getComputedArray());
+print_r($transformer->transform($rule));
 ```
 
+1. `$transformer->transform(...)` returns a `RecurrenceCollection` of `Recurrence` objects.
+2. Each `Recurrence` has `getStart()` and `getEnd()` methods that return a `\DateTime` object.
+3. If the transformed `Rule` lacks an end date, `getEnd()` will return a `\DateTime` object equal to that of `getStart()`.
+
+> Note: The transformer has a "virtual" limit (default 732) on the number of objects it generates.
+> This prevents the script from crashing on an infinitely recurring rule.
+> You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor. 
+
+### Filtering Recurrences in a RecurrenceCollection ###
+
+`RecurrenceCollection` provides the following **chainable** helper methods to filter out recurrences:
+
+- `startsBetween(\DateTime $after, \DateTime $before, $inc = false)` 
+- `startsBefore(\DateTime $before, $inc = false)`
+- `startsAfter(\DateTime $after, $inc = false)`
+- `endsBetween(\DateTime $after, \DateTime $before, $inc = false)`
+- `endsBefore(\DateTime $before, $inc = false)`
+- `endsAfter(\DateTime $after, $inc = false)`
+
+`$inc` defines what happens if `$after` or `$before` are themselves recurrences. If `$inc = true`, they will be included in the filtered collection. For example,
+
+    pseudo...
+    2014-06-01 startsBetween(2014-06-01, 2014-06-20) // false
+    2014-06-01 startsBetween(2014-06-01, 2014-06-20, true) // true
+
+> Note: `RecurrenceCollection` extends the Doctrine project's [ArrayCollection](https://github.com/doctrine/collections/blob/master/lib/Doctrine/Common/Collections/ArrayCollection.php) class.
+ 
+RRULE to Text
+--------------------------
+
+Recurr supports transforming some recurrence rules in to human readable text.
+This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies. It is not yet localized and only supports English.
+
+```php
+$rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
+
+$textTransformer = new TextTransformer();
+echo $textTransformer->transform($rule);
+```
 
 Warnings
 ---------------
@@ -55,16 +95,16 @@ Warnings
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-01-31 20:00:00', new \DateTimeZone($timezone));
-$rule        = new \Recurr\RecurrenceRule('FREQ=MONTHLY;COUNT=5', $startDate, $timezone);
-$transformer = new \Recurr\RecurrenceRuleTransformer($rule);
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, null, $timezone);
+$transformer = new \Recurr\Transformer\ArrayTransformer();
 
-$transformerConfig = new \Recurr\TransformerConfig();
+$transformerConfig = new \Recurr\Transformer\ArrayTransformerConfig();
 $transformerConfig->enableLastDayOfMonthFix();
-$transformer->setTransformerConfig($transformerConfig);
+$transformer->setConfig($transformerConfig);
 
-print_r($transformer->getComputedArray());
+print_r($transformer->transform($rule));
 
-/* Outputs:
+/* Recurrences:
  * 2013-01-31
  * 2013-02-28
  * 2013-03-31

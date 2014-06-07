@@ -2,42 +2,52 @@
 
 namespace Recurr\Test;
 
-use Recurr\RecurrenceRule;
+use Recurr\DateExclusion;
+use Recurr\Frequency;
+use Recurr\Rule;
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
 
-class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RecurrenceRule */
+    /** @var Rule */
     protected $rule;
 
     public function setUp()
     {
-        $this->rule = new RecurrenceRule;
+        $this->rule = new Rule;
     }
 
-    public function testTimezone()
+    public function testDefaultTimezone()
     {
         $this->assertEquals(date_default_timezone_get(), $this->rule->getTimezone());
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
-    public function testCreateFromStringWithMissingFreq()
+    public function testTimezoneObtainedFromStartDate()
     {
-        $this->rule->createFromString('COUNT=2');
+        $startDate = new \DateTime('2014-01-25 05:20:30', new \DateTimeZone('America/Los_Angeles'));
+
+        $this->rule = new Rule(null, $startDate);
+        $this->assertEquals($startDate->getTimezone()->getName(), $this->rule->getTimezone());
     }
 
     /**
      * @expectedException \Recurr\Exception\InvalidRRule
      */
-    public function testCreateFromStringWithBothCountAndUntil()
+    public function testLoadFromStringWithMissingFreq()
     {
-        $this->rule->createFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
+        $this->rule->loadFromString('COUNT=2');
     }
 
-    public function testCreateFromString()
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testLoadFromStringWithBothCountAndUntil()
+    {
+        $this->rule->loadFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
+    }
+
+    public function testLoadFromString()
     {
         $string = 'FREQ=YEARLY;';
         $string .= 'COUNT=2;';
@@ -52,10 +62,11 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
         $string .= 'BYMONTH=7,8;';
         $string .= 'BYSETPOS=1,3;';
         $string .= 'WKST=TU;';
+        $string .= 'EXDATE=20140607,20140620T010000,20140620T040000Z;';
 
-        $this->rule->createFromString($string);
+        $this->rule->loadFromString($string);
 
-        $this->assertEquals(RecurrenceRule::FREQ_YEARLY, $this->rule->getFreq());
+        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
         $this->assertEquals(2, $this->rule->getCount());
         $this->assertEquals(2, $this->rule->getInterval());
         $this->assertEquals(array(30), $this->rule->getBySecond());
@@ -68,27 +79,48 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(7, 8), $this->rule->getByMonth());
         $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
         $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140620T010000'), true),
+                new DateExclusion(new \DateTime('20140620 04:00:00 UTC'), true)
+            ),
+            $this->rule->getExDates()
+        );
     }
 
-    public function testCreateFromStringWithDtstart()
+    public function testLoadFromStringWithDtstart()
     {
         $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
 
         $this->rule->setTimezone('America/Los_Angeles');
-        $this->rule->createFromString($string);
+        $this->rule->loadFromString($string);
 
         $expectedStartDate = new \DateTime('2014-02-22 07:30:00', new \DateTimeZone('America/Los_Angeles'));
 
-        $this->assertEquals(RecurrenceRule::FREQ_MONTHLY, $this->rule->getFreq());
+        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
         $this->assertEquals($expectedStartDate, $this->rule->getStartDate());
+    }
+
+    public function testLoadFromStringWithDtend()
+    {
+        $string = 'FREQ=MONTHLY;DTEND=20140422T140000';
+
+        $this->rule->setTimezone('America/Los_Angeles');
+        $this->rule->loadFromString($string);
+
+        $expectedEndDate = new \DateTime('2014-04-22 14:00:00', new \DateTimeZone('America/Los_Angeles'));
+
+        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
+        $this->assertEquals($expectedEndDate, $this->rule->getEndDate());
     }
 
     /**
      * @expectedException \Recurr\Exception\InvalidRRule
      */
-    public function testCreateFromStringFails()
+    public function testLoadFromStringFails()
     {
-        $this->rule->createFromString('IM AN INVALID RRULE');
+        $this->rule->loadFromString('IM AN INVALID RRULE');
     }
 
     public function testGetString()
@@ -106,9 +138,10 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->setByMonth(array(7, 8));
         $this->rule->setBySetPosition(array(1, 3));
         $this->rule->setWeekStart('TU');
+        $this->rule->setExDates(array('20140607', '20140620T010000Z', '20140620T010000'));
 
         $this->assertEquals(
-            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU',
+            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;EXDATE=20140607,20140620T010000Z,20140620T010000',
             $this->rule->getString()
         );
     }
@@ -117,7 +150,16 @@ class RecurrenceRuleTest extends \PHPUnit_Framework_TestCase
     {
         $string = 'FREQ=MONTHLY;DTSTART=20140210T083045;INTERVAL=1;WKST=MO';
 
-        $this->rule->createFromString($string);
+        $this->rule->loadFromString($string);
+
+        $this->assertEquals($string, $this->rule->getString());
+    }
+
+    public function testGetStringWithDtend()
+    {
+        $string = 'FREQ=MONTHLY;DTEND=20140410T083045;INTERVAL=1;WKST=MO';
+
+        $this->rule->loadFromString($string);
 
         $this->assertEquals($string, $this->rule->getString());
     }

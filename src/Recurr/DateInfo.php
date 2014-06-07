@@ -15,7 +15,7 @@ namespace Recurr;
 
 /**
  * Class DateInfo is responsible for holding information based on a particular
- * date that is applicable to a RecurrenceRule.
+ * date that is applicable to a Rule.
  *
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>

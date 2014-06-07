@@ -7,9 +7,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Recurr;
+namespace Recurr\Transformer;
 
-class TransformerConfig {
+class ArrayTransformerConfig
+{
     protected $lastDayOfMonthFix = false;
 
     /**
