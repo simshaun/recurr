@@ -1,6 +1,0 @@
-- Moved RecurrenceRuleTransformer::FREQ_* constants to `Frequency::*`
-- Renamed `RecurrenceRule` to `Rule`
-- Renamed `RecurrenceRuleTransformer` to `RuleTransformer`
-- Renamed `TransformerConfig` to `RuleTransformerConfig`
-- Renamed `RuleTransformer::setTransformerConfig` to `RuleTransformer::setConfig`
-- Organized tests so they are easier to find and add to.
