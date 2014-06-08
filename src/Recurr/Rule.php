@@ -441,7 +441,7 @@ class Rule
                 $format = 'Ymd';
                 if ($exclusion->hasTime) {
                     $format .= '\This';
-                    if ($exclusion->date->getTimezone()->getName() == 'UTC') {
+                    if ($exclusion->isUtcExplicit) {
                         $format .= '\Z';
                     }
                 }
@@ -1070,7 +1070,11 @@ class Rule
             }
 
             $date          = new \DateTime($val, $timezone);
-            $exDates[$key] = new DateExclusion($this->convertZtoUtc($date), strpos($val, 'T') !== false);
+            $exDates[$key] = new DateExclusion(
+                $this->convertZtoUtc($date),
+                strpos($val, 'T') !== false,
+                strpos($val, 'Z') !== false
+            );
         }
 
         $this->exDates = $exDates;

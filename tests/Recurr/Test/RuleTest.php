@@ -83,7 +83,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
             array(
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
-                new DateExclusion(new \DateTime('20140620 04:00:00 UTC'), true)
+                new DateExclusion(new \DateTime('20140620 04:00:00 UTC'), true, true)
             ),
             $this->rule->getExDates()
         );
