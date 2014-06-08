@@ -1,4 +1,4 @@
-# Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png)
+# Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png) [![Latest Stable Version](https://poser.pugx.org/simshaun/recurr/v/stable.svg)](https://packagist.org/packages/simshaun/recurr) [![Total Downloads](https://poser.pugx.org/simshaun/recurr/downloads.svg)](https://packagist.org/packages/simshaun/recurr) [![Latest Unstable Version](https://poser.pugx.org/simshaun/recurr/v/unstable.svg)](https://packagist.org/packages/simshaun/recurr) [![License](https://poser.pugx.org/simshaun/recurr/license.svg)](https://packagist.org/packages/simshaun/recurr)
 
 Recurr is a PHP library for working with recurrence rules ([RRULE](http://tools.ietf.org/html/rfc2445)) and converting them in to DateTime objects.
 
@@ -53,13 +53,13 @@ print_r($transformer->transform($rule));
 
 > Note: The transformer has a "virtual" limit (default 732) on the number of objects it generates.
 > This prevents the script from crashing on an infinitely recurring rule.
-> You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor. 
+> You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor.
 
 ### Filtering Recurrences in a RecurrenceCollection ###
 
 `RecurrenceCollection` provides the following **chainable** helper methods to filter out recurrences:
 
-- `startsBetween(\DateTime $after, \DateTime $before, $inc = false)` 
+- `startsBetween(\DateTime $after, \DateTime $before, $inc = false)`
 - `startsBefore(\DateTime $before, $inc = false)`
 - `startsAfter(\DateTime $after, $inc = false)`
 - `endsBetween(\DateTime $after, \DateTime $before, $inc = false)`
@@ -73,7 +73,7 @@ print_r($transformer->transform($rule));
     2014-06-01 startsBetween(2014-06-01, 2014-06-20, true) // true
 
 > Note: `RecurrenceCollection` extends the Doctrine project's [ArrayCollection](https://github.com/doctrine/collections/blob/master/lib/Doctrine/Common/Collections/ArrayCollection.php) class.
- 
+
 RRULE to Text
 --------------------------
 
