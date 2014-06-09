@@ -1067,10 +1067,10 @@ class Rule
         foreach ($exDates as $key => $val) {
             if ($val instanceof DateExclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
+            } else {
+                $date          = new \DateTime($val, $timezone);
+                $exDates[$key] = new DateExclusion($this->convertZtoUtc($date), strpos($val, 'T') !== false);
             }
-
-            $date          = new \DateTime($val, $timezone);
-            $exDates[$key] = new DateExclusion($this->convertZtoUtc($date), strpos($val, 'T') !== false);
         }
 
         $this->exDates = $exDates;
