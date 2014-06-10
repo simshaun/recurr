@@ -3,9 +3,33 @@
 namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
+use Recurr\DateExclusion;
 
 class ArrayTransformerExDateTest extends ArrayTransformerBase
 {
+
+    /**
+     * Original timezone. Restore it upon test suite completion!
+     *
+     * @var string
+     */
+    protected static $originalTimezoneName;
+
+    public static function setUpBeforeClass()
+    {
+        self::$originalTimezoneName = date_default_timezone_get();
+        date_default_timezone_set('America/New_York');
+
+        parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        date_default_timezone_set(self::$originalTimezoneName);
+
+        parent::tearDownAfterClass();
+    }
+
     public function testExDateNoTime()
     {
         $rule = new Rule(
@@ -64,4 +88,26 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $this->assertCount(1, $computed);
         $this->assertEquals(new \DateTime('2014-06-03 04:00:00', $timezone), $computed[0]->getStart());
     }
+
+    /**
+     * @test
+     */
+    public function setExDates()
+    {
+        $rule    = new Rule(
+            'FREQ=DAILY;COUNT=3',
+            new \DateTime('2014-06-01')
+        );
+        $exDates = array(
+            new DateExclusion(new \DateTime('2014-06-02'), false),
+        );
+        $rule->setExDates($exDates);
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(2, $computed);
+        $this->assertEquals(new \DateTime('2014-06-01'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]->getStart());
+    }
+
 }
