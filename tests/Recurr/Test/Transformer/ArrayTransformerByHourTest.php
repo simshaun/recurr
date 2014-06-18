@@ -40,6 +40,20 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-15 14:00:00'), $computed[4]->getStart());
     }
 
+    public function testByHourWithVirtualLimit()
+    {
+        $rule = new Rule(
+            'FREQ=DAILY;BYHOUR=13',
+            new \DateTime('2014-06-12 15:00:00')
+        );
+
+        $computed = $this->transformer->transform($rule, 2);
+
+        $this->assertCount(2, $computed);
+        $this->assertEquals(new \DateTime('2014-06-13 13:00:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-14 13:00:00'), $computed[1]->getStart());
+    }
+
     public function testByHourWeekly()
     {
         $rule = new Rule(

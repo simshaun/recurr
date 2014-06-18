@@ -55,6 +55,23 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-31'), $computed[4]->getStart());
     }
 
+    public function testBySetPositionVirtualLimit()
+    {
+        $rule = new Rule(
+            'FREQ=MONTHLY;BYSETPOS=-1;BYDAY=MO,TU,WE,TH,FR',
+            new \DateTime('2013-01-24')
+        );
+
+        $computed = $this->transformer->transform($rule, 5);
+
+        $this->assertEquals(5, count($computed));
+        $this->assertEquals(new \DateTime('2013-01-31'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2013-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2013-03-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2013-04-30'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2013-05-31'), $computed[4]->getStart());
+    }
+
     public function testBySetPositionWithInterval()
     {
         $rule = new Rule(

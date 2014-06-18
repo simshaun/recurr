@@ -6,10 +6,28 @@ use Recurr\Rule;
 
 class ArrayTransformerTest extends ArrayTransformerBase
 {
-    public function testVirtualLimit()
+    public function testVirtualLimitWithCountLimit()
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=30',
+            new \DateTime('2014-03-16 04:00:00')
+        );
+
+        $this->transformer->setVirtualLimit(5);
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(5, $computed);
+
+        $computed = $this->transformer->transform($rule, 10);
+        $this->assertCount(10, $computed);
+
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(5, $computed);
+    }
+
+    public function testVirtualLimitWithoutCountLimit()
+    {
+        $rule = new Rule(
+            'FREQ=YEARLY',
             new \DateTime('2014-03-16 04:00:00')
         );
 

@@ -519,12 +519,12 @@ class ArrayTransformer
                                 break;
                             }
                         }
-                    }
 
-                    ++$total;
-                    if ($total > $vLimit) {
-                        $continue = false;
-                        break;
+                        ++$total;
+                        if ($total > $vLimit) {
+                            $continue = false;
+                            break;
+                        }
                     }
                 }
             } else {
@@ -552,12 +552,12 @@ class ArrayTransformer
                                     break;
                                 }
                             }
-                        }
 
-                        ++$total;
-                        if ($total > $vLimit) {
-                            $continue = false;
-                            break;
+                            ++$total;
+                            if ($total > $vLimit) {
+                                $continue = false;
+                                break;
+                            }
                         }
                     }
 
