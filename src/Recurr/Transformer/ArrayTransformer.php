@@ -83,11 +83,13 @@ class ArrayTransformer
      *
      * @param Rule $rule the Rule
      * @param int|null $virtualLimit imposed upon infinitely recurring events.
+     * @param ConstraintInterface|null $constraint Potential recurrences must pass the constraint, else
+     *                                             they will not be included in the returned collection.
      *
      * @return RecurrenceCollection
      * @throws MissingData
      */
-    public function transform($rule, $virtualLimit = null)
+    public function transform($rule, $virtualLimit = null, ConstraintInterface $constraint = null)
     {
         if (null === $rule) {
             throw new MissingData('Rule has not been set');
@@ -509,22 +511,35 @@ class ArrayTransformer
                     if (null !== $until && $dtTmp > $until) {
                         $continue = false;
                         break;
-                    } elseif ($dtTmp >= $start) {
-                        $dates[] = $dtTmp;
+                    }
 
-                        if (null !== $count) {
-                            --$count;
-                            if ($count <= 0) {
-                                $continue = false;
-                                break;
-                            }
+                    if ($dtTmp < $start) {
+                        continue;
+                    }
+
+                    if ($constraint instanceof ConstraintInterface && !$constraint->test($dtTmp)) {
+                        if ($constraint->stopsTransformer()) {
+                            $continue = false;
+                            break;
+                        } else {
+                            continue;
                         }
+                    }
 
-                        ++$total;
-                        if ($total > $vLimit) {
+                    $dates[] = $dtTmp;
+
+                    if (null !== $count) {
+                        --$count;
+                        if ($count <= 0) {
                             $continue = false;
                             break;
                         }
+                    }
+
+                    ++$total;
+                    if ($total > $vLimit) {
+                        $continue = false;
+                        break;
                     }
                 }
             } else {
@@ -542,22 +557,35 @@ class ArrayTransformer
                         if (null !== $until && $dtTmp > $until) {
                             $continue = false;
                             break;
-                        } elseif ($dtTmp >= $start) {
-                            $dates[] = clone $dtTmp;
+                        }
 
-                            if (null !== $count) {
-                                --$count;
-                                if ($count <= 0) {
-                                    $continue = false;
-                                    break;
-                                }
+                        if ($dtTmp < $start) {
+                            continue;
+                        }
+
+                        if ($constraint instanceof ConstraintInterface && !$constraint->test($dtTmp)) {
+                            if ($constraint->stopsTransformer()) {
+                                $continue = false;
+                                break;
+                            } else {
+                                continue;
                             }
+                        }
 
-                            ++$total;
-                            if ($total > $vLimit) {
+                        $dates[] = clone $dtTmp;
+
+                        if (null !== $count) {
+                            --$count;
+                            if ($count <= 0) {
                                 $continue = false;
                                 break;
                             }
+                        }
+
+                        ++$total;
+                        if ($total > $vLimit) {
+                            $continue = false;
+                            break;
                         }
                     }
 

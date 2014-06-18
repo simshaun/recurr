@@ -55,7 +55,28 @@ print_r($transformer->transform($rule));
 > This prevents the script from crashing on an infinitely recurring rule.
 > You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor.
 
-### Filtering Recurrences in a RecurrenceCollection ###
+### Transformation Constraints ###
+
+Constraints (`\Recurr\Transformer\ConstraintInterface`) are used by the ArrayTransformer to allow or prevent certain dates from being added to a `RecurrenceCollection`. Recurr provides the following constraints:
+
+- `AfterConstraint(\DateTime $after, $inc = false)`
+- `BeforeConstraint(\DateTime $before, $inc = false)`
+- `BetweenConstraint(\DateTime $after, \DateTime $before, $inc = false)`
+
+`$inc` defines what happens if `$after` or `$before` are themselves recurrences. If `$inc = true`, they will be included in the collection. For example,
+
+```php
+$startDate   = new \DateTime('2014-06-17 04:00:00');
+$rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate);
+$transformer = new \Recurr\Transformer\ArrayTransformer();
+
+$constraint = new \Recurr\Transformer\Constraint\BeforeConstraint(new \DateTime('2014-08-01 00:00:00'));
+print_r($transformer->transform($rule, null, $constraint));
+```
+
+> Note: If building your own constraint, it is important to know that dates which do not meet the constraint's requirements do **not** count toward the transformer's virtual limit. If you manually set your constraint's `$stopsTransformer` property to `false`, the transformer *might* crash via an infinite loop. See the `BetweenConstraint` for an example on how to prevent that.
+
+### Post-Transformation `RecurrenceCollection` Filters ###
 
 `RecurrenceCollection` provides the following **chainable** helper methods to filter out recurrences:
 
