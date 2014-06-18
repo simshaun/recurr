@@ -15,7 +15,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-02-28 23:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-03-01 00:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-03-01 01:00:00'), $computed[2]->getStart());
@@ -32,7 +32,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-02-28 23:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-03-01 08:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-03-01 17:00:00'), $computed[2]->getStart());
@@ -49,7 +49,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2016-02-28 23:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29 00:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29 01:00:00'), $computed[2]->getStart());
@@ -66,7 +66,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-12-31 22:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-12-31 23:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-01-01 00:00:00'), $computed[2]->getStart());

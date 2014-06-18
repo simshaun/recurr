@@ -20,7 +20,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-06-13 00:00:00', $timezoneObj), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-06-20 00:00:00', $timezoneObj), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-06-27 00:00:00', $timezoneObj), $computed[2]->getStart());
@@ -42,7 +42,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-12-19 00:00:00', $timezoneObj), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-01-02 00:00:00', $timezoneObj), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-01-16 00:00:00', $timezoneObj), $computed[2]->getStart());
@@ -64,7 +64,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(7, count($computed));
+        $this->assertCount(7, $computed);
         $this->assertEquals(new \DateTime('2015-12-21 00:00:00', $timezoneObj), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-01-04 00:00:00', $timezoneObj), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-01-18 00:00:00', $timezoneObj), $computed[2]->getStart());
@@ -88,7 +88,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(3, count($computed));
+        $this->assertCount(3, $computed);
         $this->assertEquals(new \DateTime('2013-12-18 00:00:00', $timezoneObj), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-01-01 00:00:00', $timezoneObj), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-01-15 00:00:00', $timezoneObj), $computed[2]->getStart());

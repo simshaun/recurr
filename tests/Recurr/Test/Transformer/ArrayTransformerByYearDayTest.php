@@ -15,7 +15,7 @@ class ArrayTransformerByYearDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(4, count($computed));
+        $this->assertCount(4, $computed);
         $this->assertEquals(new \DateTime('2013-05-05'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-05-05'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2015-05-05'), $computed[2]->getStart());
@@ -31,7 +31,7 @@ class ArrayTransformerByYearDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(4, count($computed));
+        $this->assertCount(4, $computed);
         $this->assertEquals(new \DateTime('2014-02-28'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2015-02-28'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]->getStart());

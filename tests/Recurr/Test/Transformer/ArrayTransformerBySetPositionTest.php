@@ -15,7 +15,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-01-31'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-02-28'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-03-29'), $computed[2]->getStart());
@@ -31,7 +31,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-03-31'), $computed[2]->getStart());
@@ -47,7 +47,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-02-01'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29'), $computed[2]->getStart());
@@ -64,7 +64,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule, 5);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-01-31'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-02-28'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-03-29'), $computed[2]->getStart());
@@ -81,7 +81,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(10, count($computed));
+        $this->assertCount(10, $computed);
         $this->assertEquals(new \DateTime('2013-10-14'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-12-09'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-02-10'), $computed[2]->getStart());

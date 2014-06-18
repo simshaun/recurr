@@ -15,7 +15,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-01-28'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-01-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-02-04'), $computed[2]->getStart());
@@ -32,7 +32,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-01-23'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-01-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-02-06'), $computed[2]->getStart());
@@ -48,7 +48,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-02-05'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-02-06'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-02-19'), $computed[2]->getStart());
@@ -65,7 +65,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-07-01'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-08-05'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-09-02'), $computed[2]->getStart());
@@ -82,7 +82,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-06-24'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-07-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-08-26'), $computed[2]->getStart());
@@ -98,7 +98,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-07-01'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-09-02'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-12-02'), $computed[2]->getStart());
@@ -115,7 +115,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(10, count($computed));
+        $this->assertCount(10, $computed);
         $this->assertEquals(new \DateTime('2013-06-21'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-06-24'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-07-19'), $computed[2]->getStart());
@@ -137,7 +137,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(6, count($computed));
+        $this->assertCount(6, $computed);
         $this->assertEquals(new \DateTime('2017-01-02'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2017-01-09'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2017-01-16'), $computed[2]->getStart());
@@ -154,7 +154,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(6, count($computed));
+        $this->assertCount(6, $computed);
         $this->assertEquals(new \DateTime('2017-01-16'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2017-01-20'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2017-02-13'), $computed[2]->getStart());
@@ -172,7 +172,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2014-01-06'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2015-01-05'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-01-04'), $computed[2]->getStart());
@@ -189,7 +189,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-12-30'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-12-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2015-12-28'), $computed[2]->getStart());

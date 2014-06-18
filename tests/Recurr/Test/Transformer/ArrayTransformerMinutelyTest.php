@@ -15,7 +15,7 @@ class ArrayTransformerMinutesTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2016-02-29 23:58:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29 23:59:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-03-01 00:00:00'), $computed[2]->getStart());
@@ -32,7 +32,7 @@ class ArrayTransformerMinutesTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(5, count($computed));
+        $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-02-28 23:58:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2013-02-29 00:56:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2013-02-29 01:54:00'), $computed[2]->getStart());

@@ -66,7 +66,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
 
         $computed = $this->transformer->transform($rule);
 
-        $this->assertEquals(30, count($computed));
+        $this->assertCount(30, $computed);
         $this->assertEquals(new \DateTime('1997-01-05 08:30:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('1997-01-05 09:30:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('1997-01-12 08:30:00'), $computed[2]->getStart());
