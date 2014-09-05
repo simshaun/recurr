@@ -222,7 +222,7 @@ class DateUtil
         $dayOfYear = $dt->format('z');
 
         if (self::isLeapYearDate($dt) && self::hasLeapYearBug() && $dt->format('nj') > 229) {
-            $dayOfYear -= 1;
+            //$dayOfYear -= 1;
         }
 
         $start = $dayOfYear;
