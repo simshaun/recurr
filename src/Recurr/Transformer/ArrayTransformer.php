@@ -134,6 +134,7 @@ class ArrayTransformer
         $byWeekDayRel  = array();
         $bySetPos      = $rule->getBySetPosition();
 
+        $implicitByMonthDay = false;
         if (!(!empty($byWeekNum) || !empty($byYearDay) || !empty($byMonthDay) || !empty($byWeekDay))) {
             switch ($freq) {
                 case Frequency::YEARLY:
@@ -141,6 +142,11 @@ class ArrayTransformer
                         $byMonth = array($start->format('n'));
                     }
 
+                    if ($startDay > 28) {
+                        $fixLastDayOfMonth = true;
+                    }
+
+                    $implicitByMonthDay = true;
                     $byMonthDay = array($startDay);
                     break;
                 case Frequency::MONTHLY:
@@ -148,6 +154,7 @@ class ArrayTransformer
                         $fixLastDayOfMonth = true;
                     }
 
+                    $implicitByMonthDay = true;
                     $byMonthDay = array($startDay);
                     break;
                 case Frequency::WEEKLY:
@@ -409,7 +416,10 @@ class ArrayTransformer
                 }
             }
 
+            $numMatched = 0;
             foreach ($daySet as $i => $dayOfYear) {
+                $dayOfMonth = $dtInfo->mDayMask[$dayOfYear];
+
                 $ifByMonth = $byMonth !== null && !in_array(
                         $dtInfo->mMask[$dayOfYear],
                         $byMonth
@@ -420,26 +430,33 @@ class ArrayTransformer
                         $wNoMask
                     );
 
-                $ifByYearDay = $byYearDay !== null && (($i < $dtInfo->yearLength && !in_array(
-                                $i + 1,
-                                $byYearDay
-                            ) && !in_array(
-                                -$dtInfo->yearLength + $i,
-                                $byYearDay
-                            )) || ($i >= $dtInfo->yearLength && !in_array(
-                                $i + 1 - $dtInfo->yearLength,
-                                $byYearDay
-                            ) && !in_array(
-                                -$dtInfo->nextYearLength + $i - $dtInfo->yearLength,
-                                $byYearDay
-                            )));
+                $ifByYearDay = $byYearDay !== null && (
+                        (
+                            $i < $dtInfo->yearLength &&
+                            !in_array($i + 1, $byYearDay) &&
+                            !in_array(-$dtInfo->yearLength + $i, $byYearDay)
+                        ) ||
+                        (
+                            $i >= $dtInfo->yearLength &&
+                            !in_array($i + 1 - $dtInfo->yearLength, $byYearDay) &&
+                            !in_array(-$dtInfo->nextYearLength + $i - $dtInfo->yearLength, $byYearDay)
+                        )
+                    );
 
                 $ifByMonthDay = $byMonthDay !== null && !in_array(
                         $dtInfo->mDayMask[$dayOfYear],
                         $byMonthDay
                     );
 
-                if ($ifByMonthDay && $fixLastDayOfMonth && $i < $startMonthLength && $i == $dtInfo->monthLength) {
+                // Handle "last day of next month" problem.
+                if ($fixLastDayOfMonth
+                        && $ifByMonthDay
+                        && $implicitByMonthDay
+                        && $startMonthLength > $dtInfo->monthLength
+                        && $dayOfMonth == $dtInfo->monthLength
+                        && $dayOfMonth < $startMonthLength
+                        && !$numMatched
+                ) {
                     $ifByMonthDay = false;
                 }
 
@@ -461,6 +478,8 @@ class ArrayTransformer
                     }
                 } elseif ($ifByMonth || $ifByWeekNum || $ifByYearDay || $ifByMonthDay || $ifByMonthDayNeg || $ifByDay || $ifWDayMaskRel) {
                     unset($daySet[$i]);
+                } else {
+                    ++$numMatched;
                 }
             }
 
@@ -605,7 +624,7 @@ class ArrayTransformer
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
                     $day   = $dt->format('j');
-                    $dt->setDate($year, $month, $day);
+                    $dt->setDate($year, $month, 1);
                     break;
                 case Frequency::MONTHLY:
                     $month += $rule->getInterval();

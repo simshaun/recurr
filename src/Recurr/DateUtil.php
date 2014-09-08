@@ -202,7 +202,7 @@ class DateUtil
         $start = $dateInfo->mRanges[$monthNum - 1];
         $end   = $dateInfo->mRanges[$monthNum];
 
-        $days = range(1, $dt->format('t'));
+        $days = range(0, $dt->format('t') - 1);
         $set  = range($start, $end - 1);
         $set  = array_combine($days, $set);
         $obj  = new DaySet($set, $start, $end - 1);
@@ -387,7 +387,7 @@ class DateUtil
             if ($negative) {
                 $mask = array_merge(array_slice($mask, 0, 31), array_slice($mask, 32));
             } else {
-                $mask = array_merge(array_slice($mask, 0, 58), array_slice($mask, 59));
+                $mask = array_merge(array_slice($mask, 0, 59), array_slice($mask, 60));
             }
 
             return $mask;

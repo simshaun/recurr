@@ -9,72 +9,165 @@ class ArrayTransformerMonthlyTest extends ArrayTransformerBase
 {
     public function testMonthly()
     {
-        $timezone = 'America/New_York';
-        $timezoneObj = new \DateTimeZone($timezone);
-
-        $rule = new Rule(
-            'FREQ=MONTHLY;COUNT=3;INTERVAL=1',
-            new \DateTime('2013-01-31 00:00:00', $timezoneObj),
-            null,
-            $timezone
-        );
-
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-28'));
         $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-28'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-28'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-28'), $computed[3]->getStart());
 
-        $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2013-01-31 00:00:00', $timezoneObj), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2013-03-31 00:00:00', $timezoneObj), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2013-05-31 00:00:00', $timezoneObj), $computed[2]->getStart());
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-29'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-29'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-29'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-05-29'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-30'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-30'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-30'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-30'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-05-30'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-31'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-31'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-31'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-05-31'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-07-31'), $computed[3]->getStart());
     }
 
-    public function testMonthlyWithLastDayFixEnabled()
+    public function testMonthlyOnLeapYear()
     {
-        $rule = new Rule(
-            'FREQ=MONTHLY;COUNT=10',
-            new \DateTime('2013-11-30')
-        );
-
-        $transformerConfig = new ArrayTransformerConfig();
-        $transformerConfig->enableLastDayOfMonthFix();
-
-        $this->transformer->setConfig($transformerConfig);
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-28'));
         $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-28'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-28'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-28'), $computed[3]->getStart());
 
-        $this->assertCount(10, $computed);
-        $this->assertEquals(new \DateTime('2013-11-30'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2013-12-30'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2014-01-30'), $computed[2]->getStart());
-        $this->assertEquals(new \DateTime('2014-02-28'), $computed[3]->getStart());
-        $this->assertEquals(new \DateTime('2014-03-30'), $computed[4]->getStart());
-        $this->assertEquals(new \DateTime('2014-04-30'), $computed[5]->getStart());
-        $this->assertEquals(new \DateTime('2014-05-30'), $computed[6]->getStart());
-        $this->assertEquals(new \DateTime('2014-06-30'), $computed[7]->getStart());
-        $this->assertEquals(new \DateTime('2014-07-30'), $computed[8]->getStart());
-        $this->assertEquals(new \DateTime('2014-08-30'), $computed[9]->getStart());
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-29'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-29'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-30'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-30'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-30'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-30'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-05-30'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-31'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-31'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-05-31'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-07-31'), $computed[3]->getStart());
     }
 
-    public function testMonthlyWithLastDayFixEnabledOnLeapYear()
+    public function testLastDayOfMonthFix()
     {
-        $rule = new Rule(
-            'FREQ=MONTHLY;COUNT=8',
-            new \DateTime('2016-01-31')
-        );
-
         $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
-
         $this->transformer->setConfig($transformerConfig);
-        $computed = $this->transformer->transform($rule);
 
-        $this->assertCount(8, $computed);
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-28'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-28'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-28'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-28'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-29'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-29'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-29'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-30'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-30'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-30'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-30'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-01-31'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-01-31'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-03-31'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-04-30'), $computed[3]->getStart());
+    }
+
+    public function testLastDayOfMonthFixOnLeapYear()
+    {
+        $transformerConfig = new ArrayTransformerConfig();
+        $transformerConfig->enableLastDayOfMonthFix();
+        $this->transformer->setConfig($transformerConfig);
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-28'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-28'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-28'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-28'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-28'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-29'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-29'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-29'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-30'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2016-01-30'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2016-03-30'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2016-04-30'), $computed[3]->getStart());
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2016-01-31'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
         $this->assertEquals(new \DateTime('2016-01-31'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2016-02-29'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2016-03-31'), $computed[2]->getStart());
         $this->assertEquals(new \DateTime('2016-04-30'), $computed[3]->getStart());
-        $this->assertEquals(new \DateTime('2016-05-31'), $computed[4]->getStart());
-        $this->assertEquals(new \DateTime('2016-06-30'), $computed[5]->getStart());
-        $this->assertEquals(new \DateTime('2016-07-31'), $computed[6]->getStart());
-        $this->assertEquals(new \DateTime('2016-08-31'), $computed[7]->getStart());
+    }
+
+    public function testLastDayOfMonthFixOn29thDayIn30DayMonth()
+    {
+        $transformerConfig = new ArrayTransformerConfig();
+        $transformerConfig->enableLastDayOfMonthFix();
+        $this->transformer->setConfig($transformerConfig);
+
+        $rule     = new Rule('FREQ=MONTHLY;COUNT=4;INTERVAL=1', new \DateTime('2014-08-29'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2014-08-29'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-09-29'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-10-29'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2014-11-29'), $computed[3]->getStart());
     }
 
     public function testLastDayOfMonth()
