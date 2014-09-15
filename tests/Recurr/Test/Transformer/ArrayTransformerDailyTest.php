@@ -8,7 +8,7 @@ class ArrayTransformerDailyTest extends ArrayTransformerBase
 {
     public function testDaily()
     {
-        $timezone = new \DateTimeZone('Europe/Amsterdam');
+        $timezone = new \DateTimeZone($this->timezone);
 
         $rule = new Rule(
             'FREQ=DAILY;COUNT=20;INTERVAL=1',
@@ -18,7 +18,7 @@ class ArrayTransformerDailyTest extends ArrayTransformerBase
         // Populate expected result array
         $expectedArray = array();
         for ($i = 0; $i < 20; $i++) {
-            $date = new \DateTime('2016-02-20 +'.$i.' days');
+            $date = new \DateTime('2016-02-20 +'.$i.' days', $timezone);
             $date->setTime(0,0,0);
             $expectedArray[] = $date;
         }
