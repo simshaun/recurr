@@ -62,7 +62,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $string .= 'BYMONTH=7,8;';
         $string .= 'BYSETPOS=1,3;';
         $string .= 'WKST=TU;';
-        $string .= 'EXDATE=20140607,20140620T010000,20140620T040000Z;';
+        $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
 
         $this->rule->loadFromString($string);
 
@@ -83,7 +83,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
             array(
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
-                new DateExclusion(new \DateTime('20140620 04:00:00 UTC'), true, true)
+                new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
             ),
             $this->rule->getExDates()
         );
@@ -148,7 +148,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStringWithDtstart()
     {
-        $string = 'FREQ=MONTHLY;DTSTART=20140210T083045;INTERVAL=1;WKST=MO';
+        $string = 'FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';
 
         $this->rule->loadFromString($string);
 
@@ -157,7 +157,16 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStringWithDtend()
     {
-        $string = 'FREQ=MONTHLY;DTEND=20140410T083045;INTERVAL=1;WKST=MO';
+        $string = 'FREQ=MONTHLY;DTEND=20140410T163045;INTERVAL=1;WKST=MO';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertEquals($string, $this->rule->getString());
+    }
+
+    public function testGetStringWithUntil()
+    {
+        $string = 'FREQ=MONTHLY;UNTIL=20140410T163045;INTERVAL=1;WKST=MO';
 
         $this->rule->loadFromString($string);
 

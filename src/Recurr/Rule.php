@@ -360,12 +360,12 @@ class Rule
 
         // DTSTART
         if ($this->isStartDateFromDtstart) {
-            $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\This');
+            $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\THis');
         }
 
         // DTEND
         if ($this->endDate instanceof \DateTime) {
-            $parts[] = 'DTEND='.$this->getEndDate()->format('Ymd\This');
+            $parts[] = 'DTEND='.$this->getEndDate()->format('Ymd\THis');
         }
 
         // INTERVAL
@@ -440,7 +440,7 @@ class Rule
             foreach ($exDates as $key => $exclusion) {
                 $format = 'Ymd';
                 if ($exclusion->hasTime) {
-                    $format .= '\This';
+                    $format .= '\THis';
                     if ($exclusion->isUtcExplicit) {
                         $format .= '\Z';
                     }
