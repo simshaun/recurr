@@ -89,6 +89,50 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+
+    public function testLoadFromArray()
+    {
+        $this->rule->loadFromArray(array(
+            'FREQ'=>'YEARLY',
+            'COUNT'=>'2',
+            'INTERVAL'=>'2',
+            'BYSECOND'=>'30',
+            'BYMINUTE'=>'10',
+            'BYHOUR'=>'5,15',
+            'BYDAY'=>'SU,WE',
+            'BYMONTHDAY'=>'16,22',
+            'BYYEARDAY'=>'201,203',
+            'BYWEEKNO'=>'29,32',
+            'BYMONTH'=>'7,8',
+            'BYSETPOS'=>'1,3',
+            'WKST'=>'TU',
+            'EXDATE'=>'20140607,20140620T010000,20140620T160000Z',
+        ));
+
+        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
+        $this->assertEquals(2, $this->rule->getCount());
+        $this->assertEquals(2, $this->rule->getInterval());
+        $this->assertEquals(array(30), $this->rule->getBySecond());
+        $this->assertEquals(array(10), $this->rule->getByMinute());
+        $this->assertEquals(array(5, 15), $this->rule->getByHour());
+        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
+        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
+        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
+        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
+        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
+        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
+        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140620T010000'), true),
+                new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
+            ),
+            $this->rule->getExDates()
+        );
+    }
+
+
     public function testLoadFromStringWithDtstart()
     {
         $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
