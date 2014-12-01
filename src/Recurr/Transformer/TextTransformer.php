@@ -287,40 +287,36 @@ class TextTransformer
         }
 
         $numOrdinals = 0;
+        foreach ($byDay as $key => $short) {
+            $day    = strtoupper($short);
+            $string = '';
 
-        $byDay = array_map(
-            function ($short) use ($map, &$numOrdinals) {
-                $day    = strtoupper($short);
-                $string = '';
+            if (preg_match('/([+-]?)([0-9]*)([A-Z]+)/', $short, $parts)) {
+                $symbol = $parts[1];
+                $nth    = $parts[2];
+                $day    = $parts[3];
 
-                if (preg_match('/([+-]?)([0-9]*)([A-Z]+)/', $short, $parts)) {
-                    $symbol = $parts[1];
-                    $nth    = $parts[2];
-                    $day    = $parts[3];
-
-                    if (!empty($nth)) {
-                        ++$numOrdinals;
-                        if ($symbol != '-' || $nth != 1) {
-                            $string .= $this->getOrdinalNumber($nth);
-                        }
-                        if ($symbol == '-') {
-                            $string .= ' last';
-                        }
+                if (!empty($nth)) {
+                    ++$numOrdinals;
+                    if ($symbol != '-' || $nth != 1) {
+                        $string .= $this->getOrdinalNumber($nth);
+                    }
+                    if ($symbol == '-') {
+                        $string .= ' last';
                     }
                 }
+            }
 
-                if (!isset($map[$day])) {
-                    throw new \RuntimeException("byDay $short could not be transformed");
-                }
+            if (!isset($map[$day])) {
+                throw new \RuntimeException("byDay $short could not be transformed");
+            }
 
-                if (!empty($string)) {
-                    $string .= ' ';
-                }
+            if (!empty($string)) {
+                $string .= ' ';
+            }
 
-                return ltrim($string.$map[$day]);
-            },
-            $byDay
-        );
+            $byDay[$key] = ltrim($string.$map[$day]);
+        }
 
         $output = $numOrdinals ? 'the ' : null;
         $output .= $this->getListStringFromArray($byDay, $listSeparator);
