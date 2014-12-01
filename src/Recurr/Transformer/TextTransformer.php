@@ -10,6 +10,7 @@ class TextTransformer
 
     public function transform(Rule $rule)
     {
+        $this->fragments = array();
         $this->addFragment('every');
 
         switch ($rule->getFreq()) {
@@ -285,20 +286,46 @@ class TextTransformer
             $timestamp += 86400;
         }
 
-        $byDay = array_map(
-            function ($short) use ($map) {
-                $short = strtoupper($short);
+        $numOrdinals = 0;
 
-                if (!isset($map[$short])) {
+        $byDay = array_map(
+            function ($short) use ($map, &$numOrdinals) {
+                $day    = strtoupper($short);
+                $string = '';
+
+                if (preg_match('/([+-]?)([0-9]*)([A-Z]+)/', $short, $parts)) {
+                    $symbol = $parts[1];
+                    $nth    = $parts[2];
+                    $day    = $parts[3];
+
+                    if (!empty($nth)) {
+                        ++$numOrdinals;
+                        if ($symbol != '-' || $nth != 1) {
+                            $string .= $this->getOrdinalNumber($nth);
+                        }
+                        if ($symbol == '-') {
+                            $string .= ' last';
+                        }
+                    }
+                }
+
+                if (!isset($map[$day])) {
                     throw new \RuntimeException("byDay $short could not be transformed");
                 }
 
-                return $map[$short];
+                if (!empty($string)) {
+                    $string .= ' ';
+                }
+
+                return ltrim($string.$map[$day]);
             },
             $byDay
         );
 
-        return $this->getListStringFromArray($byDay, $listSeparator);
+        $output = $numOrdinals ? 'the ' : null;
+        $output .= $this->getListStringFromArray($byDay, $listSeparator);
+
+        return $output;
     }
 
     public function getByMonthDayAsText($byMonthDay, $listSeparator = 'and')

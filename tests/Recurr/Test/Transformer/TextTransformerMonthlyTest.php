@@ -45,5 +45,29 @@ class TextTransformerMonthlyTest extends TextTransformerBase
     {
         $rule = new Rule('FREQ=MONTHLY;BYDAY=TU,WE,FR', $this->dateTime);
         $this->assertEquals('every month on Tuesday, Wednesday and Friday', $this->transformer->transform($rule));
+
+        $rule = new Rule('FREQ=MONTHLY;BYDAY=+4MO', $this->dateTime);
+        $this->assertEquals(
+            'every month on the 4th Monday',
+            $this->transformer->transform($rule)
+        );
+
+        $rule = new Rule('FREQ=MONTHLY;BYDAY=+4MO,+2TU', $this->dateTime);
+        $this->assertEquals(
+            'every month on the 4th Monday and 2nd Tuesday',
+            $this->transformer->transform($rule)
+        );
+
+        $rule = new Rule('FREQ=MONTHLY;BYDAY=+4MO,+2TU,+3WE', $this->dateTime);
+        $this->assertEquals(
+            'every month on the 4th Monday, 2nd Tuesday and 3rd Wednesday',
+            $this->transformer->transform($rule)
+        );
+
+        $rule = new Rule('FREQ=MONTHLY;BYDAY=1MO,+1TU,+2WE,+3WE,+4WE,-1TH,-2FR,-3SA,-4SU', $this->dateTime);
+        $this->assertEquals(
+            'every month on the 1st Monday, 1st Tuesday, 2nd Wednesday, 3rd Wednesday, 4th Wednesday, last Thursday, 2nd last Friday, 3rd last Saturday and 4th last Sunday',
+            $this->transformer->transform($rule)
+        );
     }
 }
