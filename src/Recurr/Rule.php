@@ -191,7 +191,9 @@ class Rule
         $this->setStartDate($startDate);
         $this->setEndDate($endDate);
 
-        if (!empty($rrule)) {
+        if (is_array($rrule)) {
+            $this->loadFromArray($rrule);
+        } else if (!empty($rrule)) {
             $this->loadFromString($rrule);
         }
     }
@@ -208,6 +210,24 @@ class Rule
      * @throws InvalidRRule
      */
     public static function createFromString($rrule, $startDate = null, $endDate = null, $timezone = null)
+    {
+        $rule = new static($rrule, $startDate, $endDate, $timezone);
+
+        return $rule;
+    }
+
+    /**
+     * Create a Rule object based on a RRULE array.
+     *
+     * @param array           $rrule RRULE array
+     * @param string|\DateTime $startDate
+     * @param \DateTime|null   $endDate
+     * @param string           $timezone
+     *
+     * @return Rule
+     * @throws InvalidRRule
+     */
+    public static function createFromArray($rrule, $startDate = null, $endDate = null, $timezone = null)
     {
         $rule = new static($rrule, $startDate, $endDate, $timezone);
 
@@ -243,6 +263,19 @@ class Rule
             $parts[$key] = $val;
         }
 
+	return $this->loadFromArray($parts);
+    }
+
+    /**
+     * Populate the object based on a RRULE array.
+     *
+     * @param array
+     *
+     * @return Rule
+     * @throws InvalidRRule
+     */
+    public function loadFromArray($parts)
+    {
         // FREQ is required
         if (!isset($parts['FREQ'])) {
             throw new InvalidRRule('FREQ is required');
