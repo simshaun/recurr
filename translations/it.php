@@ -5,7 +5,7 @@ return array(
     'for %count% times' => 'per %count% volte',
     'for %count% time' => 'per una %count% volta',
     '(~ approximate)' => '(~ approssimato)',
-    'until %date%' => 'fino a %date%', // e.g. every year until July 4, 2014
+    'until %date%' => 'fino al %date%', // e.g. every year until July 4, 2014
     'day_date' => defined('PHP_WINDOWS_VERSION_BUILD') ? '%#d %B, %Y' : '%e %B, %Y',
     'and' => 'e',
     'or' => 'o',
