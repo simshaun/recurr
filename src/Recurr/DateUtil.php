@@ -442,12 +442,8 @@ class DateUtil
 
     public static function hasLeapYearBug()
     {
-        $leapBugTest = \DateTime::createFromFormat('z Y', '80 2016');
-        if ($leapBugTest->format('Y-m-d') == '2016-03-22') {
-            return true;
-        }
-
-        return false;
+        $leapBugTest = \DateTime::createFromFormat('Y-m-d', '2016-03-21');
+        return $leapBugTest->format('z') != '80';
     }
 
     /**
