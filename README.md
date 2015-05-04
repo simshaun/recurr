@@ -7,32 +7,9 @@ Recurr was developed as a precursor for a calendar with recurring events, and is
 Installation
 ------------
 
-Recurr is hosted on [packagist](http://packagist.org), meaning you can install it with [Composer](http://getcomposer.org/).
+Recurr is hosted on [Packagist](https://packagist.org), meaning you can install it with [Composer](https://getcomposer.org/):
 
-1. Create a composer.json file
-
-    ```json
-    {
-        "require": {
-            "simshaun/recurr": "dev-master"
-        }
-    }
-    ```
-   > *We recommend using a [stable version](https://packagist.org/packages/simshaun/recurr) instead of dev-master.*
-
-2. Install Composer and run the install command
-
-    ```sh
-    wget http://getcomposer.org/composer.phar
-    php composer.phar install
-    ```
-
-3. Include Composer's autoloader
-
-    ```php
-    require 'vendor/autoload.php';
-    ```
-
+`composer require simshaun/recurr`
 
 RRULE to DateTime objects
 -----------
@@ -98,13 +75,25 @@ print_r($transformer->transform($rule, null, $constraint));
 RRULE to Text
 --------------------------
 
-Recurr supports transforming some recurrence rules in to human readable text.
-This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies. It is not yet localized and only supports English.
+Recurr supports transforming some recurrence rules into human readable text.
+This feature is still in beta and only supports yearly, monthly, weekly, and daily frequencies.
 
 ```php
 $rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
 
 $textTransformer = new TextTransformer();
+echo $textTransformer->transform($rule);
+```
+
+If you need more than English you can pass in a translator with one of the
+supported locales (currently en, de, fr, it).
+
+```php
+$rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
+
+$textTransformer = new TextTransformer(
+    new \Recurr\Transformer\Translator('de')
+);
 echo $textTransformer->transform($rule);
 ```
 

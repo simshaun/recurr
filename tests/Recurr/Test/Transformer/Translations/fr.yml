@@ -1,0 +1,53 @@
+# base tests
+"yearly for 1 time": "annuellement une fois"
+"yearly for 3 times": "annuellement 3 fois"
+"yearly until July 4, 2014": "annuellement jusqu'au 4 juillet, 2014"
+"yearly (~ approximate)": "annuellement (~ approximation)"
+"monthly (~ approximate)": "mensuellement (~ approximation)"
+
+# monthly tests
+"monthly": "mensuellement"
+"every 10 months": "tous les 10 mois"
+"every January, May and August": "chaque janvier, mai et août"
+"every 2 months in January, May and August": "tous les 2 mois en janvier, mai et août"
+"monthly on the 1st, 5th and 21st": "mensuellement le 1er, 5ème et 21ème"
+"monthly on Tuesday or Friday the 1st, 5th or 21st": "mensuellement le mardi ou vendredi le 1er, 5ème ou 21ème"
+"monthly on the 21st day and on the last day": "mensuellement le 21ème jour et le dernier jour"
+"monthly on Tuesday or Friday the 1st day or 2nd to the last day": "mensuellement le mardi ou vendredi le 1er jour ou avant dernier jour"
+"monthly on Tuesday, Wednesday and Friday": "mensuellement le mardi, mercredi et vendredi"
+"monthly on the 4th Monday": "mensuellement le 4ème lundi"
+"monthly on the 4th Monday and 2nd Tuesday": "mensuellement le 4ème lundi et 2ème mardi"
+"monthly on the 4th Monday, 2nd Tuesday and 3rd Wednesday": "mensuellement le 4ème lundi, 2ème mardi et 3ème mercredi"
+"monthly on the 1st Monday, 1st Tuesday, 2nd Wednesday, 3rd Wednesday, 4th Wednesday, last Thursday, 2nd to the last Friday, 3rd to the last Saturday and 4th to the last Sunday":
+    "mensuellement le 1er lundi, 1er mardi, 2ème mercredi, 3ème mercredi, 4ème mercredi, dernier jeudi, avant dernier vendredi, 3ème au dernier samedi et 4ème au dernier dimanche"
+
+# daily tests
+"daily": "chaque jour"
+"every 10 days": "tous les 10 jours"
+"daily in January, May and August": "chaque jour en janvier, mai et août"
+"every 2 days in January, May and August": "tous les 2 jours en janvier, mai et août"
+"daily on the 1st, 5th and 21st of the month": "chaque jour le 1er, 5ème et 21ème du mois"
+"daily on Tuesday or Friday the 1st, 5th or 21st of the month": "chaque jour le mardi ou vendredi le 1er, 5ème ou 21ème du mois"
+"daily on Tuesday, Wednesday and Friday": "chaque jour le mardi, mercredi et vendredi"
+
+# yearly tests
+"yearly": "annuellement"
+"every 10 years": "tous les 10 ans"
+"every January, May and August": "chaque janvier, mai et août"
+"every 2 years in January, May and August": "tous les 2 ans en janvier, mai et août"
+"every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month": "tous les 4 ans en novembre le mardi le 2ème, 3ème, 4ème, 5ème, 6ème, 7ème ou 8ème du mois"
+"yearly on the 1st, 5th and 21st of the month": "annuellement le 1er, 5ème et 21ème du mois"
+"yearly on Tuesday or Friday the 1st, 5th or 21st of the month": "annuellement le mardi ou vendredi le 1er, 5ème ou 21ème du mois"
+"yearly on Tuesday, Wednesday and Friday": "annuellement le mardi, mercredi et vendredi"
+"yearly on the 1st and 200th day": "annuellement le 1er et 200ème jour"
+"yearly in week 3": "annuellement en semaine 3"
+"yearly in weeks 3, 20 and 30": "annuellement en semaines 3, 20 et 30"
+
+# weekly tests
+"weekly": "chaque semaine"
+"every 10 weeks": "toutes les 10 semaines"
+"weekly in January, May and August": "chaque semaine en janvier, mai et août"
+"every 2 weeks in January, May and August": "toutes les 2 semaines en janvier, mai et août"
+"weekly on the 1st, 5th and 21st of the month": "chaque semaine le 1er, 5ème et 21ème du mois"
+"weekly on Tuesday or Friday the 1st, 5th or 21st of the month": "chaque semaine le mardi ou vendredi le 1er, 5ème ou 21ème du mois"
+"weekly on Tuesday, Wednesday and Friday": "chaque semaine le mardi, mercredi et vendredi"

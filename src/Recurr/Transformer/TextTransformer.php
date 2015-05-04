@@ -40,13 +40,13 @@ class TextTransformer
         $until = $rule->getUntil();
         $count = $rule->getCount();
         if ($until instanceof \DateTime) {
-            $dateFormatted = str_replace('  ', ' ', strftime($this->translator->trans('day_date'), $until->format('U')));
+            $dateFormatted = $this->translator->trans('day_date', array('date' => $until->format('U')));
             $this->addFragment($this->translator->trans('until %date%', array('date' => $dateFormatted)));
         } else if (!empty($count)) {
             if ($this->isPlural($count)) {
                 $this->addFragment($this->translator->trans('for %count% times', array('count' => $count)));
             } else {
-                $this->addFragment($this->translator->trans('for %count% time', array('count' => $count)));
+                $this->addFragment($this->translator->trans('for one time'));
             }
         }
 
@@ -99,7 +99,7 @@ class TextTransformer
 
         if (!empty($byMonth)) {
             if ($interval != 1) {
-                $this->addFragment($this->translator->trans('in'));
+                $this->addFragment($this->translator->trans('in_month'));
             }
 
             $this->addByMonth($rule);
@@ -109,6 +109,7 @@ class TextTransformer
         $byDay      = $rule->getByDay();
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
+            $this->addFragment($this->translator->trans('of_the_month'));
         } else if (!empty($byDay)) {
             $this->addByDay($rule);
         }
@@ -122,7 +123,7 @@ class TextTransformer
 
         $byWeekNum = $rule->getByWeekNumber();
         if (!empty($byWeekNum)) {
-            $this->addFragment($this->translator->trans('in'));
+            $this->addFragment($this->translator->trans('in_week'));
             $this->addFragment($this->translator->trans($this->isPlural(count($byWeekNum)) ? 'weeks' : 'week'));
             $this->addFragment($this->getByWeekNumberAsText($byWeekNum));
         }
@@ -141,7 +142,7 @@ class TextTransformer
 
         if (!empty($byMonth)) {
             if ($interval != 1) {
-                $this->addFragment($this->translator->trans('in'));
+                $this->addFragment($this->translator->trans('in_month'));
             }
 
             $this->addByMonth($rule);
@@ -164,7 +165,7 @@ class TextTransformer
         $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% weeks' : 'every week', array('count' => $interval)));
 
         if (!empty($byMonth)) {
-            $this->addFragment($this->translator->trans('in'));
+            $this->addFragment($this->translator->trans('in_month'));
             $this->addByMonth($rule);
         }
 
@@ -172,6 +173,7 @@ class TextTransformer
         $byDay      = $rule->getByDay();
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
+            $this->addFragment($this->translator->trans('of_the_month'));
         } else if (!empty($byDay)) {
             $this->addByDay($rule);
         }
@@ -185,7 +187,7 @@ class TextTransformer
         $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% days' : 'every day', array('count' => $interval)));
 
         if (!empty($byMonth)) {
-            $this->addFragment($this->translator->trans('in'));
+            $this->addFragment($this->translator->trans('in_month'));
             $this->addByMonth($rule);
         }
 
@@ -193,6 +195,7 @@ class TextTransformer
         $byDay      = $rule->getByDay();
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
+            $this->addFragment($this->translator->trans('of_the_month'));
         } else if (!empty($byDay)) {
             $this->addByDay($rule);
         }
@@ -216,12 +219,12 @@ class TextTransformer
 
         if (!empty($byDay)) {
             $this->addFragment($this->translator->trans('on'));
-            $this->addFragment($this->getByDayAsText($byDay, $this->translator->trans('or')));
-            $this->addFragment($this->translator->trans('the'));
-            $this->addFragment($this->getByMonthDayAsText($byMonthDay, $this->translator->trans('or')));
+            $this->addFragment($this->getByDayAsText($byDay, 'or'));
+            $this->addFragment($this->translator->trans('the_for_monthday'));
+            $this->addFragment($this->getByMonthDayAsText($byMonthDay, 'or'));
         } else {
             $this->addFragment($this->translator->trans('on the'));
-            $this->addFragment($this->getByMonthDayAsText($byMonthDay, $this->translator->trans('and')));
+            $this->addFragment($this->getByMonthDayAsText($byMonthDay, 'and'));
         }
     }
 
@@ -243,9 +246,10 @@ class TextTransformer
             sort($byMonth);
         }
 
+        $monthNames = $this->translator->trans('month_names');
         $byMonth = array_map(
-            function ($monthInt) {
-                return strftime('%B', mktime(1, 1, 1, $monthInt, 1));
+            function ($monthInt) use ($monthNames) {
+                return $monthNames[$monthInt - 1];
             },
             $byMonth
         );
@@ -253,14 +257,10 @@ class TextTransformer
         return $this->getListStringFromArray($byMonth);
     }
 
-    public function getByDayAsText($byDay, $listSeparator = null)
+    public function getByDayAsText($byDay, $listSeparator = 'and')
     {
         if (empty($byDay)) {
             return '';
-        }
-
-        if (null === $listSeparator) {
-            $listSeparator = $this->translator->trans('and');
         }
 
         $map = array(
@@ -273,9 +273,10 @@ class TextTransformer
             'SA' => null
         );
 
+        $dayNames = $this->translator->trans('day_names');
         $timestamp = mktime(1, 1, 1, 1, 12, 2014); // A Sunday
         foreach (array_keys($map) as $short) {
-            $long        = strftime('%A', $timestamp);
+            $long        = $dayNames[date('w', $timestamp)];
             $map[$short] = $long;
             $timestamp += 86400;
         }
@@ -292,12 +293,7 @@ class TextTransformer
 
                 if (!empty($nth)) {
                     ++$numOrdinals;
-                    if ($symbol != '-' || $nth != 1) {
-                        $string .= $this->getOrdinalNumber($nth);
-                    }
-                    if ($symbol == '-') {
-                        $string .= ' ' . $this->translator->trans('last');
-                    }
+                    $string .= $this->getOrdinalNumber($symbol == '-' ? -$nth : $nth);
                 }
             }
 
@@ -312,7 +308,10 @@ class TextTransformer
             $byDay[$key] = ltrim($string.$map[$day]);
         }
 
-        $output = $numOrdinals ? $this->translator->trans('the') . ' ' : null;
+        $output = $numOrdinals ? $this->translator->trans('the_for_weekday') . ' ' : '';
+        if ($output == ' ') {
+            $output = '';
+        }
         $output .= $this->getListStringFromArray($byDay, $listSeparator);
 
         return $output;
@@ -324,9 +323,38 @@ class TextTransformer
             return '';
         }
 
-        sort($byMonthDay);
+        // sort negative indices in reverse order so we get e.g. 1st, 2nd, 4th, 3rd last, last day
+        usort($byMonthDay, function ($a, $b) {
+            if (($a < 0 && $b < 0) || ($a >= 0 && $b >= 0)) {
+                return $a - $b;
+            }
 
-        $byMonthDay = array_map(array($this, 'getOrdinalNumber'), $byMonthDay);
+            return $b - $a;
+        });
+
+        // generate ordinal numbers and insert a "on the" for clarity in the middle if we have both
+        // positive and negative ordinals. This is to avoid confusing situations like:
+        //
+        // monthly on the 1st and 2nd to the last day
+        //
+        // which gets clarified to:
+        //
+        // monthly on the 1st day and on the 2nd to the last day
+        $hadPositives = false;
+        $hadNegatives = false;
+        foreach ($byMonthDay as $index => $day) {
+            $prefix = '';
+            if ($day >= 0) {
+                $hadPositives = true;
+            }
+            if ($day < 0) {
+                if ($hadPositives && !$hadNegatives && $listSeparator === 'and') {
+                    $prefix = $this->translator->trans('on the') . ' ';
+                }
+                $hadNegatives = true;
+            }
+            $byMonthDay[$index] = $prefix . $this->getOrdinalNumber($day, end($byMonthDay) < 0);
+        }
 
         return $this->getListStringFromArray($byMonthDay, $listSeparator);
     }
@@ -337,9 +365,20 @@ class TextTransformer
             return '';
         }
 
-        sort($byYearDay);
+        // sort negative indices in reverse order so we get e.g. 1st, 2nd, 4th, 3rd last, last day
+        usort($byYearDay, function ($a, $b) {
+            if (($a < 0 && $b < 0) || ($a >= 0 && $b >= 0)) {
+                return $a - $b;
+            }
 
-        $byYearDay = array_map(array($this, 'getOrdinalNumber'), $byYearDay);
+            return $b - $a;
+        });
+
+        $byYearDay = array_map(
+            array($this, 'getOrdinalNumber'),
+            $byYearDay,
+            array_fill(0, count($byYearDay), end($byYearDay) < 0)
+        );
 
         return $this->getListStringFromArray($byYearDay);
     }
@@ -359,7 +398,9 @@ class TextTransformer
 
     protected function addFragment($fragment)
     {
-        $this->fragments[] = $fragment;
+        if ($fragment && $fragment !== ' ') {
+            $this->fragments[] = $fragment;
+        }
     }
 
     public function resetFragments()
@@ -372,20 +413,19 @@ class TextTransformer
         return $number % 100 != 1;
     }
 
-    protected function getOrdinalNumber($number)
+
+    protected function getOrdinalNumber($number, $hasNegatives = false)
     {
-        if (!ctype_digit($number)) {
+        if (!preg_match('{^-?\d+$}D', $number)) {
             throw new \RuntimeException('$number must be a whole number');
         }
 
-        return $this->translator->trans('ordinal_number', array('number' => $number));
+        return $this->translator->trans('ordinal_number', array('number' => $number, 'has_negatives' => $hasNegatives));
     }
 
-    protected function getListStringFromArray($values, $separator = null)
+    protected function getListStringFromArray($values, $separator = 'and')
     {
-        if (null === $separator) {
-            $separator = $this->translator->trans('and');
-        }
+        $separator = $this->translator->trans($separator);
 
         if (!is_array($values)) {
             throw new \RuntimeException('$values must be an array.');
