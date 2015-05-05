@@ -7,7 +7,6 @@ use Recurr\RecurrenceCollection;
 
 class RecurrenceCollectionTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var RecurrenceCollection */
     protected $collection;
 
