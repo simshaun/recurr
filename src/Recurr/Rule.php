@@ -383,17 +383,24 @@ class Rule
         $parts[] = 'FREQ='.$this->getFreqAsText();
 
         // UNTIL or COUNT
-        $until = $this->getUntil();
+        // Until should always be expressed in UTC, just to be safe
+        $until = clone $this->getUntil();
+        $until->setTimezone(new \DateTimeZone('UTC'));
+
         $count = $this->getCount();
         if (!empty($until)) {
-            $parts[] = 'UNTIL='.$until->format('Ymd\THis');
+            $parts[] = 'UNTIL='.$until->format('Ymd\THis\Z');
         } elseif (!empty($count)) {
             $parts[] = 'COUNT='.$count;
         }
 
         // DTSTART
         if ($this->isStartDateFromDtstart) {
-            $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\THis');
+            $d = $this->getStartDate();
+            $tzid = $d->getTimezone()->getName();
+            $date = $d->format('Ymd\THis');
+
+            $parts[] = "DTSTART;TZID=$tzid:$date";
         }
 
         // DTEND
