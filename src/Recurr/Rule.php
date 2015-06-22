@@ -404,7 +404,7 @@ class Rule
 
         // DTSTART
         if ($this->isStartDateFromDtstart) {
-            if ($timezoneType === TZ_FIXED) {
+            if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getStartDate();
                 $tzid = $d->getTimezone()->getName();
                 $date = $d->format($format);
@@ -416,7 +416,7 @@ class Rule
 
         // DTEND
         if ($this->endDate instanceof \DateTime) {
-            if ($timezoneType === TZ_FIXED) {
+            if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getEndDate();
                 $tzid = $d->getTimezone()->getName();
                 $date = $d->format($format);
