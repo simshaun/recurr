@@ -190,6 +190,23 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetStringWithUTC()
+    {
+        $this->rule->setFreq('DAILY');
+        $this->rule->setInterval(1);
+        $this->rule->setUntil(new \DateTime('2015-07-10 04:00:00', new \DateTimeZone('America/New_York')));
+
+        $this->assertNotEquals(
+            'FREQ=DAILY;UNTIL=20150710T040000Z;INTERVAL=1;WKST=MO',
+            $this->rule->getString()
+        );
+
+        $this->assertEquals(
+            'FREQ=DAILY;UNTIL=20150710T080000Z;INTERVAL=1;WKST=MO',
+            $this->rule->getString(Rule::TZ_FIXED)
+        );
+    }
+
     public function testGetStringWithDtstart()
     {
         $string = 'FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';

@@ -87,6 +87,9 @@ use Recurr\Weekday;
  */
 class Rule
 {
+    const TZ_FIXED = 'fixed';
+    const TZ_FLOAT = 'floating';
+
     public static $freqs = array(
         'YEARLY'   => 0,
         'MONTHLY'  => 1,
@@ -375,8 +378,10 @@ class Rule
      *
      * @return string
      */
-    public function getString()
+    public function getString($timezoneType=self::TZ_FLOAT)
     {
+        $format = 'Ymd\THis';
+
         $parts = array();
 
         // FREQ
@@ -386,19 +391,40 @@ class Rule
         $until = $this->getUntil();
         $count = $this->getCount();
         if (!empty($until)) {
-            $parts[] = 'UNTIL='.$until->format('Ymd\THis');
+            if ($timezoneType === self::TZ_FIXED) {
+                $u = clone $until;
+                $u->setTimezone(new \DateTimeZone('UTC'));
+                $parts[] = 'UNTIL='.$u->format($format.'\Z');
+            } else {
+                $parts[] = 'UNTIL='.$until->format($format);
+            }
         } elseif (!empty($count)) {
             $parts[] = 'COUNT='.$count;
         }
 
         // DTSTART
         if ($this->isStartDateFromDtstart) {
-            $parts[] = 'DTSTART='.$this->getStartDate()->format('Ymd\THis');
+            if ($timezoneType === self::TZ_FIXED) {
+                $d = $this->getStartDate();
+                $tzid = $d->getTimezone()->getName();
+                $date = $d->format($format);
+                $parts[] = "DTSTART;TZID=$tzid:$date";
+            } else {
+                $parts[] = 'DTSTART='.$this->getStartDate()->format($format);
+            }
         }
 
         // DTEND
         if ($this->endDate instanceof \DateTime) {
-            $parts[] = 'DTEND='.$this->getEndDate()->format('Ymd\THis');
+            if ($timezoneType === self::TZ_FIXED) {
+                $d = $this->getEndDate();
+                $tzid = $d->getTimezone()->getName();
+                $date = $d->format($format);
+
+                $parts[] = "DTEND;TZID=$tzid:$date";
+            } else {
+                $parts[] = 'DTEND='.$this->getEndDate()->format($format);
+            }
         }
 
         // INTERVAL
