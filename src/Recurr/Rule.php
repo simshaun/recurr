@@ -150,6 +150,7 @@ class Rule
 
     /** @var string */
     protected $weekStart = 'MO';
+    protected $weekStartDefined = false;
 
     /** @var array */
     protected $days = array(
@@ -266,7 +267,7 @@ class Rule
             $parts[$key] = $val;
         }
 
-	return $this->loadFromArray($parts);
+        return $this->loadFromArray($parts);
     }
 
     /**
@@ -489,7 +490,7 @@ class Rule
 
         // WKST
         $weekStart = $this->getWeekStart();
-        if (!empty($weekStart)) {
+        if ($this->weekStartDefined && !empty($weekStart)) {
             $parts[] = 'WKST='.$weekStart;
         }
 
@@ -1046,7 +1047,8 @@ class Rule
             throw new InvalidArgument('Week Start must be one of MO, TU, WE, TH, FR, SA, SU');
         }
 
-        $this->weekStart = $weekStart;
+        $this->weekStart        = $weekStart;
+        $this->weekStartDefined = true;
 
         return $this;
     }

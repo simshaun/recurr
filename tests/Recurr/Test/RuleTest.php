@@ -197,12 +197,12 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->setUntil(new \DateTime('2015-07-10 04:00:00', new \DateTimeZone('America/New_York')));
 
         $this->assertNotEquals(
-            'FREQ=DAILY;UNTIL=20150710T040000Z;INTERVAL=1;WKST=MO',
+            'FREQ=DAILY;UNTIL=20150710T040000Z;INTERVAL=1',
             $this->rule->getString()
         );
 
         $this->assertEquals(
-            'FREQ=DAILY;UNTIL=20150710T080000Z;INTERVAL=1;WKST=MO',
+            'FREQ=DAILY;UNTIL=20150710T080000Z;INTERVAL=1',
             $this->rule->getString(Rule::TZ_FIXED)
         );
     }
@@ -232,6 +232,24 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->loadFromString($string);
 
         $this->assertEquals($string, $this->rule->getString());
+    }
+
+    public function testGetStringWithoutExplicitWkst()
+    {
+        $string = 'FREQ=MONTHLY;COUNT=2;INTERVAL=1';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertNotContains('WKST', $this->rule->getString());
+    }
+
+    public function testGetStringWithExplicitWkst()
+    {
+        $string = 'FREQ=MONTHLY;COUNT=2;INTERVAL=1;WKST=TH';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertContains('WKST=TH', $this->rule->getString());
     }
 
     /**
