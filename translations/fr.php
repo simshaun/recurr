@@ -46,10 +46,10 @@ return array(
     'on the' => 'le', // e.g. every year on the 1st and 200th day
     'of_the_month' => 'du mois', // e.g. every year on the 2nd or 3rd of the month
     'every %count% years' => 'tous les %count% ans',
-    'every year' => 'annuellement',
+    'every year' => 'chaque année',
     'every_month_list' => 'chaque', // e.g. every January, May and August
     'every %count% months' => 'tous les %count% mois',
-    'every month' => 'mensuellement',
+    'every month' => 'chaque mois',
     'every %count% weeks' => 'toutes les %count% semaines',
     'every week' => 'chaque semaine',
     'every %count% days' => 'tous les %count% jours',
@@ -78,10 +78,13 @@ return array(
         } elseif ($isNegative) {
             $number = abs($number);
             $abbreviation = $number . 'ème au dernier';
-        } elseif ($number == 1) {
+        } elseif ($number == 1 && (!$params['day_in_month'])) {
             $abbreviation = $number . 'er';
-        } else {
+        } else if (!$params['day_in_month']) {
             $abbreviation = $number . 'ème';
+        }
+        else {
+            $abbreviation = $number;
         }
 
         if (!empty($params['has_negatives'])) {
