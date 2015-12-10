@@ -252,6 +252,21 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('WKST=TH', $this->rule->getString());
     }
 
+    public function testSetStartDateAffectsStringOutput()
+    {
+        $this->rule->loadFromString('FREQ=MONTHLY;COUNT=2');
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+
+        $this->rule->setStartDate(new \DateTime('2015-12-10'));
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+
+        $this->rule->setStartDate(new \DateTime('2015-12-10'), true);
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART=20151210T000000', $this->rule->getString());
+
+        $this->rule->setStartDate(new \DateTime('2015-12-10'), false);
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+    }
+
     /**
      * @expectedException \Recurr\Exception\InvalidArgument
      */

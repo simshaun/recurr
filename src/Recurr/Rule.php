@@ -118,6 +118,9 @@ class Rule
     /** @var int */
     protected $interval = 1;
 
+    /** @var bool */
+    protected $isExplicitInterval = false;
+
     /** @var \DateTime|null */
     protected $until;
 
@@ -430,7 +433,7 @@ class Rule
 
         // INTERVAL
         $interval = $this->getInterval();
-        if (!empty($interval)) {
+        if ($this->isExplicitInterval && !empty($interval)) {
             $parts[] = 'INTERVAL='.$interval;
         }
 
@@ -539,13 +542,18 @@ class Rule
     /**
      * This date specifies the first instance in the recurrence set.
      *
-     * @param \DateTime|null $startDate Date of the first instance in the recurrence
+     * @param \DateTime|null $startDate       Date of the first instance in the recurrence
+     * @param bool|null      $includeInString If true, include as DTSTART when calling getString()
      *
      * @return $this
      */
-    public function setStartDate($startDate)
+    public function setStartDate($startDate, $includeInString = null)
     {
         $this->startDate = $startDate;
+
+        if ($includeInString !== null) {
+            $this->isStartDateFromDtstart = (bool) $includeInString;
+        }
 
         return $this;
     }
@@ -667,7 +675,8 @@ class Rule
             throw new InvalidArgument('Interval must be a positive integer');
         }
 
-        $this->interval = $interval;
+        $this->interval           = $interval;
+        $this->isExplicitInterval = true;
 
         return $this;
     }
