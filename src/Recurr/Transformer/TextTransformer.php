@@ -353,7 +353,7 @@ class TextTransformer
                 }
                 $hadNegatives = true;
             }
-            $byMonthDay[$index] = $prefix . $this->getOrdinalNumber($day, end($byMonthDay) < 0);
+            $byMonthDay[$index] = $prefix . $this->getOrdinalNumber($day, end($byMonthDay) < 0, true);
         }
 
         return $this->getListStringFromArray($byMonthDay, $listSeparator);
@@ -414,13 +414,13 @@ class TextTransformer
     }
 
 
-    protected function getOrdinalNumber($number, $hasNegatives = false)
+    protected function getOrdinalNumber($number, $hasNegatives = false, $dayInMonth = false)
     {
         if (!preg_match('{^-?\d+$}D', $number)) {
             throw new \RuntimeException('$number must be a whole number');
         }
 
-        return $this->translator->trans('ordinal_number', array('number' => $number, 'has_negatives' => $hasNegatives));
+        return $this->translator->trans('ordinal_number', array('number' => $number, 'has_negatives' => $hasNegatives, 'day_in_month' => $dayInMonth));
     }
 
     protected function getListStringFromArray($values, $separator = 'and')
