@@ -48,7 +48,7 @@ $rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate);
 $transformer = new \Recurr\Transformer\ArrayTransformer();
 
 $constraint = new \Recurr\Transformer\Constraint\BeforeConstraint(new \DateTime('2014-08-01 00:00:00'));
-print_r($transformer->transform($rule, null, $constraint));
+print_r($transformer->transform($rule, $constraint));
 ```
 
 > Note: If building your own constraint, it is important to know that dates which do not meet the constraint's requirements do **not** count toward the transformer's virtual limit. If you manually set your constraint's `$stopsTransformer` property to `false`, the transformer *might* crash via an infinite loop. See the `BetweenConstraint` for an example on how to prevent that.

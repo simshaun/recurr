@@ -36,9 +36,6 @@ use Recurr\Exception\MissingData;
  */
 class ArrayTransformer
 {
-    /** @var int */
-    protected $virtualLimit = 732;
-
     /** @var ArrayTransformerConfig */
     protected $config;
 
@@ -53,15 +50,10 @@ class ArrayTransformer
     /**
      * Construct a new ArrayTransformer
      *
-     * @param null                   $virtualLimit The virtual limit imposed upon infinite recurrence
      * @param ArrayTransformerConfig $config
      */
-    public function __construct($virtualLimit = null, ArrayTransformerConfig $config = null)
+    public function __construct(ArrayTransformerConfig $config = null)
     {
-        if (is_int($virtualLimit)) {
-            $this->setVirtualLimit($virtualLimit);
-        }
-
         if (!$config instanceof ArrayTransformerConfig) {
             $config = new ArrayTransformerConfig();
         }
@@ -83,7 +75,6 @@ class ArrayTransformer
      * Transform a Rule in to an array of \DateTimes
      *
      * @param Rule                     $rule                    the Rule object
-     * @param int|null                 $virtualLimit            imposed upon infinitely recurring events.
      * @param ConstraintInterface|null $constraint              Potential recurrences must pass the constraint, else
      *                                                          they will not be included in the returned collection.
      * @param bool                     $countConstraintFailures Whether recurrences that fail the constraint's test
@@ -92,12 +83,8 @@ class ArrayTransformer
      * @return RecurrenceCollection
      * @throws MissingData
      */
-    public function transform(
-        Rule $rule,
-        $virtualLimit = null,
-        ConstraintInterface $constraint = null,
-        $countConstraintFailures = true
-    ) {
+    public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
+    {
         if (null === $rule) {
             throw new MissingData('Rule has not been set');
         }
@@ -125,7 +112,7 @@ class ArrayTransformer
         $dt = clone $start;
 
         $maxCount = $rule->getCount();
-        $vLimit   = !empty($virtualLimit) && is_int($virtualLimit) ? $virtualLimit : $this->getVirtualLimit();
+        $vLimit   = $this->config->getVirtualLimit();
 
         $freq          = $rule->getFreq();
         $weekStart     = $rule->getWeekStartAsNum();
@@ -760,29 +747,5 @@ class ArrayTransformer
         }
 
         return array_values($recurrences);
-    }
-
-    /**
-     * Set the virtual limit imposed upon infinitely recurring events.
-     *
-     * @param int $virtualLimit The limit
-     *
-     * @return $this
-     */
-    public function setVirtualLimit($virtualLimit)
-    {
-        $this->virtualLimit = (int) $virtualLimit;
-
-        return $this;
-    }
-
-    /**
-     * Get the virtual limit imposed upon infinitely recurring events.
-     *
-     * @return int
-     */
-    public function getVirtualLimit()
-    {
-        return $this->virtualLimit;
     }
 }

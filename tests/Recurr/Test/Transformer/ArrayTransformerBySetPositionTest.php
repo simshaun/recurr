@@ -3,6 +3,7 @@
 namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
+use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 {
@@ -62,7 +63,11 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
             new \DateTime('2013-01-24')
         );
 
-        $computed = $this->transformer->transform($rule, 5);
+        $config = new ArrayTransformerConfig();
+        $config->setVirtualLimit(5);
+        $this->transformer->setConfig($config);
+
+        $computed = $this->transformer->transform($rule);
 
         $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2013-01-31'), $computed[0]->getStart());

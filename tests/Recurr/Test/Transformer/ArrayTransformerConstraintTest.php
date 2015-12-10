@@ -16,14 +16,14 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         );
 
         $constraint = new BeforeConstraint(new \DateTime('2014-05-16 04:00:00'), false);
-        $computed   = $this->transformer->transform($rule, null, $constraint);
-        $this->assertCount(2, $this->transformer->transform($rule, null, $constraint));
+        $computed   = $this->transformer->transform($rule, $constraint);
+        $this->assertCount(2, $computed);
         $this->assertEquals(new \DateTime('2014-03-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-04-16 04:00:00'), $computed[1]->getStart());
 
         $constraint = new BeforeConstraint(new \DateTime('2014-05-16 04:00:00'), true);
-        $computed   = $this->transformer->transform($rule, null, $constraint);
-        $this->assertCount(3, $this->transformer->transform($rule, null, $constraint));
+        $computed   = $this->transformer->transform($rule, $constraint);
+        $this->assertCount(3, $computed);
         $this->assertEquals(new \DateTime('2014-03-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-04-16 04:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-05-16 04:00:00'), $computed[2]->getStart());
@@ -38,13 +38,13 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         $constraint = new AfterConstraint(new \DateTime('2014-05-16 04:00:00'), false);
 
         // Count instances that fail the constraint towards the rule's limit.
-        $computed = $this->transformer->transform($rule, null, $constraint);
+        $computed = $this->transformer->transform($rule, $constraint);
         $this->assertCount(2, $computed);
         $this->assertEquals(new \DateTime('2014-06-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-07-16 04:00:00'), $computed[1]->getStart());
 
         // Do not count instances that fail the constraint towards the rule's limit.
-        $computed = $this->transformer->transform($rule, null, $constraint, false);
+        $computed = $this->transformer->transform($rule, $constraint, false);
         $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2014-06-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-07-16 04:00:00'), $computed[1]->getStart());
@@ -55,14 +55,14 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         $constraint = new AfterConstraint(new \DateTime('2014-05-16 04:00:00'), true);
 
         // Count instances that fail the constraint towards the rule's limit.
-        $computed = $this->transformer->transform($rule, null, $constraint);
+        $computed = $this->transformer->transform($rule, $constraint);
         $this->assertCount(3, $computed);
         $this->assertEquals(new \DateTime('2014-05-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-06-16 04:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('2014-07-16 04:00:00'), $computed[2]->getStart());
 
         // Do not count instances that fail the constraint towards the rule's limit.
-        $computed = $this->transformer->transform($rule, null, $constraint, false);
+        $computed = $this->transformer->transform($rule, $constraint, false);
         $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2014-05-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-06-16 04:00:00'), $computed[1]->getStart());
@@ -78,7 +78,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         );
 
         $constraint = new AfterConstraint(new \DateTime('2020-05-16 04:00:00'), false);
-        $computed   = $this->transformer->transform($rule, null, $constraint, false);
+        $computed   = $this->transformer->transform($rule, $constraint, false);
         $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2020-06-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2020-07-16 04:00:00'), $computed[1]->getStart());
@@ -96,7 +96,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         $constraint = new BetweenConstraint(
             new \DateTime('2014-03-16 04:00:00'), new \DateTime('2014-07-16 04:00:00'), false
         );
-        $computed   = $this->transformer->transform($rule, null, $constraint);
+        $computed   = $this->transformer->transform($rule, $constraint);
         $this->assertCount(3, $computed);
         $this->assertEquals(new \DateTime('2014-04-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-05-16 04:00:00'), $computed[1]->getStart());
@@ -105,7 +105,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         $constraint = new BetweenConstraint(
             new \DateTime('2014-03-16 04:00:00'), new \DateTime('2014-07-16 04:00:00'), true
         );
-        $computed   = $this->transformer->transform($rule, null, $constraint);
+        $computed   = $this->transformer->transform($rule, $constraint);
         $this->assertCount(5, $computed);
         $this->assertEquals(new \DateTime('2014-03-16 04:00:00'), $computed[0]->getStart());
         $this->assertEquals(new \DateTime('2014-04-16 04:00:00'), $computed[1]->getStart());

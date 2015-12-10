@@ -48,7 +48,11 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
             new \DateTime('2014-06-12 15:00:00')
         );
 
-        $computed = $this->transformer->transform($rule, 2);
+        $config = new ArrayTransformerConfig();
+        $config->setVirtualLimit(2);
+        $this->transformer->setConfig($config);
+
+        $computed = $this->transformer->transform($rule);
 
         $this->assertCount(2, $computed);
         $this->assertEquals(new \DateTime('2014-06-13 13:00:00'), $computed[0]->getStart());
