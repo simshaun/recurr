@@ -81,16 +81,22 @@ class ArrayTransformer
     /**
      * Transform a Rule in to an array of \DateTimes
      *
-     * @param Rule $rule the Rule
-     * @param int|null $virtualLimit imposed upon infinitely recurring events.
-     * @param ConstraintInterface|null $constraint Potential recurrences must pass the constraint, else
-     *                                             they will not be included in the returned collection.
+     * @param Rule                     $rule                    the Rule object
+     * @param int|null                 $virtualLimit            imposed upon infinitely recurring events.
+     * @param ConstraintInterface|null $constraint              Potential recurrences must pass the constraint, else
+     *                                                          they will not be included in the returned collection.
+     * @param bool                     $countConstraintFailures Whether recurrences that fail the constraint's test
+     *                                                          should count towards a rule's COUNT limit.
      *
      * @return RecurrenceCollection
      * @throws MissingData
      */
-    public function transform($rule, $virtualLimit = null, ConstraintInterface $constraint = null)
-    {
+    public function transform(
+        Rule $rule,
+        $virtualLimit = null,
+        ConstraintInterface $constraint = null,
+        $countConstraintFailures = true
+    ) {
         if (null === $rule) {
             throw new MissingData('Rule has not been set');
         }
@@ -537,15 +543,17 @@ class ArrayTransformer
                     }
 
                     if ($constraint instanceof ConstraintInterface && !$constraint->test($dtTmp)) {
-                        if ($constraint->stopsTransformer()) {
-                            $continue = false;
-                            break;
-                        } else {
-                            continue;
+                        if (!$countConstraintFailures) {
+                            if ($constraint->stopsTransformer()) {
+                                $continue = false;
+                                break;
+                            } else {
+                                continue;
+                            }
                         }
+                    } else {
+                        $dates[] = $dtTmp;
                     }
-
-                    $dates[] = $dtTmp;
 
                     if (null !== $count) {
                         --$count;
@@ -583,15 +591,17 @@ class ArrayTransformer
                         }
 
                         if ($constraint instanceof ConstraintInterface && !$constraint->test($dtTmp)) {
-                            if ($constraint->stopsTransformer()) {
-                                $continue = false;
-                                break;
-                            } else {
-                                continue;
+                            if (!$countConstraintFailures) {
+                                if ($constraint->stopsTransformer()) {
+                                    $continue = false;
+                                    break;
+                                } else {
+                                    continue;
+                                }
                             }
+                        } else {
+                            $dates[] = clone $dtTmp;
                         }
-
-                        $dates[] = clone $dtTmp;
 
                         if (null !== $count) {
                             --$count;
