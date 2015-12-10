@@ -34,7 +34,7 @@ print_r($transformer->transform($rule));
 
 ### Transformation Constraints ###
 
-Constraints (`\Recurr\Transformer\ConstraintInterface`) are used by the ArrayTransformer to allow or prevent certain dates from being added to a `RecurrenceCollection`. Recurr provides the following constraints:
+Constraints are used by the ArrayTransformer to allow or prevent certain dates from being added to a `RecurrenceCollection`. Recurr provides the following constraints:
 
 - `AfterConstraint(\DateTime $after, $inc = false)`
 - `BeforeConstraint(\DateTime $before, $inc = false)`
@@ -55,7 +55,7 @@ print_r($transformer->transform($rule, $constraint));
 
 ### Post-Transformation `RecurrenceCollection` Filters ###
 
-`RecurrenceCollection` provides the following **chainable** helper methods to filter out recurrences:
+`RecurrenceCollection` provides the following chainable helper methods to filter out recurrences:
 
 - `startsBetween(\DateTime $after, \DateTime $before, $inc = false)`
 - `startsBefore(\DateTime $before, $inc = false)`
@@ -86,7 +86,7 @@ echo $textTransformer->transform($rule);
 ```
 
 If you need more than English you can pass in a translator with one of the
-supported locales (currently en, de, fr, it).
+supported locales *(see translations folder)*.
 
 ```php
 $rule = new Rule('FREQ=YEARLY;INTERVAL=2;COUNT=3;', new \DateTime());
@@ -100,7 +100,11 @@ echo $textTransformer->transform($rule);
 Warnings
 ---------------
 
-- Monthly recurring rules: **If your start date is on the 29th, 30th, or 31st, Recurr will skip the months that have less than that number of days.** This behavior is configurable:
+- **Monthly recurring rules **
+  By default, if your start date is on the 29th, 30th, or 31st, Recurr will skip following months that don't have at least that many days.
+  *(e.g. Jan 31 + 1 month = March)* 
+
+This behavior is configurable:
 
 ```php
 $timezone    = 'America/New_York';
@@ -113,21 +117,17 @@ $transformerConfig->enableLastDayOfMonthFix();
 $transformer->setConfig($transformerConfig);
 
 print_r($transformer->transform($rule));
-
-/* Recurrences:
- * 2013-01-31
- * 2013-02-28
- * 2013-03-31
- * 2013-04-30
- * 2013-05-31
- */
+// 2013-01-31, 2013-02-28, 2013-03-31, 2013-04-30, 2013-05-31
 ```
+
+- **Under Development**
+  Recurr is still under development and may not be 100% free of bugs.
+  Until v1.0 is reached, BC breaks may occur at any time.
 
 
 Contribute
 ----------
 
-Recurr is still in beta, and is most likely not 100% free of bugs.
 Feel free to comment or make pull requests. Please include tests with PRs.
 
 
