@@ -30,7 +30,7 @@ print_r($transformer->transform($rule));
 
 > Note: The transformer has a "virtual" limit (default 732) on the number of objects it generates.
 > This prevents the script from crashing on an infinitely recurring rule.
-> You can change the virtual limit in the call to `transform` or the `ArrayTransformer` constructor.
+> You can change the virtual limit with an `ArrayTransformerConfig` object that you pass to `ArrayTransformer`.
 
 ### Transformation Constraints ###
 
