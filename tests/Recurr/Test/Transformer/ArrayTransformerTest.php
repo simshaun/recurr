@@ -98,4 +98,19 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2003-01-12 08:30:00'), $computed[28]->getStart());
         $this->assertEquals(new \DateTime('2003-01-12 09:30:00'), $computed[29]->getStart());
     }
+
+    /**
+     * See Issue #71
+     */
+    public function testPhp53vsPhp54()
+    {
+        $rule = Rule::createFromString('FREQ=WEEKLY;COUNT=3;WKST=MO;BYDAY=WE,TH,FR');
+        $rule->setStartDate(new \Datetime('2015-11-02'));
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertEquals(new \DateTime('2015-11-04'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2015-11-05'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2015-11-06'), $computed[2]->getStart());
+    }
 }
