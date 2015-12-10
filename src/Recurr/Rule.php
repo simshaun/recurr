@@ -170,6 +170,9 @@ class Rule
     protected $bySetPosition;
 
     /** @var array */
+    protected $rDates = array();
+
+    /** @var array */
     protected $exDates = array();
 
     /**
@@ -371,6 +374,11 @@ class Rule
             $this->setWeekStart($parts['WKST']);
         }
 
+        // RDATE
+        if (isset($parts['RDATE'])) {
+            $this->setRDates(explode(',', $parts['RDATE']));
+        }
+
         // EXDATE
         if (isset($parts['EXDATE'])) {
             $this->setExDates(explode(',', $parts['EXDATE']));
@@ -495,6 +503,22 @@ class Rule
         $weekStart = $this->getWeekStart();
         if ($this->weekStartDefined && !empty($weekStart)) {
             $parts[] = 'WKST='.$weekStart;
+        }
+
+        // RDATE
+        $rDates = $this->getRDates();
+        if (!empty($rDates)) {
+            foreach ($rDates as $key => $inclusion) {
+                $format = 'Ymd';
+                if ($inclusion->hasTime) {
+                    $format .= '\THis';
+                    if ($inclusion->isUtcExplicit) {
+                        $format .= '\Z';
+                    }
+                }
+                $rDates[$key] = $inclusion->date->format($format);
+            }
+            $parts[] = 'RDATE='.implode(',', $rDates);
         }
 
         // EXDATE
@@ -1119,6 +1143,45 @@ class Rule
     public function getBySetPosition()
     {
         return $this->bySetPosition;
+    }
+
+    /**
+     * This rule specifies an array of dates that will be
+     * included in a recurrence set.
+     *
+     * @param string[]|DateInclusion[] $rDates Array of dates that will be
+     *                                         included in the recurrence set.
+     *
+     * @return $this
+     */
+    public function setRDates(array $rDates)
+    {
+        $timezone = new \DateTimeZone($this->getTimezone());
+
+        foreach ($rDates as $key => $val) {
+            if ($val instanceof DateInclusion) {
+                $val->date = $this->convertZtoUtc($val->date);
+            } else {
+                $date          = new \DateTime($val, $timezone);
+                $rDates[$key] = new DateInclusion(
+                    $this->convertZtoUtc($date),
+                    strpos($val, 'T') !== false,
+                    strpos($val, 'Z') !== false
+                );
+            }
+        }
+
+        $this->rDates = $rDates;
+    }
+
+    /**
+     * Get the array of dates that will be included in a recurrence set.
+     *
+     * @return DateInclusion[]
+     */
+    public function getRDates()
+    {
+        return $this->rDates;
     }
 
     /**

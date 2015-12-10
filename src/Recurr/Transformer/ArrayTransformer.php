@@ -15,6 +15,7 @@
 namespace Recurr\Transformer;
 
 use Recurr\DateExclusion;
+use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Recurrence;
 use Recurr\RecurrenceCollection;
@@ -704,6 +705,7 @@ class ArrayTransformer
             $recurrences[] = new Recurrence($start, $end->add($durationInterval));
         }
 
+        $recurrences = $this->handleInclusions($rule->getRDates(), $recurrences);
         $recurrences = $this->handleExclusions($rule->getExDates(), $recurrences);
 
         return new RecurrenceCollection($recurrences);
@@ -713,7 +715,7 @@ class ArrayTransformer
      * @param DateExclusion[] $exclusions
      * @param Recurrence[]    $recurrences
      *
-     * @return DateExclusion[]
+     * @return Recurrence[]
      */
     protected function handleExclusions(array $exclusions, array $recurrences)
     {
@@ -739,6 +741,22 @@ class ArrayTransformer
                     unset($recurrences[$key]);
                 }
             }
+        }
+
+        return array_values($recurrences);
+    }
+
+    /**
+     * @param DateInclusion[] $inclusions
+     * @param Recurrence[]    $recurrences
+     *
+     * @return Recurrence[]
+     */
+    protected function handleInclusions(array $inclusions, array $recurrences)
+    {
+        foreach ($inclusions as $inclusion) {
+            $recurrence = new Recurrence(clone $inclusion->date, clone $inclusion->date);
+            $recurrences[] = $recurrence;
         }
 
         return array_values($recurrences);

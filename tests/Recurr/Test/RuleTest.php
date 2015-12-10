@@ -3,6 +3,7 @@
 namespace Recurr\Test;
 
 use Recurr\DateExclusion;
+use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
 use Recurr\Exception\InvalidArgument;
@@ -62,6 +63,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $string .= 'BYMONTH=7,8;';
         $string .= 'BYSETPOS=1,3;';
         $string .= 'WKST=TU;';
+        $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
         $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
 
         $this->rule->loadFromString($string);
@@ -79,6 +81,14 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(7, 8), $this->rule->getByMonth());
         $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
         $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151214T020000'), true),
+                new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
+            ),
+            $this->rule->getRDates()
+        );
         $this->assertEquals(
             array(
                 new DateExclusion(new \DateTime(20140607), false),
@@ -106,6 +116,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
             'BYMONTH'=>'7,8',
             'BYSETPOS'=>'1,3',
             'WKST'=>'TU',
+            'RDATE'=>'20151210,20151214T020000,20151215T210000Z',
             'EXDATE'=>'20140607,20140620T010000,20140620T160000Z',
         ));
 
@@ -122,6 +133,14 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(7, 8), $this->rule->getByMonth());
         $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
         $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151214T020000'), true),
+                new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
+            ),
+            $this->rule->getRDates()
+        );
         $this->assertEquals(
             array(
                 new DateExclusion(new \DateTime(20140607), false),
@@ -182,10 +201,11 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->setByMonth(array(7, 8));
         $this->rule->setBySetPosition(array(1, 3));
         $this->rule->setWeekStart('TU');
+        $this->rule->setRDates(array('20151210', '20151214T020000Z', '20151215T210000'));
         $this->rule->setExDates(array('20140607', '20140620T010000Z', '20140620T010000'));
 
         $this->assertEquals(
-            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;EXDATE=20140607,20140620T010000Z,20140620T010000',
+            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;RDATE=20151210,20151214T020000Z,20151215T210000;EXDATE=20140607,20140620T010000Z,20140620T010000',
             $this->rule->getString()
         );
     }
