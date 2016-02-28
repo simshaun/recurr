@@ -729,7 +729,7 @@ class Rule
      *
      * @return $this
      */
-    public function setUntil(\DateTime $until)
+    public function setUntil(\DateTimeInterface $until)
     {
         $this->until = $until;
         $this->count = null;
@@ -1223,7 +1223,7 @@ class Rule
      *
      * @return \DateTime
      */
-    private function convertZtoUtc(\DateTime $date)
+    private function convertZtoUtc(\DateTimeInterface $date)
     {
         if ($date->getTimezone()->getName() !== 'Z') {
             return $date;

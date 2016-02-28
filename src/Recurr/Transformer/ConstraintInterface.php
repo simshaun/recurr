@@ -21,5 +21,5 @@ interface ConstraintInterface
      *
      * @return bool
      */
-    public function test(\DateTime $date);
+    public function test(\DateTimeInterface $date);
 }
