@@ -686,13 +686,10 @@ class ArrayTransformer
         /** @var Recurrence[] $recurrences */
         $recurrences = array();
         foreach ($dates as $start) {
-            /** @var \DateTime $end */
-            $end = clone $start;
-
-            $recurrences[] = new Recurrence($start, $end->add($durationInterval));
+            $recurrences[] = $this->getRecurrenceObject($start,$durationInterval);
         }
 
-        $recurrences = $this->handleInclusions($rule->getRDates(), $recurrences);
+        $recurrences = $this->handleInclusions($rule->getRDates(), $recurrences, $durationInterval);
         $recurrences = $this->handleExclusions($rule->getExDates(), $recurrences);
 
         return new RecurrenceCollection($recurrences);
@@ -739,13 +736,26 @@ class ArrayTransformer
      *
      * @return Recurrence[]
      */
-    protected function handleInclusions(array $inclusions, array $recurrences)
+    protected function handleInclusions(array $inclusions, array $recurrences, $durationInterval)
     {
         foreach ($inclusions as $inclusion) {
-            $recurrence = new Recurrence(clone $inclusion->date, clone $inclusion->date);
+            $recurrence = $this->getRecurrenceObject(clone $inclusion->date, $durationInterval);
             $recurrences[] = $recurrence;
         }
-
         return array_values($recurrences);
+    }
+
+
+    /**
+     * @param \DateTime $start
+     * @param \DateInterval $durationInterval
+     *
+     * @return Recurrence
+     */
+
+    private function getRecurrenceObject($start, $durationInterval){
+        /** @var \DateTime $end */
+        $end = clone $start;
+        return new Recurrence($start, $end->add($durationInterval));
     }
 }
