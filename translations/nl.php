@@ -56,7 +56,7 @@ return array(
     'every day' => 'dagelijks',
     'last' => 'laatste', // e.g. 2nd last Friday
     'days' => 'dagen',
-    'day' => 'dah',
+    'day' => 'dag',
     'weeks' => 'weken',
     'week' => 'week',
     // formats a number with a prefix e.g. every year on the 1st and 200th day
