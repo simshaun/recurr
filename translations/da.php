@@ -2,37 +2,37 @@
 
 // sunday first as date('w') is zero-based on sunday
 $days = array(
-    'Søndag',
-    'Mandag',
-    'Tirsdag',
-    'Onsdag',
-    'Torsdag',
-    'Fredag',
-    'Lørdag',
+    'søndag',
+    'mandag',
+    'tirsdag',
+    'onsdag',
+    'torsdag',
+    'fredag',
+    'lørdag',
 );
 $months = array(
-    'Januar',
-    'Februar',
-    'Marts',
-    'April',
-    'Maj',
-    'Juni',
-    'Juli',
-    'August',
-    'September',
-    'Oktober',
-    'November',
-    'December',
+    'januar',
+    'februar',
+    'marts',
+    'april',
+    'maj',
+    'juni',
+    'juli',
+    'august',
+    'september',
+    'oktober',
+    'november',
+    'december',
 );
 
 return array(
-    'Unable to fully convert this rrule to text.' => 'Kunne ikke konvertere denne rryle til tekst.',
+    'Unable to fully convert this rrule to text.' => 'Kunne ikke konvertere denne regel til tekst.',
     'for %count% times' => '%count% gange',
     'for one time' => 'en gang',
-    '(~ approximate)' => '(~ ca.)',
+    '(~ approximate)' => '(~ cirka)',
     'until %date%' => 't.o.m. %date%', // e.g. every year until July 4, 2014
     'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. July 4, 2014
-        return  date('j.', $params['date']) . ' ' . $months[date('n', $params['date']) - 1] . ' '. date('Y', $params['date']);
+        return date('j', $params['date']) . '. '. $months[date('n, Y', $params['date']) - 1];
     },
     'day_names' => $days,
     'month_names' => $months,
@@ -40,19 +40,19 @@ return array(
     'or' => 'eller',
     'in_month' => 'i', // e.g. weekly in January, May and August
     'in_week' => 'i', // e.g. yearly in week 3
-    'on' => 'på', // e.g. every day on Tuesday, Wednesday and Friday
+    'on' => 'hver', // e.g. every day on Tuesday, Wednesday and Friday
     'the_for_monthday' => 'den', // e.g. monthly on Tuesday the 1st
     'the_for_weekday' => 'den', // e.g. monthly on the 4th Monday
     'on the' => 'på den', // e.g. every year on the 1st and 200th day
     'of_the_month' => 'i måneden', // e.g. every year on the 2nd or 3rd of the month
-    'every %count% years' => 'hver %count%. år',
+    'every %count% years' => 'hvert %count% år',
     'every year' => 'årligt',
-    'every_month_list' => 'varje', // e.g. every January, May and August
-    'every %count% months' => 'varje %count% måned',
-    'every month' => 'månedligt',
-    'every %count% weeks' => 'varje %count% vecka',
-    'every week' => 'ugentligt',
-    'every %count% days' => 'varje %count% dag',
+    'every_month_list' => 'hver', // e.g. every January, May and August
+    'every %count% months' => 'hver %count% måned',
+    'every month' => 'månedsvis',
+    'every %count% weeks' => 'hver %count% uge',
+    'every week' => 'ugenligt',
+    'every %count% days' => 'hver %count% dag',
     'every day' => 'dagligt',
     'last' => 'sidste', // e.g. 2nd last Friday
     'days' => 'dage',
@@ -82,7 +82,7 @@ return array(
             }
 
             if (($number % 100) >= 11 && ($number % 100) <= 13) {
-                $abbreviation = $number.'th';
+                $abbreviation = $number.'.';
             } else {
                 $abbreviation = $number.$ends[$number % 10];
             }
