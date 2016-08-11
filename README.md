@@ -4,10 +4,10 @@ Recurr is a PHP library for working with recurrence rules ([RRULE](http://tools.
 
 Recurr was developed as a precursor for a calendar with recurring events, and is heavily inspired by [rrule.js](https://github.com/jkbr/rrule).
 
-Installation
+Installing Recurr
 ------------
 
-Recurr is hosted on [Packagist](https://packagist.org), meaning you can install it with [Composer](https://getcomposer.org/):
+The recommended way to install Recurr is through [Composer](http://getcomposer.org).
 
 `composer require simshaun/recurr`
 
@@ -119,10 +119,6 @@ $transformer->setConfig($transformerConfig);
 print_r($transformer->transform($rule));
 // 2013-01-31, 2013-02-28, 2013-03-31, 2013-04-30, 2013-05-31
 ```
-
-- **Under Development**
-  Recurr is still under development and may not be 100% free of bugs.
-  Until v1.0 is reached, BC breaks may occur at any time.
 
 
 Contribute
