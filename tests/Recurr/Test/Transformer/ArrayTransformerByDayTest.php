@@ -55,7 +55,7 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals('Europe/London', $computed[5]->getStart()->getTimezone()->getName());
         $this->assertEquals(new \DateTime('2015-04-08 15:00:00', new \DateTimeZone('UTC')), $computed[5]->getStart());
         $this->assertEquals('Europe/London', $computed[6]->getStart()->getTimezone()->getName());
-        $this->assertEquals(new \DateTime('2015-04-15 15:00:00', new \DateTimeZone('UTC')), $computed[6]->getStart());      
+        $this->assertEquals(new \DateTime('2015-04-15 15:00:00', new \DateTimeZone('UTC')), $computed[6]->getStart());
     }
 
     public function testByDayMonthly()
@@ -109,6 +109,6 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
 
     public function unsupportedNthByDayFrequencies()
     {
-        return [['DAILY'], ['HOURLY'], ['MINUTELY'], ['SECONDLY']];
+        return array(array('DAILY'), array('HOURLY'), array('MINUTELY'), array('SECONDLY'));
     }
 }
