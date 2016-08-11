@@ -889,9 +889,14 @@ class Rule
      * @param array $byDay Array of days of the week
      *
      * @return $this
+     * @throws InvalidRRule
      */
     public function setByDay(array $byDay)
     {
+        if ($this->getFreq() > static::$freqs['MONTHLY'] && preg_match('/\d/', implode(',', $byDay))) {
+            throw new InvalidRRule('BYDAY only supports MONTHLY and YEARLY frequencies');
+        }
+
         $this->byDay = $byDay;
 
         return $this;

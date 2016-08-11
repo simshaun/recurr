@@ -94,4 +94,21 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('1998-05-18 16:00:00'), $computed[1]->getStart());
         $this->assertEquals(new \DateTime('1999-05-17 16:00:00'), $computed[2]->getStart());
     }
+
+    /**
+     * @dataProvider unsupportedNthByDayFrequencies
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testNthByDayWithUnsupportedFrequency($frequency)
+    {
+        new Rule(
+            "FREQ=$frequency;COUNT=3;BYDAY=2MO",
+            new \DateTime('1997-05-19 16:00:00')
+        );
+    }
+
+    public function unsupportedNthByDayFrequencies()
+    {
+        return [['DAILY'], ['HOURLY'], ['MINUTELY'], ['SECONDLY']];
+    }
 }
