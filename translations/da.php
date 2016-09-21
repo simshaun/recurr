@@ -32,7 +32,10 @@ return array(
     '(~ approximate)' => '(~ cirka)',
     'until %date%' => 't.o.m. %date%', // e.g. every year until July 4, 2014
     'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. July 4, 2014
-        return date('j', $params['date']) . '. '. $months[date('n, Y', $params['date']) - 1];
+        return date('j', $params['date']) . '. '. $months[date('n', $params['date']) - 1].date(', Y', $params['date']);
+    },
+    'day_month' => function ($str, $params) use ($days, $months) { // outputs a day month, e.g. July 4
+        return $params['day'].'. '.$months[$params['month'] - 1];
     },
     'day_names' => $days,
     'month_names' => $months,
