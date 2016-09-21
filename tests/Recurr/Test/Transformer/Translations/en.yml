@@ -1,8 +1,8 @@
 # base tests
-"yearly for 1 time": "yearly once"
-"yearly for 3 times": "yearly for 3 times"
-"yearly until July 4, 2014": "yearly until July 4, 2014"
-"yearly (~ approximate)": "yearly (~ approximate)"
+"yearly on March 16 for 1 time": "yearly on March 16 once"
+"yearly on March 16 for 3 times": "yearly on March 16 for 3 times"
+"yearly on March 16 until July 4, 2014": "yearly on March 16 until July 4, 2014"
+"yearly on March 16 (~ approximate)": "yearly on March 16 (~ approximate)"
 "monthly (~ approximate)": "monthly (~ approximate)"
 
 # monthly tests
@@ -31,8 +31,8 @@
 "daily on Tuesday, Wednesday and Friday": "daily on Tuesday, Wednesday and Friday"
 
 # yearly tests
-"yearly": "yearly"
-"every 10 years": "every 10 years"
+"yearly on March 16": "yearly on March 16"
+"every 10 years on March 16": "every 10 years on March 16"
 "every January, May and August": "every January, May and August"
 "every 2 years in January, May and August": "every 2 years in January, May and August"
 "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month": "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month"
@@ -40,14 +40,19 @@
 "yearly on Tuesday or Friday the 1st, 5th or 21st of the month": "yearly on Tuesday or Friday the 1st, 5th or 21st of the month"
 "yearly on Tuesday, Wednesday and Friday": "yearly on Tuesday, Wednesday and Friday"
 "yearly on the 1st and 200th day": "yearly on the 1st and 200th day"
-"yearly in week 3": "yearly in week 3"
-"yearly in weeks 3, 20 and 30": "yearly in weeks 3, 20 and 30"
+"yearly in week 3 on Sunday": "yearly in week 3 on Sunday"
+"yearly in weeks 3, 20 and 30 on Sunday": "yearly in weeks 3, 20 and 30 on Sunday"
 
 # weekly tests
-"weekly": "weekly"
-"every 10 weeks": "every 10 weeks"
-"weekly in January, May and August": "weekly in January, May and August"
-"every 2 weeks in January, May and August": "every 2 weeks in January, May and August"
+"weekly on Sunday": "weekly on Sunday"
+"every 10 weeks on Sunday": "every 10 weeks on Sunday"
+"weekly on Sunday in January, May and August": "weekly on Sunday in January, May and August"
+"every 2 weeks on Sunday in January, May and August": "every 2 weeks on Sunday in January, May and August"
 "weekly on the 1st, 5th and 21st of the month": "weekly on the 1st, 5th and 21st of the month"
 "weekly on Tuesday or Friday the 1st, 5th or 21st of the month": "weekly on Tuesday or Friday the 1st, 5th or 21st of the month"
 "weekly on Tuesday, Wednesday and Friday": "weekly on Tuesday, Wednesday and Friday"
+
+# start date tests
+"every 2 years on March 16": "every 2 years on March 16"
+"yearly on March 16 for 5 times": "yearly on March 16 for 5 times"
+"yearly on March 16 until December 31, 2012": "yearly on March 16 until December 31, 2012"

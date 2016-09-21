@@ -34,6 +34,9 @@ return array(
     'day_date' => function ($str, $params) use ($days, $months) { // tarih çıktıları, e.g. Temmuz 4, 2014
         return $months[date('n', $params['date']) - 1] . ' '. date('j, Y', $params['date']);
     },
+    'day_month' => function ($str, $params) use ($days, $months) { // outputs a day month, e.g. July 4
+        return $months[$params['month'] - 1].' '.$params['day'];
+    },
     'day_names' => $days,
     'month_names' => $months,
     'and' => 've',

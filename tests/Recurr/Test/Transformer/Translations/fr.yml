@@ -1,8 +1,8 @@
 # base tests
-"yearly for 1 time": "chaque année une fois"
-"yearly for 3 times": "chaque année 3 fois"
-"yearly until July 4, 2014": "chaque année jusqu'au 4 juillet, 2014"
-"yearly (~ approximate)": "chaque année (~ approximation)"
+"yearly on March 16 for 1 time": "chaque année le 16 mars une fois"
+"yearly on March 16 for 3 times": "chaque année le 16 mars 3 fois"
+"yearly on March 16 until July 4, 2014": "chaque année le 16 mars jusqu'au 4 juillet, 2014"
+"yearly on March 16 (~ approximate)": "chaque année le 16 mars (~ approximation)"
 "monthly (~ approximate)": "chaque mois (~ approximation)"
 
 # monthly tests
@@ -31,8 +31,8 @@
 "daily on Tuesday, Wednesday and Friday": "chaque jour le mardi, mercredi et vendredi"
 
 # yearly tests
-"yearly": "chaque année"
-"every 10 years": "tous les 10 ans"
+"yearly on March 16": "chaque année le 16 mars"
+"every 10 years on March 16": "tous les 10 ans le 16 mars"
 "every January, May and August": "chaque janvier, mai et août"
 "every 2 years in January, May and August": "tous les 2 ans en janvier, mai et août"
 "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month": "tous les 4 ans en novembre le mardi le 2, 3, 4, 5, 6, 7 ou 8 du mois"
@@ -40,14 +40,19 @@
 "yearly on Tuesday or Friday the 1st, 5th or 21st of the month": "chaque année le mardi ou vendredi le 1, 5 ou 21 du mois"
 "yearly on Tuesday, Wednesday and Friday": "chaque année le mardi, mercredi et vendredi"
 "yearly on the 1st and 200th day": "chaque année le 1er et 200ème jour"
-"yearly in week 3": "chaque année en semaine 3"
-"yearly in weeks 3, 20 and 30": "chaque année en semaines 3, 20 et 30"
+"yearly in week 3 on Sunday": "chaque année en semaine 3 le dimanche"
+"yearly in weeks 3, 20 and 30 on Sunday": "chaque année en semaines 3, 20 et 30 le dimanche"
 
 # weekly tests
-"weekly": "chaque semaine"
-"every 10 weeks": "toutes les 10 semaines"
-"weekly in January, May and August": "chaque semaine en janvier, mai et août"
-"every 2 weeks in January, May and August": "toutes les 2 semaines en janvier, mai et août"
+"weekly on Sunday": "chaque semaine le dimanche"
+"every 10 weeks on Sunday": "toutes les 10 semaines le dimanche"
+"weekly on Sunday in January, May and August": "chaque semaine le dimanche en janvier, mai et août"
+"every 2 weeks on Sunday in January, May and August": "toutes les 2 semaines le dimanche en janvier, mai et août"
 "weekly on the 1st, 5th and 21st of the month": "chaque semaine le 1, 5 et 21 du mois"
 "weekly on Tuesday or Friday the 1st, 5th or 21st of the month": "chaque semaine le mardi ou vendredi le 1, 5 ou 21 du mois"
 "weekly on Tuesday, Wednesday and Friday": "chaque semaine le mardi, mercredi et vendredi"
+
+# start date tests
+"every 2 years on March 16": "tous les 2 ans le 16 mars"
+"yearly on March 16 for 5 times": "chaque année le 16 mars 5 fois"
+"yearly on March 16 until December 31, 2012": "chaque année le 16 mars jusqu'au 31 décembre, 2012"

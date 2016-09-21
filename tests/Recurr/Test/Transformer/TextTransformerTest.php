@@ -16,6 +16,7 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatting($lang, $rule, $expected)
     {
+        // Sunday, March 16th is our reference start date
         $dateTime = new \DateTime('2014-03-16 04:00:00');
         $rule = new Rule($rule, $dateTime);
 
@@ -29,30 +30,30 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
             // Count
             array(
                 'FREQ=YEARLY;COUNT=1',
-                'yearly for 1 time',
+                'yearly on March 16 for 1 time',
             ),
             // CountPlural
             array(
                 'FREQ=YEARLY;COUNT=3',
-                'yearly for 3 times',
+                'yearly on March 16 for 3 times',
             ),
             // Until
             array(
                 'FREQ=YEARLY;UNTIL=20140704T040000Z',
-                'yearly until July 4, 2014',
+                'yearly on March 16 until July 4, 2014',
             ),
             // FullyConvertible
             array(
                 'FREQ=YEARLY;BYHOUR=1',
-                'yearly (~ approximate)',
+                'yearly on March 16 (~ approximate)',
             ),
             array(
                 'FREQ=YEARLY;BYMINUTE=1',
-                'yearly (~ approximate)',
+                'yearly on March 16 (~ approximate)',
             ),
             array(
                 'FREQ=YEARLY;BYSECOND=1',
-                'yearly (~ approximate)',
+                'yearly on March 16 (~ approximate)',
             ),
             array(
                 'FREQ=MONTHLY;BYWEEKNO=50',
@@ -159,12 +160,12 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
             // Yearly
             array(
                 'FREQ=YEARLY',
-                'yearly',
+                'yearly on March 16',
             ),
             // YearlyPlural
             array(
                 'FREQ=YEARLY;INTERVAL=10',
-                'every 10 years',
+                'every 10 years on March 16',
             ),
             // YearlyByMonth
             array(
@@ -202,31 +203,31 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
             // YearlyByWeekNumber
             array(
                 'FREQ=YEARLY;BYWEEKNO=3',
-                'yearly in week 3'
+                'yearly in week 3 on Sunday'
             ),
             array(
                 'FREQ=YEARLY;BYWEEKNO=3,30,20',
-                'yearly in weeks 3, 20 and 30',
+                'yearly in weeks 3, 20 and 30 on Sunday',
             ),
 
             // Weekly
             array(
                 'FREQ=WEEKLY',
-                'weekly',
+                'weekly on Sunday',
             ),
             // WeeklyPlural
             array(
                 'FREQ=WEEKLY;INTERVAL=10',
-                'every 10 weeks',
+                'every 10 weeks on Sunday',
             ),
             // WeeklyByMonth
             array(
                 'FREQ=WEEKLY;BYMONTH=1,8,5',
-                'weekly in January, May and August'
+                'weekly on Sunday in January, May and August'
             ),
             array(
                 'FREQ=WEEKLY;INTERVAL=2;BYMONTH=1,8,5',
-                'every 2 weeks in January, May and August',
+                'every 2 weeks on Sunday in January, May and August',
             ),
             // WeeklyByMonthDay
             array(
@@ -241,6 +242,24 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
             array(
                 'FREQ=WEEKLY;BYDAY=TU,WE,FR',
                 'weekly on Tuesday, Wednesday and Friday',
+            ),
+
+            // Check that start date impacts wording for yearly
+            array(
+                'FREQ=YEARLY;BYMONTH=3',
+                'yearly on March 16'
+            ),
+            array(
+                'FREQ=YEARLY;INTERVAL=2;BYMONTH=3',
+                'every 2 years on March 16'
+            ),
+            array(
+                'FREQ=YEARLY;BYMONTH=3;COUNT=5',
+                'yearly on March 16 for 5 times'
+            ),
+            array(
+                'FREQ=YEARLY;BYMONTH=3;UNTIL=20121231T235959Z',
+                'yearly on March 16 until December 31, 2012'
             ),
         );
 
