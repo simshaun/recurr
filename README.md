@@ -11,14 +11,37 @@ The recommended way to install Recurr is through [Composer](http://getcomposer.o
 
 `composer require simshaun/recurr`
 
-RRULE to DateTime objects
+Using Recurr 
 -----------
+
+### Creating RRULE rule objects ###
+
+You can create a new Rule object by passing the ([RRULE](http://tools.ietf.org/html/rfc2445)) string or an array with the rule parts, the start date, end date (optional) and timezone.
 
 ```php
 $timezone    = 'America/New_York';
 $startDate   = new \DateTime('2013-06-12 20:00:00', new \DateTimeZone($timezone));
 $endDate     = new \DateTime('2013-06-14 20:00:00', new \DateTimeZone($timezone)); // Optional
 $rule        = new \Recurr\Rule('FREQ=MONTHLY;COUNT=5', $startDate, $endDate, $timezone);
+```
+
+You can also use chained methods to build your rule programmatically and get the resulting RRULE.
+
+```php
+$rule = (new \Recurr\Rule)
+    ->setStartDate($startDate)
+    ->setTimezone($timezone)
+    ->setFreq('DAILY')
+    ->setByDay(['MO', 'TU'])
+    ->setUntil(new \DateTime('2017-12-31'))
+;
+
+echo $rule->getString(); //FREQ=DAILY;UNTIL=20171231T000000;BYDAY=MO,TU
+```
+
+### RRULE to DateTime objects ###
+
+```php
 $transformer = new \Recurr\Transformer\ArrayTransformer();
 
 print_r($transformer->transform($rule));
