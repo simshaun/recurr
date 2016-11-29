@@ -80,7 +80,7 @@ class ArrayTransformer
      * @param bool                     $countConstraintFailures Whether recurrences that fail the constraint's test
      *                                                          should count towards a rule's COUNT limit.
      *
-     * @return RecurrenceCollection
+     * @return RecurrenceCollection|Recurrence[]
      * @throws MissingData
      */
     public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
