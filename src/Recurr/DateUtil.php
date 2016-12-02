@@ -68,7 +68,7 @@ class DateUtil
      *
      * @return DateInfo
      */
-    public static function getDateInfo(\DateTime $dt)
+    public static function getDateInfo(\DateTimeInterface $dt)
     {
         $i              = new DateInfo();
         $i->dt          = $dt;
@@ -179,7 +179,7 @@ class DateUtil
      *
      * @return DaySet
      */
-    public static function getDaySetOfYear(\DateTime $dt)
+    public static function getDaySetOfYear(\DateTimeInterface $dt)
     {
         $yearLen = self::getYearLength($dt);
         $set     = range(0, $yearLen - 1);
@@ -194,7 +194,7 @@ class DateUtil
      *
      * @return DaySet
      */
-    public static function getDaySetOfMonth(\DateTime $dt)
+    public static function getDaySetOfMonth(\DateTimeInterface $dt)
     {
         $dateInfo = self::getDateInfo($dt);
         $monthNum = $dt->format('n');
@@ -217,7 +217,7 @@ class DateUtil
      *
      * @return DaySet
      */
-    public static function getDaySetOfDay(\DateTime $dt)
+    public static function getDaySetOfDay(\DateTimeInterface $dt)
     {
         $dayOfYear = $dt->format('z');
 
@@ -295,7 +295,7 @@ class DateUtil
      *
      * @return array
      */
-    public static function getTimeSetOfSecond(\DateTime $dt)
+    public static function getTimeSetOfSecond(\DateTimeInterface $dt)
     {
         return array(new Time($dt->format('G'), $dt->format('i'), $dt->format('s')));
     }
@@ -349,7 +349,7 @@ class DateUtil
      *
      * @return array
      */
-    public static function getMonthDaysMask(\DateTime $dt, $negative = false)
+    public static function getMonthDaysMask(\DateTimeInterface $dt, $negative = false)
     {
         if ($negative) {
             $m29 = range(-29, -1);
@@ -394,7 +394,7 @@ class DateUtil
         }
     }
 
-    public static function getMonthMask(\DateTime $dt)
+    public static function getMonthMask(\DateTimeInterface $dt)
     {
         if (self::isLeapYearDate($dt)) {
             return array_merge(
@@ -479,7 +479,7 @@ class DateUtil
      *
      * @return bool
      */
-    public static function isLeapYearDate(\DateTime $dt)
+    public static function isLeapYearDate(\DateTimeInterface $dt)
     {
         return $dt->format('L') ? true : false;
     }
@@ -520,7 +520,7 @@ class DateUtil
      *
      * @return string
      */
-    public static function getDayOfWeekAsText(\DateTime $dt)
+    public static function getDayOfWeekAsText(\DateTimeInterface $dt)
     {
         $dayOfWeek = $dt->format('w') - 1;
 
@@ -548,7 +548,7 @@ class DateUtil
      *
      * @return int
      */
-    public static function getDayOfWeek(\DateTime $dt)
+    public static function getDayOfWeek(\DateTimeInterface $dt)
     {
         $dayOfWeek = $dt->format('w') - 1;
 
@@ -566,7 +566,7 @@ class DateUtil
      *
      * @return int
      */
-    public static function getYearLength(\DateTime $dt)
+    public static function getYearLength(\DateTimeInterface $dt)
     {
         return self::isLeapYearDate($dt) ? 366 : 365;
     }
