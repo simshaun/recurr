@@ -154,28 +154,37 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadFromStringWithDtstart()
     {
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('America/Chicago');
+
         $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
 
         $this->rule->setTimezone('America/Los_Angeles');
         $this->rule->loadFromString($string);
 
-        $expectedStartDate = new \DateTime('2014-02-22 07:30:00', new \DateTimeZone('America/Los_Angeles'));
+        $expectedStartDate = new \DateTime('2014-02-22 05:30:00', new \DateTimeZone('America/Los_Angeles'));
 
         $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
         $this->assertEquals($expectedStartDate, $this->rule->getStartDate());
+
+        date_default_timezone_set($defaultTimezone);
     }
 
     public function testLoadFromStringWithDtend()
     {
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('America/Chicago');
         $string = 'FREQ=MONTHLY;DTEND=20140422T140000';
 
         $this->rule->setTimezone('America/Los_Angeles');
         $this->rule->loadFromString($string);
 
-        $expectedEndDate = new \DateTime('2014-04-22 14:00:00', new \DateTimeZone('America/Los_Angeles'));
+        $expectedEndDate = new \DateTime('2014-04-22 12:00:00', new \DateTimeZone('America/Los_Angeles'));
 
         $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
         $this->assertEquals($expectedEndDate, $this->rule->getEndDate());
+
+        date_default_timezone_set($defaultTimezone);
     }
 
     /**

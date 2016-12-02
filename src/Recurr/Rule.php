@@ -300,21 +300,25 @@ class Rule
         // DTSTART
         if (isset($parts['DTSTART'])) {
             $this->isStartDateFromDtstart = true;
-            $this->setStartDate(new \DateTime($parts['DTSTART'], new \DateTimeZone($this->getTimezone())));
+            $date = new \DateTime($parts['DTSTART']);
+            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $this->setStartDate($date);
         }
 
         // DTEND
         if (isset($parts['DTEND'])) {
-            $this->setEndDate(new \DateTime($parts['DTEND'], new \DateTimeZone($this->getTimezone())));
+            $date = new \DateTime($parts['DTEND']);
+            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $this->setEndDate($date);
         }
 
         // UNTIL or COUNT
         if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
             throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
         } elseif (isset($parts['UNTIL'])) {
-            $this->setUntil(
-                new \DateTime($parts['UNTIL'], new \DateTimeZone($this->getTimezone()))
-            );
+            $date = new \DateTime($parts['UNTIL']);
+            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $this->setUntil($date);
         } elseif (isset($parts['COUNT'])) {
             $this->setCount($parts['COUNT']);
         }
