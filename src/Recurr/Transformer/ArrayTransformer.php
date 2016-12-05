@@ -85,10 +85,6 @@ class ArrayTransformer
      */
     public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
     {
-        if (null === $rule) {
-            throw new MissingData('Rule has not been set');
-        }
-
         $start = $rule->getStartDate();
         $end   = $rule->getEndDate();
         $until = $rule->getUntil();
