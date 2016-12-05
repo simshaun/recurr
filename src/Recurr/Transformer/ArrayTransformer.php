@@ -23,7 +23,6 @@ use Recurr\Rule;
 use Recurr\Time;
 use Recurr\Weekday;
 use Recurr\DateUtil;
-use Recurr\Exception\MissingData;
 
 /**
  * This class is responsible for transforming a Rule in to an array
@@ -81,7 +80,6 @@ class ArrayTransformer
      *                                                          should count towards a rule's COUNT limit.
      *
      * @return RecurrenceCollection|Recurrence[]
-     * @throws MissingData
      */
     public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
     {
