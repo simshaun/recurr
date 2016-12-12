@@ -540,7 +540,7 @@ class ArrayTransformer
                             }
                         }
                     } else {
-                        $dates[] = $dtTmp;
+                        $dates[$total] = $dtTmp;
                     }
 
                     if (null !== $count) {
@@ -588,7 +588,7 @@ class ArrayTransformer
                                 }
                             }
                         } else {
-                            $dates[] = clone $dtTmp;
+                            $dates[$total] = clone $dtTmp;
                         }
 
                         if (null !== $count) {
@@ -685,11 +685,11 @@ class ArrayTransformer
 
         /** @var Recurrence[] $recurrences */
         $recurrences = array();
-        foreach ($dates as $start) {
+        foreach ($dates as $key => $start) {
             /** @var \DateTime $end */
             $end = clone $start;
 
-            $recurrences[] = new Recurrence($start, $end->add($durationInterval));
+            $recurrences[] = new Recurrence($start, $end->add($durationInterval), $key);
         }
 
         $recurrences = $this->handleInclusions($rule->getRDates(), $recurrences);
