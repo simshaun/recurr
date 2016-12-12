@@ -24,7 +24,7 @@ class Recurrence
     /** @var \DateTime */
     protected $end;
 
-    public function __construct(\DateTime $start = null, \DateTime $end = null, int $index = 0)
+    public function __construct(\DateTime $start = null, \DateTime $end = null, $index = 0)
     {
         if ($start instanceof \DateTime) {
             $this->setStart($start);
@@ -80,7 +80,7 @@ class Recurrence
     /**
      * @param int $index
      */
-    public function setIndex(int $index)
+    public function setIndex($index)
     {
         $this->index = $index;
     }
