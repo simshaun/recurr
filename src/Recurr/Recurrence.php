@@ -24,6 +24,9 @@ class Recurrence
     /** @var \DateTime */
     protected $end;
 
+    /** @var int */
+    protected $index;
+
     public function __construct(\DateTime $start = null, \DateTime $end = null, $index = 0)
     {
         if ($start instanceof \DateTime) {
