@@ -101,4 +101,18 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2003-01-12 08:30:00'), $computed[28]->getStart());
         $this->assertEquals(new \DateTime('2003-01-12 09:30:00'), $computed[29]->getStart());
     }
+
+    public function testIndex()
+    {
+        $rule = new Rule(
+            'FREQ=YEARLY;COUNT=10',
+            new \DateTime('2000-01-01 09:00:00')
+        );
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(10, $computed);
+        $this->assertEquals(1, $computed[0]->getIndex());
+        $this->assertEquals(10, $computed[9]->getIndex());
+    }
 }
