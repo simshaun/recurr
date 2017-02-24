@@ -1254,4 +1254,12 @@ class Rule
     {
         return $this->exDates;
     }
+
+    /**
+     * @return bool
+     */
+    public function repeatsIndefinitely()
+    {
+        return !$this->getCount() && !$this->getUntil() && !$this->getEndDate();
+    }
 }
