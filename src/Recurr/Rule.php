@@ -612,7 +612,7 @@ class Rule
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getEndDate()
     {
