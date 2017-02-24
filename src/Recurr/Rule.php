@@ -388,6 +388,8 @@ class Rule
         if (isset($parts['EXDATE'])) {
             $this->setExDates(explode(',', $parts['EXDATE']));
         }
+
+        return $this;
     }
 
     /**
