@@ -19,6 +19,7 @@ namespace Recurr;
 
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
+use Recurr\Exception\InvalidWeekday;
 use Recurr\Weekday;
 
 /**
@@ -920,6 +921,7 @@ class Rule
      * Get an array of Weekdays
      *
      * @return array of Weekdays
+     * @throws InvalidWeekday
      */
     public function getByDayTransformedToWeekdays()
     {
