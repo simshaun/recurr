@@ -679,9 +679,7 @@ class Rule
      */
     public function getFreqAsText()
     {
-        $freq = array_search($this->getFreq(), self::$freqs);
-
-        return $freq;
+        return array_search($this->getFreq(), self::$freqs);
     }
 
     /**
