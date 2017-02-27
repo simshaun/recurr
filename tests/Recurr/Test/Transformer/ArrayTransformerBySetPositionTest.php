@@ -98,4 +98,46 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2015-02-09'), $computed[8]->getStart());
         $this->assertEquals(new \DateTime('2015-04-13'), $computed[9]->getStart());
     }
+
+    public function testIndexErrorOnEmptySet()
+    {
+        $rule = new Rule(
+            'FREQ=WEEKLY;UNTIL=20180102T120000Z;BYDAY=TH,FR;BYMONTH=11,12;BYSETPOS=-1,-2',
+            new \DateTime('2018-07-01')
+        );
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(18, $computed);
+    }
+
+    public function testBySetPositionHandlesMultipleNegatives()
+    {
+        $rule = new Rule(
+            'FREQ=WEEKLY;UNTIL=20180102T120000Z;BYDAY=TH,FR;BYMONTH=11,12;BYSETPOS=-1,-2',
+            new \DateTime('2018-11-01')
+        );
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(18, $computed);
+        $this->assertEquals(new \DateTime('2017-11-02'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-03'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-09'), $computed[4]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-10'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-16'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-17'), $computed[5]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-23'), $computed[6]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-24'), $computed[7]->getStart());
+        $this->assertEquals(new \DateTime('2017-11-30'), $computed[8]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-01'), $computed[9]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-07'), $computed[10]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-08'), $computed[11]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-14'), $computed[12]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-15'), $computed[13]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-21'), $computed[14]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-22'), $computed[15]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-28'), $computed[16]->getStart());
+        $this->assertEquals(new \DateTime('2017-12-29'), $computed[17]->getStart());
+    }
 }
