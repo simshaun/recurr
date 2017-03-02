@@ -19,6 +19,7 @@ namespace Recurr;
 
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
+use Recurr\Exception\InvalidWeekday;
 use Recurr\Weekday;
 
 /**
@@ -387,6 +388,8 @@ class Rule
         if (isset($parts['EXDATE'])) {
             $this->setExDates(explode(',', $parts['EXDATE']));
         }
+
+        return $this;
     }
 
     /**
@@ -609,7 +612,7 @@ class Rule
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getEndDate()
     {
@@ -676,9 +679,7 @@ class Rule
      */
     public function getFreqAsText()
     {
-        $freq = array_search($this->getFreq(), self::$freqs);
-
-        return $freq;
+        return array_search($this->getFreq(), self::$freqs);
     }
 
     /**
@@ -920,6 +921,7 @@ class Rule
      * Get an array of Weekdays
      *
      * @return array of Weekdays
+     * @throws InvalidWeekday
      */
     public function getByDayTransformedToWeekdays()
     {
@@ -930,7 +932,7 @@ class Rule
         }
 
         foreach ($byDay as $idx => $day) {
-            if (strlen($day) == 2) {
+            if (strlen($day) === 2) {
                 $byDay[$idx] = new Weekday($day, null);
             } else {
                 preg_match('/^([+-]?[0-9]+)([A-Z]{2})$/', $day, $dayParts);
@@ -1251,5 +1253,13 @@ class Rule
     public function getExDates()
     {
         return $this->exDates;
+    }
+
+    /**
+     * @return bool
+     */
+    public function repeatsIndefinitely()
+    {
+        return !$this->getCount() && !$this->getUntil() && !$this->getEndDate();
     }
 }
