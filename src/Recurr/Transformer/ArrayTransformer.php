@@ -496,6 +496,9 @@ class ArrayTransformer
 
                     if ($dayPos < 0) {
                         $nextInSet = array_slice($tmp, $dayPos, 1);
+                        if (count($nextInSet) === 0) {
+                            continue;
+                        }
                         $nextInSet = $nextInSet[0];
                     } else {
                         $nextInSet = $tmp[$dayPos];
