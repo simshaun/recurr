@@ -472,7 +472,7 @@ class ArrayTransformer
                 }
             }
 
-            if (!empty($bySetPos)) {
+            if (!empty($bySetPos) && !empty($daySet)) {
                 $datesAdj  = array();
                 $tmpDaySet = array_combine($daySet, $daySet);
 
