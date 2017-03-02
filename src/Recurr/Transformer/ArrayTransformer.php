@@ -16,6 +16,7 @@ namespace Recurr\Transformer;
 
 use Recurr\DateExclusion;
 use Recurr\DateInclusion;
+use Recurr\Exception\InvalidWeekday;
 use Recurr\Frequency;
 use Recurr\Recurrence;
 use Recurr\RecurrenceCollection;
@@ -80,6 +81,7 @@ class ArrayTransformer
      *                                                          should count towards a rule's COUNT limit.
      *
      * @return RecurrenceCollection|Recurrence[]
+     * @throws InvalidWeekday
      */
     public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
     {
