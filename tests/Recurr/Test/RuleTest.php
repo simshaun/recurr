@@ -6,8 +6,6 @@ use Recurr\DateExclusion;
 use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
-use Recurr\Exception\InvalidArgument;
-use Recurr\Exception\InvalidRRule;
 
 class RuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -261,6 +259,15 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule->loadFromString($string);
 
         $this->assertEquals($string, $this->rule->getString());
+    }
+
+    public function testGetStringWithUntilUsingZuluTime()
+    {
+        $string = 'FREQ=MONTHLY;UNTIL=20170331T040000Z;INTERVAL=1;WKST=MO';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertSame($string, $this->rule->getString(Rule::TZ_FIXED));
     }
 
     public function testGetStringWithoutExplicitWkst()
