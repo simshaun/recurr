@@ -1,6 +1,6 @@
 # Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png) [![Latest Stable Version](https://poser.pugx.org/simshaun/recurr/v/stable.svg)](https://packagist.org/packages/simshaun/recurr) [![Total Downloads](https://poser.pugx.org/simshaun/recurr/downloads.svg)](https://packagist.org/packages/simshaun/recurr) [![Latest Unstable Version](https://poser.pugx.org/simshaun/recurr/v/unstable.svg)](https://packagist.org/packages/simshaun/recurr) [![License](https://poser.pugx.org/simshaun/recurr/license.svg)](https://packagist.org/packages/simshaun/recurr)
 
-Recurr is a PHP library for working with recurrence rules ([RRULE](http://tools.ietf.org/html/rfc2445)) and converting them in to DateTime objects.
+Recurr is a PHP library for working with recurrence rules ([RRULE](https://tools.ietf.org/html/rfc5545)) and converting them in to DateTime objects.
 
 Recurr was developed as a precursor for a calendar with recurring events, and is heavily inspired by [rrule.js](https://github.com/jkbr/rrule).
 
@@ -16,7 +16,7 @@ Using Recurr
 
 ### Creating RRULE rule objects ###
 
-You can create a new Rule object by passing the ([RRULE](http://tools.ietf.org/html/rfc2445)) string or an array with the rule parts, the start date, end date (optional) and timezone.
+You can create a new Rule object by passing the ([RRULE](https://tools.ietf.org/html/rfc5545)) string or an array with the rule parts, the start date, end date (optional) and timezone.
 
 ```php
 $timezone    = 'America/New_York';
