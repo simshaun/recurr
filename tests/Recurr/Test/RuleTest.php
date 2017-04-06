@@ -305,6 +305,22 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testEmptyByDayThrowsException()
+    {
+        $this->rule->setByDay([]);
+    }
+
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testEmptyByDayFromStringThrowsException()
+    {
+        $this->rule->loadFromString('FREQ=WEEKLY;BYDAY=;INTERVAL=1;UNTIL=20160725');
+    }
+
+    /**
      * @expectedException \Recurr\Exception\InvalidArgument
      */
     public function testBadWeekStart()
