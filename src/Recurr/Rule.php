@@ -230,7 +230,7 @@ class Rule
     /**
      * Create a Rule object based on a RRULE array.
      *
-     * @param array           $rrule RRULE array
+     * @param array            $rrule RRULE array
      * @param string|\DateTime $startDate
      * @param \DateTime|null   $endDate
      * @param string           $timezone
