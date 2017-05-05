@@ -316,7 +316,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyByDayThrowsException()
     {
-        $this->rule->setByDay([]);
+        $this->rule->setByDay(array());
     }
 
     /**
