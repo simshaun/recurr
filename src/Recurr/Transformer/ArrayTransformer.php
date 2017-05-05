@@ -497,21 +497,23 @@ class ArrayTransformer
                         $nextInSet = array_slice($tmp, $dayPos, 1);
                         $nextInSet = $nextInSet[0];
                     } else {
-                        $nextInSet = $tmp[$dayPos];
+                        $nextInSet = isset($tmp[$dayPos]) ? $tmp[$dayPos] : null;
                     }
 
-                    /** @var Time $time */
-                    $time = $timeSet[$timePos];
+                    if ($nextInSet) {
+                        /** @var Time $time */
+                        $time = $timeSet[$timePos];
 
-                    $dtTmp = DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
+                        $dtTmp = DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
 
-                    $dtTmp->setTime(
-                        $time->hour,
-                        $time->minute,
-                        $time->second
-                    );
+                        $dtTmp->setTime(
+                            $time->hour,
+                            $time->minute,
+                            $time->second
+                        );
 
-                    $datesAdj[] = $dtTmp;
+                        $datesAdj[] = $dtTmp;
+                    }
                 }
 
                 foreach ($datesAdj as $dtTmp) {
