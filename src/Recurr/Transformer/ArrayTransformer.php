@@ -16,6 +16,7 @@ namespace Recurr\Transformer;
 
 use Recurr\DateExclusion;
 use Recurr\DateInclusion;
+use Recurr\Exception\InvalidWeekday;
 use Recurr\Frequency;
 use Recurr\Recurrence;
 use Recurr\RecurrenceCollection;
@@ -80,6 +81,7 @@ class ArrayTransformer
      *                                                          should count towards a rule's COUNT limit.
      *
      * @return RecurrenceCollection|Recurrence[]
+     * @throws InvalidWeekday
      */
     public function transform(Rule $rule, ConstraintInterface $constraint = null, $countConstraintFailures = true)
     {
@@ -203,7 +205,6 @@ class ArrayTransformer
 
         $year   = $dt->format('Y');
         $month  = $dt->format('n');
-        $day    = $dt->format('j');
         $hour   = $dt->format('G');
         $minute = $dt->format('i');
         $second = $dt->format('s');
@@ -471,7 +472,7 @@ class ArrayTransformer
                 }
             }
 
-            if (!empty($bySetPos)) {
+            if (!empty($bySetPos) && !empty($daySet)) {
                 $datesAdj  = array();
                 $tmpDaySet = array_combine($daySet, $daySet);
 
@@ -495,6 +496,9 @@ class ArrayTransformer
 
                     if ($dayPos < 0) {
                         $nextInSet = array_slice($tmp, $dayPos, 1);
+                        if (count($nextInSet) === 0) {
+                            continue;
+                        }
                         $nextInSet = $nextInSet[0];
                     } else {
                         $nextInSet = isset($tmp[$dayPos]) ? $tmp[$dayPos] : null;
@@ -617,7 +621,6 @@ class ArrayTransformer
                 case Frequency::YEARLY:
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
-                    $day   = $dt->format('j');
                     $dt->setDate($year, $month, 1);
                     break;
                 case Frequency::MONTHLY:
@@ -644,26 +647,22 @@ class ArrayTransformer
                     $dt->modify("+$delta day");
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
-                    $day   = $dt->format('j');
                     break;
                 case Frequency::DAILY:
                     $dt->modify('+'.$rule->getInterval().' day');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
-                    $day   = $dt->format('j');
                     break;
                 case Frequency::HOURLY:
                     $dt->modify('+'.$rule->getInterval().' hours');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
-                    $day   = $dt->format('j');
                     $hour  = $dt->format('G');
                     break;
                 case Frequency::MINUTELY:
                     $dt->modify('+'.$rule->getInterval().' minutes');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
-                    $day    = $dt->format('j');
                     $hour   = $dt->format('G');
                     $minute = $dt->format('i');
                     break;
@@ -671,7 +670,6 @@ class ArrayTransformer
                     $dt->modify('+'.$rule->getInterval().' seconds');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
-                    $day    = $dt->format('j');
                     $hour   = $dt->format('G');
                     $minute = $dt->format('i');
                     $second = $dt->format('s');
