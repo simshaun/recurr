@@ -17,9 +17,9 @@ interface ConstraintInterface
     public function stopsTransformer();
 
     /**
-     * @param \DateTime $date
+     * @param \DateTimeInterface $date
      *
      * @return bool
      */
-    public function test(\DateTime $date);
+    public function test(\DateTimeInterface $date);
 }

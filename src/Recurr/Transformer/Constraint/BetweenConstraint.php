@@ -16,21 +16,21 @@ class BetweenConstraint extends Constraint
 
     protected $stopsTransformer = false;
 
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $before;
 
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $after;
 
     /** @var bool */
     protected $inc;
 
     /**
-     * @param \DateTime $after
-     * @param \DateTime $before
-     * @param bool      $inc Include date if it equals $after or $before.
+     * @param \DateTimeInterface $after
+     * @param \DateTimeInterface $before
+     * @param bool               $inc Include date if it equals $after or $before.
      */
-    public function __construct(\DateTime $after, \DateTime $before, $inc = false)
+    public function __construct(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
     {
         $this->after  = $after;
         $this->before = $before;
@@ -42,7 +42,7 @@ class BetweenConstraint extends Constraint
      *
      * {@inheritdoc}
      */
-    public function test(\DateTime $date)
+    public function test(\DateTimeInterface $date)
     {
         if ($date > $this->before) {
             $this->stopsTransformer = true;

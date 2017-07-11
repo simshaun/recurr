@@ -10,10 +10,11 @@
 namespace Recurr;
 
 /**
- * Class DateInclusion is a container for a single \DateTime.
+ * Class DateInclusion is a container for a single \DateTimeInterface.
  *
  * The purpose of this class is to hold a flag that specifies whether
- * or not the \DateTime was created from a DATE only, or with a DATETIME.
+ * or not the \DateTimeInterface was created from a DATE only, or with a
+ * DATETIME.
  *
  * It also tracks whether or not the inclusion is explicitly set to UTC.
  *
@@ -22,7 +23,7 @@ namespace Recurr;
  */
 class DateInclusion
 {
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     public $date;
 
     /** @var bool Day of year */
@@ -34,11 +35,11 @@ class DateInclusion
     /**
      * Constructor
      *
-     * @param \DateTime $date
-     * @param bool      $hasTime
-     * @param bool      $isUtcExplicit
+     * @param \DateTimeInterface $date
+     * @param bool               $hasTime
+     * @param bool               $isUtcExplicit
      */
-    public function __construct(\DateTime $date, $hasTime = true, $isUtcExplicit = false)
+    public function __construct(\DateTimeInterface $date, $hasTime = true, $isUtcExplicit = false)
     {
         $this->date          = $date;
         $this->hasTime       = $hasTime;

@@ -16,17 +16,17 @@ class AfterConstraint extends Constraint
 
     protected $stopsTransformer = false;
 
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $after;
 
     /** @var bool */
     protected $inc;
 
     /**
-     * @param \DateTime $after
-     * @param bool      $inc Include date if it equals $after.
+     * @param \DateTimeInterface $after
+     * @param bool               $inc Include date if it equals $after.
      */
-    public function __construct(\DateTime $after, $inc = false)
+    public function __construct(\DateTimeInterface $after, $inc = false)
     {
         $this->after = $after;
         $this->inc    = $inc;
@@ -37,7 +37,7 @@ class AfterConstraint extends Constraint
      *
      * {@inheritdoc}
      */
-    public function test(\DateTime $date)
+    public function test(\DateTimeInterface $date)
     {
         if ($this->inc) {
             return $date >= $this->after;

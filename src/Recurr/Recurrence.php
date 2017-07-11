@@ -18,22 +18,22 @@ namespace Recurr;
  */
 class Recurrence
 {
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $start;
 
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $end;
 
     /** @var int */
     protected $index;
 
-    public function __construct(\DateTime $start = null, \DateTime $end = null, $index = 0)
+    public function __construct(\DateTimeInterface $start = null, \DateTimeInterface $end = null, $index = 0)
     {
-        if ($start instanceof \DateTime) {
+        if ($start instanceof \DateTimeInterface) {
             $this->setStart($start);
         }
 
-        if ($end instanceof \DateTime) {
+        if ($end instanceof \DateTimeInterface) {
             $this->setEnd($end);
         }
 
@@ -41,7 +41,7 @@ class Recurrence
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getStart()
     {
