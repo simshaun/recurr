@@ -16,17 +16,17 @@ class BeforeConstraint extends Constraint
 
     protected $stopsTransformer = true;
 
-    /** @var \DateTime */
+    /** @var \DateTimeInterface */
     protected $before;
 
     /** @var bool */
     protected $inc;
 
     /**
-     * @param \DateTime $before
-     * @param bool      $inc Include date if it equals $before.
+     * @param \DateTimeInterface $before
+     * @param bool               $inc Include date if it equals $before.
      */
-    public function __construct(\DateTime $before, $inc = false)
+    public function __construct(\DateTimeInterface $before, $inc = false)
     {
         $this->before = $before;
         $this->inc    = $inc;
@@ -37,7 +37,7 @@ class BeforeConstraint extends Constraint
      *
      * {@inheritdoc}
      */
-    public function test(\DateTime $date)
+    public function test(\DateTimeInterface $date)
     {
         if ($this->inc) {
             return $date <= $this->before;

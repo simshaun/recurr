@@ -27,7 +27,7 @@ use Recurr\DateUtil;
 
 /**
  * This class is responsible for transforming a Rule in to an array
- * of \DateTime() objects.
+ * of \DateTimeInterface objects.
  *
  * If a recurrence rule is infinitely recurring, a virtual limit is imposed.
  *
@@ -41,7 +41,7 @@ class ArrayTransformer
 
     /**
      * Some versions of PHP are affected by a bug where
-     * \DateTime::createFromFormat('z Y', ...) does not account for leap years.
+     * \DateTimeInterface::createFromFormat('z Y', ...) does not account for leap years.
      *
      * @var bool
      */
@@ -72,7 +72,7 @@ class ArrayTransformer
     }
 
     /**
-     * Transform a Rule in to an array of \DateTimes
+     * Transform a Rule in to an array of \DateTimeInterface objects
      *
      * @param Rule                     $rule                    the Rule object
      * @param ConstraintInterface|null $constraint              Potential recurrences must pass the constraint, else
@@ -91,7 +91,7 @@ class ArrayTransformer
 
         if (null === $start) {
             $start = new \DateTime(
-                'now', $until instanceof \DateTime ? $until->getTimezone() : null
+                'now', $until instanceof \DateTimeInterface ? $until->getTimezone() : null
             );
         }
 
@@ -680,7 +680,7 @@ class ArrayTransformer
         /** @var Recurrence[] $recurrences */
         $recurrences = array();
         foreach ($dates as $key => $start) {
-            /** @var \DateTime $end */
+            /** @var \DateTimeInterface $end */
             $end = clone $start;
 
             $recurrences[] = new Recurrence($start, $end->add($durationInterval), $key);

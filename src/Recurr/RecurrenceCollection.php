@@ -18,13 +18,13 @@ use \Doctrine\Common\Collections\ArrayCollection as BaseCollection;
 class RecurrenceCollection extends BaseCollection
 {
     /**
-     * @param \DateTime $after
-     * @param \DateTime $before
+     * @param \DateTimeInterface $after
+     * @param \DateTimeInterface $before
      * @param bool      $inc Include $after or $before if they happen to be a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function startsBetween(\DateTime $after, \DateTime $before, $inc = false)
+    public function startsBetween(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($after, $before, $inc) {
@@ -41,12 +41,12 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param \DateTime $before
-     * @param bool      $inc Include $before if it is a recurrence.
+     * @param \DateTimeInterface $before
+     * @param bool               $inc Include $before if it is a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function startsBefore(\DateTime $before, $inc = false)
+    public function startsBefore(\DateTimeInterface $before, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($before, $inc) {
@@ -63,12 +63,12 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param \DateTime $after
-     * @param bool      $inc Include $after if it a recurrence.
+     * @param \DateTimeInterface $after
+     * @param bool               $inc Include $after if it a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function startsAfter(\DateTime $after, $inc = false)
+    public function startsAfter(\DateTimeInterface $after, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($after, $inc) {
@@ -85,13 +85,13 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param \DateTime $after
-     * @param \DateTime $before
-     * @param bool      $inc Include $after or $before if they happen to be a recurrence.
+     * @param \DateTimeInterface $after
+     * @param \DateTimeInterface $before
+     * @param bool               $inc Include $after or $before if they happen to be a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function endsBetween(\DateTime $after, \DateTime $before, $inc = false)
+    public function endsBetween(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($after, $before, $inc) {
@@ -108,12 +108,12 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param \DateTime $before
-     * @param bool      $inc Include $before if it is a recurrence.
+     * @param \DateTimeInterface $before
+     * @param bool               $inc Include $before if it is a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function endsBefore(\DateTime $before, $inc = false)
+    public function endsBefore(\DateTimeInterface $before, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($before, $inc) {
@@ -130,12 +130,12 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param \DateTime $after
-     * @param bool      $inc Include $after if it a recurrence.
+     * @param \DateTimeInterface $after
+     * @param bool               $inc Include $after if it a recurrence.
      *
      * @return RecurrenceCollection
      */
-    public function endsAfter(\DateTime $after, $inc = false)
+    public function endsAfter(\DateTimeInterface $after, $inc = false)
     {
         return $this->filter(
             function ($recurrence) use ($after, $inc) {

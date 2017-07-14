@@ -39,7 +39,7 @@ class TextTransformer
 
         $until = $rule->getUntil();
         $count = $rule->getCount();
-        if ($until instanceof \DateTime) {
+        if ($until instanceof \DateTimeInterface) {
             $dateFormatted = $this->translator->trans('day_date', array('date' => $until->format('U')));
             $this->addFragment($this->translator->trans('until %date%', array('date' => $dateFormatted)));
         } else if (!empty($count)) {
