@@ -12,7 +12,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
     /**
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
      */
-    private function testBefore($dateTimeClassName)
+    private function _testBefore($dateTimeClassName)
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5', new $dateTimeClassName('2014-03-16 04:00:00')
@@ -34,18 +34,18 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
 
     public function testBeforeMutable()
     {
-        $this->testBefore('\DateTime');
+        $this->_testBefore('\DateTime');
     }
 
     public function testBeforeImmutable()
     {
-        $this->testBefore('\DateTimeImmutable');
+        $this->_testBefore('\DateTimeImmutable');
     }
 
     /**
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
      */
-    private function testAfter($dateTimeClassName)
+    private function _testAfter($dateTimeClassName)
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5', new $dateTimeClassName('2014-03-16 04:00:00')
@@ -89,18 +89,18 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
 
     public function testAfterMutable()
     {
-        $this->testAfter('\DateTime');
+        $this->_testAfter('\DateTime');
     }
 
     public function testAfterImmutable()
     {
-        $this->testAfter('\DateTimeImmutable');
+        $this->_testAfter('\DateTimeImmutable');
     }
 
     /**
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
      */
-    private function testAfterFarFuture($dateTimeClassName)
+    private function _testAfterFarFuture($dateTimeClassName)
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5', new $dateTimeClassName('2014-03-16 04:00:00')
@@ -118,18 +118,18 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
 
     public function testAfterFarFutureMutable()
     {
-        $this->testAfterFarFuture('\DateTime');
+        $this->_testAfterFarFuture('\DateTime');
     }
 
     public function testAfterFarFutureImmutable()
     {
-        $this->testAfterFarFuture('\DateTimeImmutable');
+        $this->_testAfterFarFuture('\DateTimeImmutable');
     }
 
     /**
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
      */
-    private function testBetween($dateTimeClassName)
+    private function _testBetween($dateTimeClassName)
     {
         $rule = new Rule(
             'FREQ=MONTHLY', new $dateTimeClassName('2014-03-16 04:00:00')
@@ -158,11 +158,11 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
 
     public function testBetweenMutable()
     {
-        $this->testBetween('\DateTime');
+        $this->_testBetween('\DateTime');
     }
 
     public function testBetweenImmutable()
     {
-        $this->testBetween('\DateTimeImmutable');
+        $this->_testBetween('\DateTimeImmutable');
     }
 }
