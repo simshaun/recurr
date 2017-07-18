@@ -120,7 +120,7 @@ class DateUtil
     )
     {
         $start = clone $dt;
-        $start->setDate($start->format('Y'), 1, 1);
+        $start = $start->setDate($start->format('Y'), 1, 1);
 
         $diff  = $dt->diff($start);
         $start = $diff->days;
@@ -434,8 +434,8 @@ class DateUtil
     public static function getDateTimeByDayOfYear($dayOfYear, $year, \DateTimeZone $timezone)
     {
         $dtTmp = new \DateTime('now', $timezone);
-        $dtTmp->setDate($year, 1, 1);
-        $dtTmp->modify("+$dayOfYear day");
+        $dtTmp = $dtTmp->setDate($year, 1, 1);
+        $dtTmp = $dtTmp->modify("+$dayOfYear day");
 
         return $dtTmp;
     }

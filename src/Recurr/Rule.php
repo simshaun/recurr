@@ -302,14 +302,14 @@ class Rule
         if (isset($parts['DTSTART'])) {
             $this->isStartDateFromDtstart = true;
             $date = new \DateTime($parts['DTSTART']);
-            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
             $this->setStartDate($date);
         }
 
         // DTEND
         if (isset($parts['DTEND'])) {
             $date = new \DateTime($parts['DTEND']);
-            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
             $this->setEndDate($date);
         }
 
@@ -318,7 +318,7 @@ class Rule
             throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
         } elseif (isset($parts['UNTIL'])) {
             $date = new \DateTime($parts['UNTIL']);
-            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
             $this->setUntil($date);
         } elseif (isset($parts['COUNT'])) {
             $this->setCount($parts['COUNT']);
@@ -412,7 +412,7 @@ class Rule
         if (!empty($until)) {
             if ($timezoneType === self::TZ_FIXED) {
                 $u = clone $until;
-                $u->setTimezone(new \DateTimeZone('UTC'));
+                $u = $u->setTimezone(new \DateTimeZone('UTC'));
                 $parts[] = 'UNTIL='.$u->format($format.'\Z');
             } else {
                 $parts[] = 'UNTIL='.$until->format($format);
@@ -1243,9 +1243,7 @@ class Rule
             return $date;
         }
 
-        $date->setTimezone(new \DateTimeZone('UTC'));
-
-        return $date;
+        return $date->setTimezone(new \DateTimeZone('UTC'));
     }
 
     /**

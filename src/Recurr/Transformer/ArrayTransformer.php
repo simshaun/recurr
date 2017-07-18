@@ -322,7 +322,7 @@ class ArrayTransformer
                     // days from last year's last week number in this year.
                     if (!in_array(-1, $byWeekNum)) {
                         $dtTmp = new \DateTime();
-                        $dtTmp->setDate($year - 1, 1, 1);
+                        $dtTmp = $dtTmp->setDate($year - 1, 1, 1);
                         $lastYearWeekDay      = DateUtil::getDayOfWeek($dtTmp);
                         $lastYearNo1WeekStart = DateUtil::pymod(7 - $lastYearWeekDay + $weekStart, 7);
                         $lastYearLength       = DateUtil::getYearLength($dtTmp);
@@ -510,7 +510,7 @@ class ArrayTransformer
 
                         $dtTmp = DateUtil::getDateTimeByDayOfYear($nextInSet, $dt->format('Y'), $start->getTimezone());
 
-                        $dtTmp->setTime(
+                        $dtTmp = $dtTmp->setTime(
                             $time->hour,
                             $time->minute,
                             $time->second
@@ -563,7 +563,7 @@ class ArrayTransformer
 
                     foreach ($timeSet as $time) {
                         /** @var Time $time */
-                        $dtTmp->setTime(
+                        $dtTmp = $dtTmp->setTime(
                             $time->hour,
                             $time->minute,
                             $time->second
@@ -621,7 +621,7 @@ class ArrayTransformer
                 case Frequency::YEARLY:
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
-                    $dt->setDate($year, $month, 1);
+                    $dt = $dt->setDate($year, $month, 1);
                     break;
                 case Frequency::MONTHLY:
                     $month += $rule->getInterval();
@@ -635,7 +635,7 @@ class ArrayTransformer
                             --$year;
                         }
                     }
-                    $dt->setDate($year, $month, 1);
+                    $dt = $dt->setDate($year, $month, 1);
                     break;
                 case Frequency::WEEKLY:
                     if ($weekStart > $dtInfo->dayOfWeek) {
@@ -710,7 +710,7 @@ class ArrayTransformer
 
                 if ($recurrenceDate->getTimezone()->getName() !== $exclusionTimezone->getName()) {
                     $recurrenceDate = clone $recurrenceDate;
-                    $recurrenceDate->setTimezone($exclusionTimezone);
+                    $recurrenceDate = $recurrenceDate->setTimezone($exclusionTimezone);
                 }
 
                 if (!$exclusion->hasTime && $recurrenceDate->format('Ymd') == $exclusionDate) {
