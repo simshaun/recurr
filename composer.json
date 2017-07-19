@@ -20,8 +20,9 @@
 		"phpunit/phpunit": "~4.5"
 	},
 	"autoload": {
-		"psr-0": {
-			"Recurr": "src/"
+		"psr-4": {
+			"Recurr\\": "src/Recurr/",
+			"Recurr\\Test\\": "tests/"
 		}
 	},
 	"extra": {
