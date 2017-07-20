@@ -154,6 +154,16 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         $this->assertEquals(new $dateTimeClassName('2014-05-16 04:00:00'), $computed[2]->getStart());
         $this->assertEquals(new $dateTimeClassName('2014-06-16 04:00:00'), $computed[3]->getStart());
         $this->assertEquals(new $dateTimeClassName('2014-07-16 04:00:00'), $computed[4]->getStart());
+
+        $rule = new Rule(
+            'FREQ=WEEKLY', new $dateTimeClassName('2017-07-03 09:30:00')
+        );
+
+        $constraint = new BetweenConstraint(
+            new $dateTimeClassName('2017-07-16 23:00:00'), new $dateTimeClassName('2017-07-21 22:59:59'), true
+        );
+        $computed = $this->transformer->transform($rule, $constraint);
+        $this->assertCount(1, $computed);
     }
 
     public function testBetweenMutable()
