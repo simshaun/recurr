@@ -756,8 +756,8 @@ class Rule
             && $this->getTimezone() != 'UTC'
         ) {
             $timestamp = $date->getTimestamp();
-            $date->setTimezone(new \DateTimeZone($this->getTimezone()));
-            $date->setTimestamp($timestamp);
+            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = $date->setTimestamp($timestamp);
         }
 
         return $date;

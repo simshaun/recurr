@@ -644,30 +644,30 @@ class ArrayTransformer
                         $delta = ($dtInfo->dayOfWeek - $weekStart) * -1 + $rule->getInterval() * 7;
                     }
 
-                    $dt->modify("+$delta day");
+                    $dt = $dt->modify("+$delta day");
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     break;
                 case Frequency::DAILY:
-                    $dt->modify('+'.$rule->getInterval().' day');
+                    $dt = $dt->modify('+'.$rule->getInterval().' day');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     break;
                 case Frequency::HOURLY:
-                    $dt->modify('+'.$rule->getInterval().' hours');
+                    $dt = $dt->modify('+'.$rule->getInterval().' hours');
                     $year  = $dt->format('Y');
                     $month = $dt->format('n');
                     $hour  = $dt->format('G');
                     break;
                 case Frequency::MINUTELY:
-                    $dt->modify('+'.$rule->getInterval().' minutes');
+                    $dt = $dt->modify('+'.$rule->getInterval().' minutes');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
                     $hour   = $dt->format('G');
                     $minute = $dt->format('i');
                     break;
                 case Frequency::SECONDLY:
-                    $dt->modify('+'.$rule->getInterval().' seconds');
+                    $dt = $dt->modify('+'.$rule->getInterval().' seconds');
                     $year   = $dt->format('Y');
                     $month  = $dt->format('n');
                     $hour   = $dt->format('G');
