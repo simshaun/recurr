@@ -226,13 +226,10 @@ class ArrayTransformer
             $timeSet     = DateUtil::getTimeSet($rule, $dt);
 
             if ($freq >= Frequency::HOURLY) {
-                if (($freq >= Frequency::HOURLY && !empty($byHour) && !in_array(
-                            $hour,
-                            $byHour
-                        )) || ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array(
-                            $minute,
-                            $byMinute
-                        )) || ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond))
+                if (
+                    ($freq >= Frequency::HOURLY && !empty($byHour) && !in_array($hour, $byHour))
+                    || ($freq >= Frequency::MINUTELY && !empty($byMinute) && !in_array($minute, $byMinute))
+                    || ($freq >= Frequency::SECONDLY && !empty($bySecond) && !in_array($second, $bySecond))
                 ) {
                     $timeSet = array();
                 } else {
@@ -410,15 +407,9 @@ class ArrayTransformer
             foreach ($daySet as $i => $dayOfYear) {
                 $dayOfMonth = $dtInfo->mDayMask[$dayOfYear];
 
-                $ifByMonth = $byMonth !== null && !in_array(
-                        $dtInfo->mMask[$dayOfYear],
-                        $byMonth
-                    );
+                $ifByMonth = $byMonth !== null && !in_array($dtInfo->mMask[$dayOfYear], $byMonth);
 
-                $ifByWeekNum = $byWeekNum !== null && !in_array(
-                        $i,
-                        $wNoMask
-                    );
+                $ifByWeekNum = $byWeekNum !== null && !in_array($i, $wNoMask);
 
                 $ifByYearDay = $byYearDay !== null && (
                         (
@@ -433,10 +424,7 @@ class ArrayTransformer
                         )
                     );
 
-                $ifByMonthDay = $byMonthDay !== null && !in_array(
-                        $dtInfo->mDayMask[$dayOfYear],
-                        $byMonthDay
-                    );
+                $ifByMonthDay = $byMonthDay !== null && !in_array($dtInfo->mDayMask[$dayOfYear], $byMonthDay);
 
                 // Handle "last day of next month" problem.
                 if ($fixLastDayOfMonth
@@ -450,15 +438,11 @@ class ArrayTransformer
                     $ifByMonthDay = false;
                 }
 
-                $ifByMonthDayNeg = $byMonthDayNeg !== null && !in_array(
-                        $dtInfo->mDayMaskNeg[$dayOfYear],
-                        $byMonthDayNeg
-                    );
+                $ifByMonthDayNeg = $byMonthDayNeg !== null
+                    && !in_array($dtInfo->mDayMaskNeg[$dayOfYear], $byMonthDayNeg);
 
-                $ifByDay = $byWeekDay !== null && count($byWeekDay) && !in_array(
-                        $dtInfo->wDayMask[$dayOfYear],
-                        $byWeekDay
-                    );
+                $ifByDay = $byWeekDay !== null && count($byWeekDay)
+                    && !in_array($dtInfo->wDayMask[$dayOfYear], $byWeekDay);
 
                 $ifWDayMaskRel = $byWeekDayRel !== null && !in_array($dayOfYear, $wDayMaskRel);
 
