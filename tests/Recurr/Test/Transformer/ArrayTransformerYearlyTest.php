@@ -18,6 +18,14 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2015-06-13'), $computed[2]->getStart());
     }
 
+    public function testYearlyByMonth()
+    {
+        $rule = new Rule('FREQ=YEARLY;BYMONTH=9;COUNT=3', new \DateTime('2017-07-31 00:00:00'));
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(0, $computed);
+    }
+
     public function testLeapYear()
     {
         $rule     = new Rule('FREQ=YEARLY;COUNT=5;INTERVAL=1', new \DateTime('2096-02-29'));

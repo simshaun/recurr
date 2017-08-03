@@ -209,10 +209,11 @@ class ArrayTransformer
         $minute = $dt->format('i');
         $second = $dt->format('s');
 
-        $dates    = array();
-        $total    = 1;
-        $count    = $maxCount;
-        $continue = true;
+        $dates      = array();
+        $total      = 1;
+        $count      = $maxCount;
+        $continue   = true;
+        $iterations = 0;
         while ($continue) {
             $dtInfo = DateUtil::getDateInfo($dt);
 
@@ -622,6 +623,12 @@ class ArrayTransformer
                     $year += $rule->getInterval();
                     $month = $dt->format('n');
                     $dt = $dt->setDate($year, $month, 1);
+
+                    // Stop an infinite loop w/ a sane limit
+                    ++$iterations;
+                    if ($iterations > 300 && !count($dates)) {
+                        break 2;
+                    }
                     break;
                 case Frequency::MONTHLY:
                     $month += $rule->getInterval();
