@@ -89,7 +89,7 @@ class ArrayTransformer
         $end   = $rule->getEndDate();
         $until = $rule->getUntil();
 
-        if (null === $start) {
+        if (null === $start || !$start instanceof \DateTime) {
             $start = new \DateTime(
                 'now', $until instanceof \DateTimeInterface ? $until->getTimezone() : null
             );
