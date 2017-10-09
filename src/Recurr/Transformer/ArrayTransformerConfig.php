@@ -16,6 +16,9 @@ class ArrayTransformerConfig
 
     protected $lastDayOfMonthFix = false;
 
+    /** @var string */
+    protected $recurrenceClassName = '\Recurr\Recurrence';
+
     /**
      * Set the virtual limit imposed upon infinitely recurring events.
      *
@@ -61,5 +64,24 @@ class ArrayTransformerConfig
     public function isLastDayOfMonthFixEnabled()
     {
         return $this->lastDayOfMonthFix;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRecurrenceClassName()
+    {
+        return $this->recurrenceClassName;
+    }
+
+    /**
+     * Set the class to use when generating a collection of recurrences
+     * Defaults to the Recurrence class in this package
+     *
+     * @param string $recurrenceClassName
+     */
+    public function setRecurrenceClassName($recurrenceClassName)
+    {
+        $this->recurrenceClassName = $recurrenceClassName;
     }
 }
