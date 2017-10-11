@@ -668,13 +668,15 @@ class ArrayTransformer
             }
         }
 
+        $recurrenceClassName = $this->config->getRecurrenceClassName();
+
         /** @var Recurrence[] $recurrences */
         $recurrences = array();
         foreach ($dates as $key => $start) {
             /** @var \DateTimeInterface $end */
             $end = clone $start;
 
-            $recurrences[] = new Recurrence($start, $end->add($durationInterval), $key);
+            $recurrences[] = new $recurrenceClassName($start, $end->add($durationInterval), $key);
         }
 
         $recurrences = $this->handleInclusions($rule->getRDates(), $recurrences);
@@ -726,8 +728,10 @@ class ArrayTransformer
      */
     protected function handleInclusions(array $inclusions, array $recurrences)
     {
+        $recurrenceClassName = $this->config->getRecurrenceClassName();
+
         foreach ($inclusions as $inclusion) {
-            $recurrence = new Recurrence(clone $inclusion->date, clone $inclusion->date);
+            $recurrence = new $recurrenceClassName(clone $inclusion->date, clone $inclusion->date);
             $recurrences[] = $recurrence;
         }
 
