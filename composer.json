@@ -1,5 +1,5 @@
 {
-	"name": "codesmithtech/recurr",
+	"name": "simshaun/recurr",
 	"description": "PHP library for working with recurrence rules",
 	"keywords": ["rrule", "recurrence", "recurring", "events", "dates"],
 	"homepage": "https://github.com/simshaun/recurr",
