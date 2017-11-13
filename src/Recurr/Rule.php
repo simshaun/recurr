@@ -1186,6 +1186,8 @@ class Rule
         }
 
         $this->rDates = $rDates;
+
+        return $this;
     }
 
     /**
@@ -1225,6 +1227,8 @@ class Rule
         }
 
         $this->exDates = $exDates;
+
+        return $this;
     }
 
     /**
