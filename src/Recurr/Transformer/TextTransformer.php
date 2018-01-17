@@ -101,9 +101,10 @@ class TextTransformer
             $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% years' : 'every year', array('count' => $interval)));
         }
 
-        if (count($byMonth) <= 1 && empty($byMonthDay) && empty($byDay) && empty($byYearDay) && empty($byWeekNum)) {
+        $hasNoOrOneByMonth = is_null($byMonth) || count($byMonth) <= 1;
+        if ($hasNoOrOneByMonth && empty($byMonthDay) && empty($byDay) && empty($byYearDay) && empty($byWeekNum)) {
             $this->addFragment($this->translator->trans('on'));
-            $monthNum = count($byMonth) ? $byMonth[0] : $rule->getStartDate()->format('n');
+            $monthNum = (is_array($byMonth) && count($byMonth)) ? $byMonth[0] : $rule->getStartDate()->format('n');
             $this->addFragment(
                 $this->translator->trans('day_month', array('month' => $monthNum, 'day' => $rule->getStartDate()->format('d')))
             );
