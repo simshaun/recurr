@@ -183,6 +183,8 @@ class Rule
      * @param string|\DateTimeInterface $startDate
      * @param \DateTimeInterface|null   $endDate
      * @param string                    $timezone
+     *
+     * @throws InvalidRRule
      */
     public function __construct($rrule = null, $startDate = null, $endDate = null, $timezone = null)
     {
