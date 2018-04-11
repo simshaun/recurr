@@ -57,6 +57,8 @@ return array(
     'every week' => 'weekly',
     'every %count% days' => 'every %count% days',
     'every day' => 'daily',
+    'every %count% hours' => 'every %count% hours',
+    'every hour' => 'hourly',
     'last' => 'last', // e.g. 2nd last Friday
     'days' => 'days',
     'day' => 'day',

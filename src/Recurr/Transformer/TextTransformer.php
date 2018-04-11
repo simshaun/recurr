@@ -32,6 +32,8 @@ class TextTransformer
                 $this->addDaily($rule);
                 break;
             case 4:
+                $this->addHourly($rule);
+                break;
             case 5:
             case 6:
                 return $this->translator->trans('Unable to fully convert this rrule to text.');
@@ -59,7 +61,7 @@ class TextTransformer
 
     protected function isFullyConvertible(Rule $rule)
     {
-        if ($rule->getFreq() >= 4) {
+        if ($rule->getFreq() >= 5) {
             return false;
         }
 
