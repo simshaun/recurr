@@ -56,3 +56,12 @@
 "every 2 years on March 16": "alle 2 Jahre am 16. März"
 "yearly on March 16 for 5 times": "jährlich am 16. März 5 Mal"
 "yearly on March 16 until December 31, 2012": "jährlich am 16. März bis 31. Dezember, 2012"
+
+# hourly tests
+"hourly": "stündlich"
+"every 10 hours": "alle 10 Stunden"
+"hourly in January, May and August": "stündlich im Januar, Mai und August"
+"every 2 hours in January, May and August": "alle 2 Stunden im Januar, Mai und August"
+"hourly on the 1st, 5th and 21st of the month": "stündlich am 1., 5. und 21. des Monats"
+"hourly on Tuesday or Friday the 1st, 5th or 21st of the month": "stündlich am Dienstag oder Freitag dem 1., 5. oder 21. des Monats"
+"hourly on Tuesday, Wednesday and Friday": "stündlich am Dienstag, Mittwoch und Freitag"

@@ -217,6 +217,28 @@ class TextTransformer
             $this->addByDay($rule);
         }
     }
+    
+    protected function addHourly(Rule $rule)
+    {
+        $interval = $rule->getInterval();
+        $byMonth = $rule->getByMonth();
+
+        $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% hours' : 'every hour', array('count' => $interval)));
+
+        if (!empty($byMonth)) {
+            $this->addFragment($this->translator->trans('in_month'));
+            $this->addByMonth($rule);
+        }
+
+        $byMonthDay = $rule->getByMonthDay();
+        $byDay      = $rule->getByDay();
+        if (!empty($byMonthDay)) {
+            $this->addByMonthDay($rule);
+            $this->addFragment($this->translator->trans('of_the_month'));
+        } else if (!empty($byDay)) {
+            $this->addByDay($rule);
+        }
+    }
 
     protected function addByMonth(Rule $rule)
     {

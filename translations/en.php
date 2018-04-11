@@ -64,6 +64,8 @@ return array(
     'day' => 'day',
     'weeks' => 'weeks',
     'week' => 'week',
+    'hours' => 'hours',
+    'hour' => 'hour',
     // formats a number with a prefix e.g. every year on the 1st and 200th day
     // negative numbers should be handled as in '5th to the last' or 'last'
     //

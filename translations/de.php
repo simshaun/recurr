@@ -57,11 +57,15 @@ return array(
     'every week' => 'wöchentlich',
     'every %count% days' => 'alle %count% Tage',
     'every day' => 'täglich',
+    'every %count% hours' => 'alle %count% Stunden',
+    'every hour' => 'stündlich',
     'last' => 'letzte', // e.g. 2nd last Friday
     'days' => 'Tage',
     'day' => 'Tag',
     'weeks' => 'Wochen',
     'week' => 'Woche',
+    'hours' => 'Stunden',
+    'hour' => 'stündlich',
     // formats a number with a prefix e.g. every year on the 1st and 200th day
     // negative numbers should be handled as in '5th to the last' or 'last'
     //
