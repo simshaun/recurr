@@ -640,7 +640,7 @@ class Rule
      *  - Frequency::YEAR to specify repeating events based on an
      *    interval of a year or more.
      *
-     * @param string $freq Frequency of recurrence.
+     * @param string|int $freq Frequency of recurrence.
      *
      * @return $this
      * @throws Exception\InvalidArgument
