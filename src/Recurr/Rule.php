@@ -179,10 +179,10 @@ class Rule
     /**
      * Construct a new Rule.
      *
-     * @param string                    $rrule RRULE string
-     * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param string                         $rrule RRULE string
+     * @param string|\DateTimeInterface      $startDate
+     * @param string|\DateTimeInterface|null $endDate
+     * @param string                         $timezone
      *
      * @throws InvalidRRule
      */
@@ -197,11 +197,16 @@ class Rule
         }
         $this->setTimezone($timezone);
 
-        if (!$startDate instanceof \DateTimeInterface) {
+        if ($startDate !== null && !$startDate instanceof \DateTimeInterface) {
             $startDate = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
 
         $this->setStartDate($startDate);
+
+        if ($endDate !== null && !$endDate instanceof \DateTimeInterface) {
+            $endDate = new \DateTime($endDate, new \DateTimeZone($timezone));
+        }
+
         $this->setEndDate($endDate);
 
         if (is_array($rrule)) {
