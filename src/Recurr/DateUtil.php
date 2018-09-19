@@ -87,11 +87,11 @@ class DateUtil
         }
 
         $tmpDt = clone $dt;
-        $tmpDt->setDate($dt->format('Y') + 1, 1, 1);
+        $tmpDt = $tmpDt->setDate($dt->format('Y') + 1, 1, 1);
         $i->nextYearLength = self::getYearLength($tmpDt);
 
         $tmpDt = clone $dt;
-        $tmpDt->setDate($dt->format('Y'), 1, 1);
+        $tmpDt = $tmpDt->setDate($dt->format('Y'), 1, 1);
         $i->dayOfWeekYearDay1 = self::getDayOfWeek($tmpDt);
 
         $i->wDayMask = array_slice(
