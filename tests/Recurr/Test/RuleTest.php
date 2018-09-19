@@ -17,6 +17,27 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule = new Rule;
     }
 
+    public function testConstructAcceptableStartDate()
+    {
+        $this->rule = new Rule(null, null);
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+
+        $this->rule = new Rule(null, '2018-09-19');
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+
+        $this->rule = new Rule(null, new \DateTime('2018-09-19'));
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+    }
+
+    public function testConstructAcceptableEndDate()
+    {
+        $this->rule = new Rule(null, null, '2018-09-19');
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
+
+        $this->rule = new Rule(null, null, new \DateTime('2018-09-19'));
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
+    }
+
     public function testDefaultTimezone()
     {
         $this->assertEquals(date_default_timezone_get(), $this->rule->getTimezone());
