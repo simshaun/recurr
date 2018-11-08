@@ -32,6 +32,8 @@ class TextTransformer
                 $this->addDaily($rule);
                 break;
             case 4:
+                $this->addHourly($rule);
+                break;
             case 5:
             case 6:
                 return $this->translator->trans('Unable to fully convert this rrule to text.');
@@ -59,7 +61,7 @@ class TextTransformer
 
     protected function isFullyConvertible(Rule $rule)
     {
-        if ($rule->getFreq() >= 4) {
+        if ($rule->getFreq() >= 5) {
             return false;
         }
 
@@ -200,6 +202,28 @@ class TextTransformer
         $byMonth = $rule->getByMonth();
 
         $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% days' : 'every day', array('count' => $interval)));
+
+        if (!empty($byMonth)) {
+            $this->addFragment($this->translator->trans('in_month'));
+            $this->addByMonth($rule);
+        }
+
+        $byMonthDay = $rule->getByMonthDay();
+        $byDay      = $rule->getByDay();
+        if (!empty($byMonthDay)) {
+            $this->addByMonthDay($rule);
+            $this->addFragment($this->translator->trans('of_the_month'));
+        } else if (!empty($byDay)) {
+            $this->addByDay($rule);
+        }
+    }
+    
+    protected function addHourly(Rule $rule)
+    {
+        $interval = $rule->getInterval();
+        $byMonth = $rule->getByMonth();
+
+        $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% hours' : 'every hour', array('count' => $interval)));
 
         if (!empty($byMonth)) {
             $this->addFragment($this->translator->trans('in_month'));

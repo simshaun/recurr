@@ -261,6 +261,40 @@ class TextTransformerTest extends \PHPUnit_Framework_TestCase
                 'FREQ=YEARLY;BYMONTH=3;UNTIL=20121231T235959Z',
                 'yearly on March 16 until December 31, 2012'
             ),
+
+            // Hourly
+            array(
+                'FREQ=HOURLY',
+                'hourly',
+            ),
+            // HourlyPlural
+            array(
+                'FREQ=HOURLY;INTERVAL=10',
+                'every 10 hours',
+            ),
+            // HourlyByMonth
+            array(
+                'FREQ=HOURLY;BYMONTH=1,8,5',
+                'hourly in January, May and August',
+            ),
+            array(
+                'FREQ=HOURLY;INTERVAL=2;BYMONTH=1,8,5',
+                'every 2 hours in January, May and August',
+            ),
+            // HourlyByMonthDay
+            array(
+                'FREQ=HOURLY;BYMONTHDAY=5,1,21',
+                'hourly on the 1st, 5th and 21st of the month'
+            ),
+            array(
+                'FREQ=HOURLY;BYMONTHDAY=5,1,21;BYDAY=TU,FR',
+                'hourly on Tuesday or Friday the 1st, 5th or 21st of the month',
+            ),
+            // HourlyByDay
+            array(
+                'FREQ=HOURLY;BYDAY=TU,WE,FR',
+                'hourly on Tuesday, Wednesday and Friday',
+            ),
         );
 
         $tests = array();

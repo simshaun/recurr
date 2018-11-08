@@ -56,3 +56,12 @@
 "every 2 years on March 16": "ogni 2 anni il 16 marzo"
 "yearly on March 16 for 5 times": "ogni anno il 16 marzo per 5 volte"
 "yearly on March 16 until December 31, 2012": "ogni anno il 16 marzo fino al 31 dicembre, 2012"
+
+# hourly tests
+"hourly": "ogni ora"
+"every 10 hours": "ogni 10 ore"
+"hourly in January, May and August": "ogni ora in gennaio, maggio e agosto"
+"every 2 hours in January, May and August": "ogni 2 ore in gennaio, maggio e agosto"
+"hourly on the 1st, 5th and 21st of the month": "ogni ora il 1, 5 e 21 del mese"
+"hourly on Tuesday or Friday the 1st, 5th or 21st of the month": "ogni ora il martedì o venerdì il 1, 5 o 21 del mese"
+"hourly on Tuesday, Wednesday and Friday": "ogni ora il martedì, mercoledì e venerdì"

@@ -57,11 +57,15 @@ return array(
     'every week' => 'ogni settimana',
     'every %count% days' => 'ogni %count% giorni',
     'every day' => 'ogni giorno',
+    'every %count% hours' => 'ogni %count% ore',
+    'every hour' => 'ogni ora',
     'last' => 'scorso', // e.g. 2nd last Friday
     'days' => 'giorni',
     'day' => 'giorno',
     'weeks' => 'settimane',
     'week' => 'settimana',
+    'hours' => 'ore',
+    'hour' => 'ora',
     // formats a number with a prefix e.g. every year on the 1st and 200th day
     // negative numbers should be handled as in '5th to the last' or 'last'
     //

@@ -56,3 +56,12 @@
 "every 2 years on March 16": "every 2 years on March 16"
 "yearly on March 16 for 5 times": "yearly on March 16 for 5 times"
 "yearly on March 16 until December 31, 2012": "yearly on March 16 until December 31, 2012"
+
+# hourly tests
+"hourly": "hourly"
+"every 10 hours": "every 10 hours"
+"hourly in January, May and August": "hourly in January, May and August"
+"every 2 hours in January, May and August": "every 2 hours in January, May and August"
+"hourly on the 1st, 5th and 21st of the month": "hourly on the 1st, 5th and 21st of the month"
+"hourly on Tuesday or Friday the 1st, 5th or 21st of the month": "hourly on Tuesday or Friday the 1st, 5th or 21st of the month"
+"hourly on Tuesday, Wednesday and Friday": "hourly on Tuesday, Wednesday and Friday"

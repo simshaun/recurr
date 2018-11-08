@@ -57,11 +57,15 @@ return array(
     'every week' => 'chaque semaine',
     'every %count% days' => 'tous les %count% jours',
     'every day' => 'chaque jour',
+    'every %count% hours' => 'toutes les %count% heures',
+    'every hour' => 'chaque heure',
     'last' => 'dernier', // e.g. 2nd last Friday
     'days' => 'jours',
     'day' => 'jour',
     'weeks' => 'semaines',
     'week' => 'semaine',
+    'hours' => 'heures',
+    'hour' => 'heure',
     // formats a number with a prefix e.g. every year on the 1st and 200th day
     // negative numbers should be handled as in '5th to the last' or 'last'
     //
