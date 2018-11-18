@@ -80,7 +80,7 @@ print_r($transformer->transform($rule, $constraint));
 
 `RecurrenceCollection` provides the following chainable helper methods to filter out recurrences:
 
-- `startsBetween(\DateTime $after, \DateTime $before, $inc = false)`
+- `startsBetween(\DateTime $before, \DateTime $after, $inc = false)`
 - `startsBefore(\DateTime $before, $inc = false)`
 - `startsAfter(\DateTime $after, $inc = false)`
 - `endsBetween(\DateTime $after, \DateTime $before, $inc = false)`
