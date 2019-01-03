@@ -489,7 +489,7 @@ class ArrayTransformer
                         $nextInSet = isset($tmp[$dayPos]) ? $tmp[$dayPos] : null;
                     }
 
-                    if (! is_null($nextInSet)) {
+                    if (null !== $nextInSet) {
                         /** @var Time $time */
                         $time = $timeSet[$timePos];
 
