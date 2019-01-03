@@ -115,4 +115,15 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(1, $computed[0]->getIndex());
         $this->assertEquals(10, $computed[9]->getIndex());
     }
+
+    public function testOccurrenceBySetPosOnJanuaryFirst()
+    {
+        $rule = new Rule('FREQ=MONTHLY;COUNT=4;BYSETPOS=1', new \DateTime('2018-11-01'));
+        $computed = $this->transformer->transform($rule);
+        $this->assertCount(4, $computed);
+        $this->assertEquals(new \DateTime('2018-11-01'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2018-12-01'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2019-01-01'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2019-02-01'), $computed[3]->getStart());
+    }
 }
