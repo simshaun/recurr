@@ -264,11 +264,48 @@ class Rule
     {
         $rrule  = strtoupper($rrule);
         $rrule  = trim($rrule, ';');
+        $rrule  = trim($rrule, "\n");
+        $rows   = explode("\n", $rrule);
+
+        $parts = array();
+
+        foreach ($rows as $rruleForRow) {
+            $parts = array_merge($parts, $this->parseString($rruleForRow));
+        }
+
+        return $this->loadFromArray($parts);
+    }
+
+    /**
+     * Parse string for parts
+     *
+     * @param string $rrule
+     *
+     * @return array
+     *
+     * @throws InvalidRRule
+     */
+    public function parseString($rrule)
+    {
+        if (strpos($rrule, 'DTSTART:') === 0) {
+            $pieces = explode(':', $rrule);
+
+            if (count($pieces) !== 2) {
+                throw new InvalidRRule('DSTART is not valid');
+            }
+
+            return array('DTSTART' => $pieces[1]);
+        }
+
+        if (strpos($rrule, 'RRULE:') === 0) {
+            $rrule = str_replace('RRULE:', '', $rrule);
+        }
+
         $pieces = explode(';', $rrule);
         $parts  = array();
 
         if (!count($pieces)) {
-            throw new InvalidRRule('RRULE is empty');
+            throw new InvalidRRule('DSTART is not valid');
         }
 
         // Split each piece of the RRULE in to KEY=>VAL
@@ -281,7 +318,7 @@ class Rule
             $parts[$key] = $val;
         }
 
-        return $this->loadFromArray($parts);
+        return $parts;
     }
 
     /**
