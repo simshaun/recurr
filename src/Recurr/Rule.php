@@ -305,7 +305,7 @@ class Rule
         $parts  = array();
 
         if (!count($pieces)) {
-            throw new InvalidRRule('DSTART is not valid');
+            throw new InvalidRRule('RRULE is empty');
         }
 
         // Split each piece of the RRULE in to KEY=>VAL
