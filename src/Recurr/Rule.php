@@ -197,7 +197,7 @@ class Rule
         }
         $this->setTimezone($timezone);
 
-        if (!$startDate instanceof \DateTimeInterface) {
+        if ($startDate !== null && !$startDate instanceof \DateTimeInterface) {
             $startDate = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
 
