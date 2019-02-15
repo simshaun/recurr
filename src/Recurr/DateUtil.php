@@ -17,10 +17,6 @@
 
 namespace Recurr;
 
-use Recurr\DaySet;
-use Recurr\Time;
-use Recurr\Rule;
-
 /**
  * Class DateUtil is responsible for providing utilities applicable to Rules.
  *

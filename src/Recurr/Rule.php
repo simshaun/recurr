@@ -20,7 +20,6 @@ namespace Recurr;
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Exception\InvalidWeekday;
-use Recurr\Weekday;
 
 /**
  * This class is responsible for providing a programmatic way of building,
