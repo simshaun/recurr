@@ -401,6 +401,8 @@ class Rule
     /**
      * Get the RRULE as a string
      *
+     * @param string $timezoneType
+     *
      * @return string
      */
     public function getString($timezoneType=self::TZ_FLOAT)
