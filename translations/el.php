@@ -44,6 +44,7 @@ return array(
     'for %count% times' => 'για %count% φορές',
     'for one time' => 'για μία φορά',
     '(~ approximate)' => '(~ κατά προσέγγιση)',
+    'from %date%' => 'από το %date%',
     'until %date%' => 'μέχρι %date%', // e.g. every year until July 4, 2014
     'day_date' => function ($str, $params) use ($days, $months_genitive) { // outputs a day date, e.g. 4 Ιουλίου 2014
         return date('j', $params['date']) . ' ' . $months_genitive[date('n', $params['date']) - 1] . ' '. date('Y', $params['date']);

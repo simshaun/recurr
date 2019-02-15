@@ -30,6 +30,7 @@ return array(
     'for %count% times' => '%count% gånger',
     'for one time' => 'en gång',
     '(~ approximate)' => '(~ ungefärlig)',
+    'until %date%' => 'från %date%',
     'until %date%' => 't.o.m. %date%', // e.g. every year until July 4, 2014
     'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. July 4, 2014
         return $months[date('n', $params['date']) - 1] . ' '. date('j, Y', $params['date']);

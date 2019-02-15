@@ -39,6 +39,12 @@ class TextTransformer
                 return $this->translator->trans('Unable to fully convert this rrule to text.');
         }
 
+        $startDate = $rule->getStartDate();
+        if ($startDate instanceof \DateTimeInterface) {
+            $dateFormatted = $this->translator->trans('day_date', array('date' => $startDate->format('U')));
+            $this->addFragment($this->translator->trans('from %date%', array('date' => $dateFormatted)));
+        }
+
         $until = $rule->getUntil();
         $count = $rule->getCount();
         if ($until instanceof \DateTimeInterface) {
