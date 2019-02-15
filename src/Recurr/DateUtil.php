@@ -166,6 +166,8 @@ class DateUtil
             case Frequency::YEARLY:
                 return self::getDaySetOfYear($dt, $start, $rule, $dtInfo);
         }
+
+        throw new \RuntimeException('Invalid freq.');
     }
 
     /**
