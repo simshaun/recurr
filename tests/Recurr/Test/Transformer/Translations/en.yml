@@ -4,11 +4,11 @@
 "yearly on March 16 until July 4, 2014": "yearly on March 16 until July 4, 2014"
 "yearly on March 16 (~ approximate)": "yearly on March 16 (~ approximate)"
 "monthly (~ approximate)": "monthly (~ approximate)"
+"every January, May and August": "every January, May and August"
 
 # monthly tests
 "monthly": "monthly"
 "every 10 months": "every 10 months"
-"every January, May and August": "every January, May and August"
 "every 2 months in January, May and August": "every 2 months in January, May and August"
 "monthly on the 1st, 5th and 21st": "monthly on the 1st, 5th and 21st"
 "monthly on Tuesday or Friday the 1st, 5th or 21st": "monthly on Tuesday or Friday the 1st, 5th or 21st"
@@ -33,7 +33,6 @@
 # yearly tests
 "yearly on March 16": "yearly on March 16"
 "every 10 years on March 16": "every 10 years on March 16"
-"every January, May and August": "every January, May and August"
 "every 2 years in January, May and August": "every 2 years in January, May and August"
 "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month": "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month"
 "yearly on the 1st, 5th and 21st of the month": "yearly on the 1st, 5th and 21st of the month"
