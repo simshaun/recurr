@@ -166,7 +166,7 @@ class Rule
         'SU' => 6
     );
 
-    /** @var int */
+    /** @var int[] */
     protected $bySetPosition;
 
     /** @var array */
