@@ -4,11 +4,11 @@
 "yearly on March 16 until July 4, 2014": "jährlich am 16. März bis 4. Juli, 2014"
 "yearly on March 16 (~ approximate)": "jährlich am 16. März (~ ungefähr)"
 "monthly (~ approximate)": "monatlich (~ ungefähr)"
+"every January, May and August": "jeden Januar, Mai und August"
 
 # monthly tests
 "monthly": "monatlich"
 "every 10 months": "alle 10 Monate"
-"every January, May and August": "jeden Januar, Mai und August"
 "every 2 months in January, May and August": "alle 2 Monate im Januar, Mai und August"
 "monthly on the 1st, 5th and 21st": "monatlich am 1., 5. und 21."
 "monthly on Tuesday or Friday the 1st, 5th or 21st": "monatlich am Dienstag oder Freitag dem 1., 5. oder 21."
@@ -33,7 +33,6 @@
 # yearly tests
 "yearly on March 16": "jährlich am 16. März"
 "every 10 years on March 16": "alle 10 Jahre am 16. März"
-"every January, May and August": "jeden Januar, Mai und August"
 "every 2 years in January, May and August": "alle 2 Jahre im Januar, Mai und August"
 "every 4 years in November on Tuesday the 2nd, 3rd, 4th, 5th, 6th, 7th or 8th of the month": "alle 4 Jahre im November am Dienstag dem 2., 3., 4., 5., 6., 7. oder 8. des Monats"
 "yearly on the 1st, 5th and 21st of the month": "jährlich am 1., 5. und 21. des Monats"
