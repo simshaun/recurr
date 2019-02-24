@@ -118,6 +118,112 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testLoadFromStringWithDtStartDirective()
+    {
+        $string = 'DTSTART:20190102';
+        $string .= "\n";
+        $string .= 'RRULE:';
+        $string .= 'FREQ=YEARLY;';
+        $string .= 'COUNT=2;';
+        $string .= 'INTERVAL=2;';
+        $string .= 'BYSECOND=30;';
+        $string .= 'BYMINUTE=10;';
+        $string .= 'BYHOUR=5,15;';
+        $string .= 'BYDAY=SU,WE;';
+        $string .= 'BYMONTHDAY=16,22;';
+        $string .= 'BYYEARDAY=201,203;';
+        $string .= 'BYWEEKNO=29,32;';
+        $string .= 'BYMONTH=7,8;';
+        $string .= 'BYSETPOS=1,3;';
+        $string .= 'WKST=TU;';
+        $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
+        $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
+        $this->assertEquals(new \DateTime('2019-01-02'), $this->rule->getStartDate());
+        $this->assertEquals(2, $this->rule->getCount());
+        $this->assertEquals(2, $this->rule->getInterval());
+        $this->assertEquals(array(30), $this->rule->getBySecond());
+        $this->assertEquals(array(10), $this->rule->getByMinute());
+        $this->assertEquals(array(5, 15), $this->rule->getByHour());
+        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
+        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
+        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
+        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
+        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
+        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
+        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151214T020000'), true),
+                new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
+            ),
+            $this->rule->getRDates()
+        );
+        $this->assertEquals(
+            array(
+                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140620T010000'), true),
+                new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
+            ),
+            $this->rule->getExDates()
+        );
+    }
+
+    public function testLoadFromStringWithRruleDirective()
+    {
+        $string = 'RRULE:';
+        $string .= 'FREQ=YEARLY;';
+        $string .= 'COUNT=2;';
+        $string .= 'INTERVAL=2;';
+        $string .= 'BYSECOND=30;';
+        $string .= 'BYMINUTE=10;';
+        $string .= 'BYHOUR=5,15;';
+        $string .= 'BYDAY=SU,WE;';
+        $string .= 'BYMONTHDAY=16,22;';
+        $string .= 'BYYEARDAY=201,203;';
+        $string .= 'BYWEEKNO=29,32;';
+        $string .= 'BYMONTH=7,8;';
+        $string .= 'BYSETPOS=1,3;';
+        $string .= 'WKST=TU;';
+        $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
+        $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
+
+        $this->rule->loadFromString($string);
+
+        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
+        $this->assertEquals(2, $this->rule->getCount());
+        $this->assertEquals(2, $this->rule->getInterval());
+        $this->assertEquals(array(30), $this->rule->getBySecond());
+        $this->assertEquals(array(10), $this->rule->getByMinute());
+        $this->assertEquals(array(5, 15), $this->rule->getByHour());
+        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
+        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
+        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
+        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
+        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
+        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
+        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(
+            array(
+                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151214T020000'), true),
+                new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
+            ),
+            $this->rule->getRDates()
+        );
+        $this->assertEquals(
+            array(
+                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140620T010000'), true),
+                new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
+            ),
+            $this->rule->getExDates()
+        );
+    }
 
     public function testLoadFromArray()
     {
