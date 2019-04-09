@@ -20,7 +20,6 @@ namespace Recurr;
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Exception\InvalidWeekday;
-use Recurr\Weekday;
 
 /**
  * This class is responsible for providing a programmatic way of building,
@@ -167,7 +166,7 @@ class Rule
         'SU' => 6
     );
 
-    /** @var int */
+    /** @var int[] */
     protected $bySetPosition;
 
     /** @var array */
@@ -197,7 +196,7 @@ class Rule
         }
         $this->setTimezone($timezone);
 
-        if (!$startDate instanceof \DateTimeInterface) {
+        if ($startDate !== null && !$startDate instanceof \DateTimeInterface) {
             $startDate = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
 
@@ -438,6 +437,8 @@ class Rule
 
     /**
      * Get the RRULE as a string
+     *
+     * @param string $timezoneType
      *
      * @return string
      */

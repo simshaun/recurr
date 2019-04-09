@@ -17,10 +17,6 @@
 
 namespace Recurr;
 
-use Recurr\DaySet;
-use Recurr\Time;
-use Recurr\Rule;
-
 /**
  * Class DateUtil is responsible for providing utilities applicable to Rules.
  *
@@ -170,6 +166,8 @@ class DateUtil
             case Frequency::YEARLY:
                 return self::getDaySetOfYear($dt, $start, $rule, $dtInfo);
         }
+
+        throw new \RuntimeException('Invalid freq.');
     }
 
     /**

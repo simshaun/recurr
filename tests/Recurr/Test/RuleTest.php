@@ -20,7 +20,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     public function testConstructAcceptableStartDate()
     {
         $this->rule = new Rule(null, null);
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+        $this->assertNull($this->rule->getStartDate());
 
         $this->rule = new Rule(null, '2018-09-19');
         $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
