@@ -4,8 +4,13 @@ php:
     - 7.0
     - 7.1
     - 7.2
-before_script:
+    - 7.3
+    - 7.4    
+install:
     - composer self-update
     - composer update nothing
     - composer --prefer-source install
 script: ./vendor/bin/phpunit --coverage-text
+cache:
+  directories:
+    - $HOME/.composer/cache
