@@ -45,4 +45,20 @@ class BeforeConstraint extends Constraint
 
         return $date < $this->before;
     }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getBefore()
+    {
+        return $this->before;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInc()
+    {
+        return $this->inc;
+    }
 }

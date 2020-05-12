@@ -45,4 +45,20 @@ class AfterConstraint extends Constraint
 
         return $date > $this->after;
     }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getAfter()
+    {
+        return $this->after;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInc()
+    {
+        return $this->inc;
+    }
 }

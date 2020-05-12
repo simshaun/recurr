@@ -54,4 +54,28 @@ class BetweenConstraint extends Constraint
 
         return $date > $this->after && $date < $this->before;
     }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getBefore()
+    {
+        return $this->before;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getAfter()
+    {
+        return $this->after;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInc()
+    {
+        return $this->inc;
+    }
 }
