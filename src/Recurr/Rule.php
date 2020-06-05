@@ -1186,7 +1186,7 @@ class Rule
      *
      * @return $this
      */
-    public function setBySetPosition($bySetPosition)
+    public function setBySetPosition(array $bySetPosition)
     {
         $this->bySetPosition = $bySetPosition;
 
