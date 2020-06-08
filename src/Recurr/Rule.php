@@ -523,7 +523,7 @@ class Rule
         }
 
         // DTEND
-        if ($this->endDate instanceof \DateTime) {
+        if ($this->endDate instanceof \DateTimeInterface) {
             if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getEndDate();
                 $tzid = $d->getTimezone()->getName();

@@ -6,6 +6,7 @@ use Recurr\DateExclusion;
 use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
+use DateTimeImmutable;
 
 class RuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,6 +47,18 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertSame('EUROPE/LONDON', $startDate->getTimezone()->getName());
+    }
+
+    public function testCanCreateRruleIfEndIsPassedAsDateTimeImmutable()
+    {
+        $begin = new DateTimeImmutable('2012-08-01');
+        $end = new DateTimeImmutable('2012-08-31');
+        $xmas = new DateTimeImmutable('2012-12-25');
+
+        $rule = new Rule('FREQ=WEEKLY;COUNT=5', $begin, $end);
+        $string = $rule->getString();
+
+        $this->assertEquals('FREQ=WEEKLY;COUNT=5;DTEND=20120831T000000', $string);
     }
 
     public function testConstructAcceptableStartDate()
