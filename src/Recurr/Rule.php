@@ -384,8 +384,6 @@ class Rule
             if (isset($parts['TZID'])) {
                 //DTSTART is datetime in TZID timezone
                 $date = new \DateTime($parts['DTSTART'], $timezone);
-                var_dump($date);
-                var_dump($date->format('l, F j, Y - h:i A e'));
             } else {
                 //DTSTART is UTC, convert to timezone coming from constructor/startDate/default
                 $date = new \DateTime($parts['DTSTART']);
