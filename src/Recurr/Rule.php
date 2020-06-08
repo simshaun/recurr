@@ -306,47 +306,48 @@ class Rule
             throw new InvalidRRule('RRULE is empty');
         }
 
-        $parts  = array();
+        $parts = array();
         foreach ($fragments as $fragment) {
-            if (strpos($fragment, 'RRULE:') === 0) {
-                $fragment = str_replace('RRULE:', '', $fragment);
-            }
-
-
-            if (strpos($fragment, 'DTSTART') === 0) {
-                if ($fragment === 'DTSTART') {
-                    $parts['DTSTART'] = '';//to be replaced by next token
-
-                    continue;
-                }
-
-                $p = explode(':', $fragment);
-                if (count($p) !== 2) {
-                    throw new InvalidRRule('DTSTART is not valid');
-                }
-
-                $parts['DTSTART'] = $p[1];
-
-                continue;
-            }
-
-            if (strpos($fragment, '=')) {
-                list($key, $val) = explode('=', $fragment);
-
-                if ($key === 'TZID') {
-                    $p = explode(':', $val);
-
-                    $parts['TZID'] = $p[0];
-                    $parts['DTSTART'] = $p[1];
-
-                    continue;
-                }
-
-                $parts[$key] = $val;
-            }
+            $this->parseFragment($parts, $fragment);
         }
 
         return $parts;
+    }
+
+    private function parseFragment(&$parts, $fragment)
+    {
+        if (strpos($fragment, 'RRULE:') === 0) {
+            $fragment = str_replace('RRULE:', '', $fragment);
+        }
+
+        if (strpos($fragment, 'DTSTART') === 0) {
+            if ($fragment === 'DTSTART') {
+                $parts['DTSTART'] = '';//to be replaced by next token
+                return;
+            }
+
+            $p = explode(':', $fragment);
+            if (count($p) !== 2) {
+                throw new InvalidRRule('DTSTART is not valid');
+            }
+
+            $parts['DTSTART'] = $p[1];
+            return;
+        }
+
+        if (strpos($fragment, '=')) {
+            list($key, $val) = explode('=', $fragment);
+
+            if ($key === 'TZID') {
+                $p = explode(':', $val);
+
+                $parts['TZID'] = $p[0];
+                $parts['DTSTART'] = $p[1];
+                return;
+            }
+
+            $parts[$key] = $val;
+        }
     }
 
     /**
