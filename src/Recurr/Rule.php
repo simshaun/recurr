@@ -321,33 +321,43 @@ class Rule
         }
 
         if (strpos($fragment, 'DTSTART') === 0) {
-            if ($fragment === 'DTSTART') {
-                $parts['DTSTART'] = '';//to be replaced by next token
-                return;
-            }
-
-            $p = explode(':', $fragment);
-            if (count($p) !== 2) {
-                throw new InvalidRRule('DTSTART is not valid');
-            }
-
-            $parts['DTSTART'] = $p[1];
+            $this->parseDTSTARTFragment($parts, $fragment);
             return;
         }
 
         if (strpos($fragment, '=')) {
-            list($key, $val) = explode('=', $fragment);
-
-            if ($key === 'TZID') {
-                $p = explode(':', $val);
-
-                $parts['TZID'] = $p[0];
-                $parts['DTSTART'] = $p[1];
-                return;
-            }
-
-            $parts[$key] = $val;
+            $this->parseKeyValFragment($parts, $fragment);
         }
+    }
+
+    private function parseDTSTARTFragment(&$parts, $fragment)
+    {
+        if ($fragment === 'DTSTART') {
+            $parts['DTSTART'] = '';//to be replaced by next token
+            return;
+        }
+
+        $p = explode(':', $fragment);
+        if (count($p) !== 2) {
+            throw new InvalidRRule('DTSTART is not valid');
+        }
+
+        $parts['DTSTART'] = $p[1];
+    }
+
+    private function parseKeyValFragment(&$parts, $fragment)
+    {
+        list($key, $val) = explode('=', $fragment);
+
+        if ($key === 'TZID') {
+            $p = explode(':', $val);
+
+            $parts['TZID'] = $p[0];
+            $parts['DTSTART'] = $p[1];
+            return;
+        }
+
+        $parts[$key] = $val;
     }
 
     /**
