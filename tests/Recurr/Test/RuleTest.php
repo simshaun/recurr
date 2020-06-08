@@ -43,6 +43,8 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
         $startDate = $rule->getStartDate();
         $this->assertSame('2020-06-07 12:02:00', $startDate->format('Y-m-d H:i:s'));
+
+
         $this->assertSame('EUROPE/LONDON', $startDate->getTimezone()->getName());
     }
 
