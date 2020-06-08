@@ -19,13 +19,20 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testCanConvertRruleBackAndForthAndGetSameResult()
     {
-        $rule = new Rule("DTSTART:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1");
-        $rruleOne = $rule->getString(Rule::TZ_FIXED);
+        $rrules = [
+            "DTSTART:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1",
+            "DTSTART;TZID=Europe/London:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1"
+        ];
 
-        $rule2 = new Rule($rruleOne);
-        $rruleTwo = $rule2->getString(Rule::TZ_FIXED);
+        foreach ($rrules as $rrule) {
+            $rule = new Rule($rrule);
+            $rruleOne = $rule->getString(Rule::TZ_FIXED);
 
-        $this->assertSame($rruleOne, $rruleTwo);
+            $rule2 = new Rule($rruleOne);
+            $rruleTwo = $rule2->getString(Rule::TZ_FIXED);
+
+            $this->assertSame($rruleOne, $rruleTwo);
+        }
     }
 
     public function testCanCreateRuleFromStringHavingTzid()
