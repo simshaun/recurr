@@ -17,6 +17,28 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->rule = new Rule;
     }
 
+    public function testCanConvertRruleBackAndForthAndGetSameResult()
+    {
+        $rule = new Rule("DTSTART:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1");
+        $rruleOne = $rule->getString(Rule::TZ_FIXED);
+
+        $rule2 = new Rule($rruleOne);
+        $rruleTwo = $rule2->getString(Rule::TZ_FIXED);
+
+        $this->assertSame($rruleOne, $rruleTwo);
+    }
+
+    public function testCanCreateRuleFromStringHavingTzid()
+    {
+        $rule = new Rule("DTSTART;TZID=Europe/London:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1");
+
+        $this->assertEquals('EUROPE/LONDON', $rule->getTimezone());
+
+        $startDate = $rule->getStartDate();
+        $this->assertSame('2020-06-07 12:02:00', $startDate->format('Y-m-d H:i:s'));
+        $this->assertSame('EUROPE/LONDON', $startDate->getTimezone()->getName());
+    }
+
     public function testConstructAcceptableStartDate()
     {
         $this->rule = new Rule(null, null);
