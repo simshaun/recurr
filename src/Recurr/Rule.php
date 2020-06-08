@@ -520,7 +520,7 @@ class Rule
                 $date = $d->format($format);
                 $parts[] = "DTSTART;TZID=$tzid:$date";
             } else {
-                $parts[] = 'DTSTART='.$this->getStartDate()->format($format);
+                $parts[] = 'DTSTART:'.$this->getStartDate()->format($format);
             }
         }
 

@@ -304,7 +304,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
 
-        $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
+        $string = 'FREQ=MONTHLY;DTSTART:20140222T073000';
 
         $this->rule->setTimezone('America/Los_Angeles');
         $this->rule->loadFromString($string);
@@ -385,7 +385,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStringWithDtstart()
     {
-        $string = 'FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';
+        $string = 'FREQ=MONTHLY;DTSTART:20140210T163045;INTERVAL=1;WKST=MO';
 
         $this->rule->loadFromString($string);
 
@@ -446,7 +446,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
 
         $this->rule->setStartDate(new \DateTime('2015-12-10'), true);
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART=20151210T000000', $this->rule->getString());
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART:20151210T000000', $this->rule->getString());
 
         $this->rule->setStartDate(new \DateTime('2015-12-10'), false);
         $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
