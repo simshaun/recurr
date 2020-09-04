@@ -41,20 +41,26 @@ class TextTransformer
 
         $startDate = $rule->getStartDate();
         if ($startDate instanceof \DateTimeInterface) {
-            $dateFormatted = $this->translator->trans('day_date', array('date' => $startDate->format('U')));
-            $this->addFragment($this->translator->trans('from %date%', array('date' => $dateFormatted)));
+            if (!in_array('startDate', $exclude)) {
+                $dateFormatted = $this->translator->trans('day_date', array('date' => $startDate->format('U')));
+                $this->addFragment($this->translator->trans('from %date%', array('date' => $dateFormatted)));
+            }
         }
 
         $until = $rule->getUntil();
         $count = $rule->getCount();
         if ($until instanceof \DateTimeInterface) {
-            $dateFormatted = $this->translator->trans('day_date', array('date' => $until->format('U')));
-            $this->addFragment($this->translator->trans('until %date%', array('date' => $dateFormatted)));
+            if (!in_array('until', $exclude)) {
+                $dateFormatted = $this->translator->trans('day_date', array('date' => $until->format('U')));
+                $this->addFragment($this->translator->trans('until %date%', array('date' => $dateFormatted)));
+            }
         } else if (!empty($count)) {
-            if ($this->isPlural($count)) {
-                $this->addFragment($this->translator->trans('for %count% times', array('count' => $count)));
-            } else {
-                $this->addFragment($this->translator->trans('for one time'));
+            if (!in_array('count', $exclude)) {
+                if ($this->isPlural($count)) {
+                    $this->addFragment($this->translator->trans('for %count% times', array('count' => $count)));
+                } else {
+                    $this->addFragment($this->translator->trans('for one time'));
+                }
             }
         }
 
