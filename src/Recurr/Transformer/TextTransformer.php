@@ -14,7 +14,7 @@ class TextTransformer
         $this->translator = $translator ?: new Translator('en');
     }
 
-    public function transform(Rule $rule)
+    public function transform(Rule $rule, $exclude = array())
     {
         $this->fragments = array();
 
