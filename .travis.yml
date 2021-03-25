@@ -6,6 +6,9 @@ php:
     - 7.2
     - 7.3
     - 7.4
+env:
+    global:
+        - XDEBUG_MODE=coverage
 install:
     - composer self-update
     - composer update
