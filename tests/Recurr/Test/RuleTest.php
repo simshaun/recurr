@@ -461,6 +461,14 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     {
         $this->rule->setWeekStart('monday');
     }
+    
+    /**
+     * @expectedException \Recurr\Exception\InvalidRRule
+     */
+    public function testUnknownPropertyFromStringThrowsException()
+    {
+        $this->rule->loadFromString('FREQ=MONTHLY;BYDAY=-1FR;COUNT=10;SKIP=2');
+    }
 
     /**
      * @dataProvider exampleRruleProvider

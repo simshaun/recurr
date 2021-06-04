@@ -174,6 +174,29 @@ class Rule
 
     /** @var array */
     protected $exDates = array();
+    
+    /** @var array */
+    protected $properties = [
+        'FREQ',
+        'DTSTART',
+        'DTEND',
+        'UNTIL',
+        'UNTIL',
+        'COUNT',
+        'INTERVAL',
+        'BYSECOND',
+        'BYMINUTE',
+        'BYHOUR',
+        'BYDAY',
+        'BYMONTHDAY',
+        'BYYEARDAY',
+        'BYWEEKNO',
+        'BYMONTH',
+        'BYSETPOS',
+        'WKST',
+        'RDATE',
+        'EXDATE'
+    ];
 
     /**
      * Construct a new Rule.
@@ -430,6 +453,18 @@ class Rule
         // EXDATE
         if (isset($parts['EXDATE'])) {
             $this->setExDates(explode(',', $parts['EXDATE']));
+        }
+        
+        // UNKNOWN PROPERTIES
+        $invalidProperties = array_values(array_diff(array_keys($parts), $this->properties));
+
+        if($invalidProperties) {
+            $msg = array_pop($invalidProperties);
+
+            if ($invalidProperties)
+                $msg = implode(', ', $invalidProperties).', and '.$msg;
+
+            throw new InvalidRRule('Unknown RRULE property: '.$msg);
         }
 
         return $this;
