@@ -1,4 +1,10 @@
-# Recurr [![Build Status](https://travis-ci.org/simshaun/recurr.png)](https://travis-ci.org/simshaun/recurr.png) [![Latest Stable Version](https://poser.pugx.org/simshaun/recurr/v/stable.svg)](https://packagist.org/packages/simshaun/recurr) [![Total Downloads](https://poser.pugx.org/simshaun/recurr/downloads.svg)](https://packagist.org/packages/simshaun/recurr) [![Latest Unstable Version](https://poser.pugx.org/simshaun/recurr/v/unstable.svg)](https://packagist.org/packages/simshaun/recurr) [![License](https://poser.pugx.org/simshaun/recurr/license.svg)](https://packagist.org/packages/simshaun/recurr)
+# Recurr 
+
+[![tests](https://github.com/simshaun/recurr/workflows/tests/badge.svg)](https://github.com/simshaun/recurr/actions)
+[![Latest Stable Version](https://poser.pugx.org/simshaun/recurr/v/stable.svg)](https://packagist.org/packages/simshaun/recurr) 
+[![Total Downloads](https://poser.pugx.org/simshaun/recurr/downloads.svg)](https://packagist.org/packages/simshaun/recurr) 
+[![Latest Unstable Version](https://poser.pugx.org/simshaun/recurr/v/unstable.svg)](https://packagist.org/packages/simshaun/recurr) 
+[![License](https://poser.pugx.org/simshaun/recurr/license.svg)](https://packagist.org/packages/simshaun/recurr)
 
 Recurr is a PHP library for working with recurrence rules ([RRULE](https://tools.ietf.org/html/rfc5545)) and converting them in to DateTime objects.
 
@@ -9,7 +15,9 @@ Installing Recurr
 
 The recommended way to install Recurr is through [Composer](http://getcomposer.org).
 
-`composer require simshaun/recurr`
+```bash
+composer require simshaun/recurr
+```
 
 Using Recurr 
 -----------
@@ -153,4 +161,4 @@ Feel free to comment or make pull requests. Please include tests with PRs.
 License
 -------
 
-Recurr is licensed under the MIT License. See the LICENSE file for details.
+Recurr is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.

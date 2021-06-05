@@ -15,7 +15,7 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
      */
     protected static $originalTimezoneName;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$originalTimezoneName = date_default_timezone_get();
         date_default_timezone_set('America/New_York');
@@ -23,7 +23,7 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         parent::setUpBeforeClass();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         date_default_timezone_set(self::$originalTimezoneName);
 
