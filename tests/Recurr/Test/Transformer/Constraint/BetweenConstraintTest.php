@@ -4,7 +4,7 @@ namespace Recurr\Test\Transformer\Filter;
 
 use Recurr\Transformer\Constraint\BetweenConstraint;
 
-class BetweenConstraintTest extends \PHPUnit_Framework_TestCase
+class BetweenConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testBetween()
     {

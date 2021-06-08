@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 use Recurr\Transformer\Translator;
 use Recurr\Transformer\TextTransformer;
 
-class TextTransformerTest extends \PHPUnit_Framework_TestCase
+class TextTransformerTest extends \PHPUnit\Framework\TestCase
 {
     private static $languages = array();
 

@@ -4,7 +4,7 @@ namespace Recurr\Test\Transformer\Filter;
 
 use Recurr\Transformer\Constraint\BeforeConstraint;
 
-class BeforeConstraintTest extends \PHPUnit_Framework_TestCase
+class BeforeConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testBefore()
     {

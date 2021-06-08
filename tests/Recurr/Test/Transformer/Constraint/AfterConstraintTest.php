@@ -4,7 +4,7 @@ namespace Recurr\Test\Transformer\Filter;
 
 use Recurr\Transformer\Constraint\AfterConstraint;
 
-class AfterConstraintTest extends \PHPUnit_Framework_TestCase
+class AfterConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testAfter()
     {
