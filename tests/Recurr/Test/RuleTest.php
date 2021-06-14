@@ -6,6 +6,7 @@ use Recurr\DateExclusion;
 use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
+use DateTimeImmutable;
 
 class RuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,6 +16,49 @@ class RuleTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->rule = new Rule;
+    }
+
+    public function testCanConvertRruleBackAndForthAndGetSameResult()
+    {
+        $rrules = [
+            "DTSTART:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1",
+            "DTSTART;TZID=Europe/London:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1"
+        ];
+
+        foreach ($rrules as $rrule) {
+            $rule = new Rule($rrule);
+            $rruleOne = $rule->getString(Rule::TZ_FIXED);
+
+            $rule2 = new Rule($rruleOne);
+            $rruleTwo = $rule2->getString(Rule::TZ_FIXED);
+
+            $this->assertSame($rruleOne, $rruleTwo);
+        }
+    }
+
+    public function testCanCreateRuleFromStringHavingTzid()
+    {
+        $rule = new Rule("DTSTART;TZID=Europe/London:20200607T120200\r\nRRULE:FREQ=DAILY;INTERVAL=1");
+
+        $this->assertEquals('EUROPE/LONDON', $rule->getTimezone());
+
+        $startDate = $rule->getStartDate();
+        $this->assertSame('2020-06-07 12:02:00', $startDate->format('Y-m-d H:i:s'));
+
+
+        $this->assertSame('EUROPE/LONDON', $startDate->getTimezone()->getName());
+    }
+
+    public function testCanCreateRruleIfEndIsPassedAsDateTimeImmutable()
+    {
+        $begin = new DateTimeImmutable('2012-08-01');
+        $end = new DateTimeImmutable('2012-08-31');
+        $xmas = new DateTimeImmutable('2012-12-25');
+
+        $rule = new Rule('FREQ=WEEKLY;COUNT=5', $begin, $end);
+        $string = $rule->getString();
+
+        $this->assertEquals('FREQ=WEEKLY;COUNT=5;DTEND=20120831T000000', $string);
     }
 
     public function testConstructAcceptableStartDate()
@@ -282,7 +326,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
 
-        $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
+        $string = 'FREQ=MONTHLY;DTSTART:20140222T073000';
 
         $this->rule->setTimezone('America/Los_Angeles');
         $this->rule->loadFromString($string);
@@ -363,7 +407,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStringWithDtstart()
     {
-        $string = 'FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';
+        $string = 'FREQ=MONTHLY;DTSTART:20140210T163045;INTERVAL=1;WKST=MO';
 
         $this->rule->loadFromString($string);
 
@@ -424,7 +468,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
 
         $this->rule->setStartDate(new \DateTime('2015-12-10'), true);
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART=20151210T000000', $this->rule->getString());
+        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART:20151210T000000', $this->rule->getString());
 
         $this->rule->setStartDate(new \DateTime('2015-12-10'), false);
         $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
