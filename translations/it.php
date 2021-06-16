@@ -30,6 +30,7 @@ return array(
     'for %count% times' => 'per %count% volte',
     'for one time' => 'per una volta',
     '(~ approximate)' => '(~ approssimato)',
+    'from %date%' => 'a partire dal %date%',
     'until %date%' => 'fino al %date%', // e.g. every year until July 4, 2014
     'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. 4 luglio, 2014
         return date('j ', $params['date']) . $months[date('n', $params['date']) - 1] . date(', Y', $params['date']);
