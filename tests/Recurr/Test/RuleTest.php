@@ -7,12 +7,12 @@ use Recurr\DateInclusion;
 use Recurr\Frequency;
 use Recurr\Rule;
 
-class RuleTest extends \PHPUnit_Framework_TestCase
+class RuleTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Rule */
     protected $rule;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->rule = new Rule;
     }
@@ -51,19 +51,15 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($startDate->getTimezone()->getName(), $this->rule->getTimezone());
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
     public function testLoadFromStringWithMissingFreq()
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->loadFromString('COUNT=2');
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
     public function testLoadFromStringWithBothCountAndUntil()
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->loadFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
     }
 
@@ -312,11 +308,9 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         date_default_timezone_set($defaultTimezone);
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
     public function testLoadFromStringFails()
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->loadFromString('IM AN INVALID RRULE');
     }
 
@@ -403,7 +397,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
         $this->rule->loadFromString($string);
 
-        $this->assertNotContains('WKST', $this->rule->getString());
+        $this->assertStringNotContainsString('WKST', $this->rule->getString());
     }
 
     public function testGetStringWithExplicitWkst()
@@ -412,7 +406,7 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
         $this->rule->loadFromString($string);
 
-        $this->assertContains('WKST=TH', $this->rule->getString());
+        $this->assertStringContainsString('WKST=TH', $this->rule->getString());
     }
 
     public function testSetStartDateAffectsStringOutput()
@@ -430,35 +424,27 @@ class RuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidArgument
-     */
     public function testBadInterval()
     {
+        $this->expectException(\Recurr\Exception\InvalidArgument::class);
         $this->rule->setInterval('six');
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
     public function testEmptyByDayThrowsException()
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->setByDay(array());
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidRRule
-     */
     public function testEmptyByDayFromStringThrowsException()
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->loadFromString('FREQ=WEEKLY;BYDAY=;INTERVAL=1;UNTIL=20160725');
     }
 
-    /**
-     * @expectedException \Recurr\Exception\InvalidArgument
-     */
     public function testBadWeekStart()
     {
+        $this->expectException(\Recurr\Exception\InvalidArgument::class);
         $this->rule->setWeekStart('monday');
     }
 

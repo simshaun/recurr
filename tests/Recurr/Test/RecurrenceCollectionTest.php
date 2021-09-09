@@ -5,12 +5,12 @@ namespace Recurr\Test;
 use Recurr\Recurrence;
 use Recurr\RecurrenceCollection;
 
-class RecurrenceCollectionTest extends \PHPUnit_Framework_TestCase
+class RecurrenceCollectionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurrenceCollection */
     protected $collection;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->collection = new RecurrenceCollection(
             array(

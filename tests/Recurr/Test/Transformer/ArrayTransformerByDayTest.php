@@ -97,10 +97,10 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
 
     /**
      * @dataProvider unsupportedNthByDayFrequencies
-     * @expectedException \Recurr\Exception\InvalidRRule
      */
     public function testNthByDayWithUnsupportedFrequency($frequency)
     {
+        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         new Rule(
             "FREQ=$frequency;COUNT=3;BYDAY=2MO",
             new \DateTime('1997-05-19 16:00:00')
