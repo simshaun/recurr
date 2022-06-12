@@ -9,28 +9,25 @@
 
 namespace Recurr\Transformer\Constraint;
 
+use DateTimeInterface;
 use Recurr\Transformer\Constraint;
 
 class BetweenConstraint extends Constraint
 {
+    protected bool $stopsTransformer = false;
 
-    protected $stopsTransformer = false;
+    protected DateTimeInterface $before;
 
-    /** @var \DateTimeInterface */
-    protected $before;
+    protected DateTimeInterface $after;
 
-    /** @var \DateTimeInterface */
-    protected $after;
-
-    /** @var bool */
-    protected $inc;
+    protected bool $inc;
 
     /**
-     * @param \DateTimeInterface $after
-     * @param \DateTimeInterface $before
-     * @param bool               $inc Include date if it equals $after or $before.
+     * @param DateTimeInterface $after
+     * @param DateTimeInterface $before
+     * @param bool              $inc Include date if it equals $after or $before.
      */
-    public function __construct(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
+    public function __construct(DateTimeInterface $after, DateTimeInterface $before, bool $inc = false)
     {
         $this->after  = $after;
         $this->before = $before;
@@ -39,10 +36,8 @@ class BetweenConstraint extends Constraint
 
     /**
      * Passes if $date is between $after and $before
-     *
-     * {@inheritdoc}
      */
-    public function test(\DateTimeInterface $date)
+    public function test(DateTimeInterface $date): bool
     {
         if ($date > $this->before) {
             $this->stopsTransformer = true;
@@ -55,26 +50,17 @@ class BetweenConstraint extends Constraint
         return $date > $this->after && $date < $this->before;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getBefore()
+    public function getBefore(): DateTimeInterface
     {
         return $this->before;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getAfter()
+    public function getAfter(): DateTimeInterface
     {
         return $this->after;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInc()
+    public function isInc(): bool
     {
         return $this->inc;
     }

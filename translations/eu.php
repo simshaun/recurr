@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Ezin izan da rrule testura osoki bihurtu.',
     'for %count% times' => '%count% aldiz',
     'for %count% time' => '%count% aldia',
@@ -30,7 +30,7 @@ return array(
     'ordinal_number' => function ($str, $params) { // formats a number with a prefix e.g. every year on the 1st and 200th day
         $number = $params['number'];
 
-        $ends = array('garren', 'go', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren');
+        $ends = ['garren', 'go', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren'];
 
         if (($number % 100) >= 11 && ($number % 100) <= 13) {
             $abbreviation = $number.'garren';
@@ -40,4 +40,4 @@ return array(
 
         return $abbreviation;
     },
-);
+];

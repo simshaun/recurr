@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'domingo',
     'lunes',
     'martes',
@@ -9,8 +9,8 @@ $days = array(
     'jueves',
     'viernes',
     'sábado',
-);
-$months = array(
+];
+$months = [
     'enero',
     'febrero',
     'marzo',
@@ -23,9 +23,9 @@ $months = array(
     'octubre',
     'noviembre',
     'diciembre',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'No se puede convertir completamente este RRULE al texto.',
     'for %count% times' => 'para %count% veces',
     'for one time' => 'por una vez',
@@ -71,7 +71,7 @@ return array(
     'ordinal_number' => function ($str, $params) {
         $number = $params['number'];
 
-        $ends = array('a', 'a', 'nd', 'a', 'a', 'a', 'a', 'a', 'a', 'a');
+        $ends = ['a', 'a', 'nd', 'a', 'a', 'a', 'a', 'a', 'a', 'a'];
         $suffix = '';
 
         $isNegative = $number < 0;
@@ -97,4 +97,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];

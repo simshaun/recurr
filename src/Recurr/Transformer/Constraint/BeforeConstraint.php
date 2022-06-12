@@ -9,24 +9,22 @@
 
 namespace Recurr\Transformer\Constraint;
 
+use DateTimeInterface;
 use Recurr\Transformer\Constraint;
 
 class BeforeConstraint extends Constraint
 {
+    protected bool $stopsTransformer = true;
 
-    protected $stopsTransformer = true;
+    protected DateTimeInterface $before;
 
-    /** @var \DateTimeInterface */
-    protected $before;
-
-    /** @var bool */
-    protected $inc;
+    protected bool $inc;
 
     /**
-     * @param \DateTimeInterface $before
+     * @param DateTimeInterface $before
      * @param bool               $inc Include date if it equals $before.
      */
-    public function __construct(\DateTimeInterface $before, $inc = false)
+    public function __construct(DateTimeInterface $before, bool $inc = false)
     {
         $this->before = $before;
         $this->inc    = $inc;
@@ -34,10 +32,8 @@ class BeforeConstraint extends Constraint
 
     /**
      * Passes if $date is before $before
-     *
-     * {@inheritdoc}
      */
-    public function test(\DateTimeInterface $date)
+    public function test(DateTimeInterface $date): bool
     {
         if ($this->inc) {
             return $date <= $this->before;
@@ -46,18 +42,12 @@ class BeforeConstraint extends Constraint
         return $date < $this->before;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getBefore()
+    public function getBefore(): DateTimeInterface
     {
         return $this->before;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInc()
+    public function isInc(): bool
     {
         return $this->inc;
     }

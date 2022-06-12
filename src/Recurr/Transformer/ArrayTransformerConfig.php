@@ -11,10 +11,9 @@ namespace Recurr\Transformer;
 
 class ArrayTransformerConfig
 {
-    /** @var int */
-    protected $virtualLimit = 732;
+    protected int $virtualLimit = 732;
 
-    protected $lastDayOfMonthFix = false;
+    protected bool $lastDayOfMonthFix = false;
 
     /**
      * Set the virtual limit imposed upon infinitely recurring events.
@@ -23,9 +22,9 @@ class ArrayTransformerConfig
      *
      * @return $this
      */
-    public function setVirtualLimit($virtualLimit)
+    public function setVirtualLimit(int $virtualLimit): self
     {
-        $this->virtualLimit = (int) $virtualLimit;
+        $this->virtualLimit = $virtualLimit;
 
         return $this;
     }
@@ -35,7 +34,7 @@ class ArrayTransformerConfig
      *
      * @return int
      */
-    public function getVirtualLimit()
+    public function getVirtualLimit(): int
     {
         return $this->virtualLimit;
     }
@@ -45,20 +44,17 @@ class ArrayTransformerConfig
      *
      * Enabling this fix tells Recurr that +1 month means "last day of next month".
      */
-    public function enableLastDayOfMonthFix()
+    public function enableLastDayOfMonthFix(): void
     {
         $this->lastDayOfMonthFix = true;
     }
 
-    public function disableLastDayOfMonthFix()
+    public function disableLastDayOfMonthFix(): void
     {
         $this->lastDayOfMonthFix = false;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isLastDayOfMonthFixEnabled()
+    public function isLastDayOfMonthFixEnabled(): bool
     {
         return $this->lastDayOfMonthFix;
     }

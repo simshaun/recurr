@@ -14,7 +14,8 @@
 
 namespace Recurr;
 
-class Frequency {
+class Frequency
+{
     const YEARLY   = 0;
     const MONTHLY  = 1;
     const WEEKLY   = 2;

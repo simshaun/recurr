@@ -1,16 +1,16 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
-    'Søndag',
+$days = [
+    'Sï¿½ndag',
     'Mandag',
     'Tirsdag',
     'Onsdag',
     'Torsdag',
     'Fredag',
-    'Lørdag',
-);
-$months = array(
+    'Lï¿½rdag',
+];
+$months = [
     'Januar',
     'Februar',
     'Mars',
@@ -23,9 +23,9 @@ $months = array(
     'Oktober',
     'November',
     'Desember',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Kunne ikke konvertere rrule til tekst.',
     'for %count% times' => '%count% ganger',
     'for one time' => 'en gang',
@@ -43,16 +43,16 @@ return array(
     'or' => 'eller',
     'in_month' => 'i', // e.g. weekly in January, May and August
     'in_week' => 'i', // e.g. yearly in week 3
-    'on' => 'på', // e.g. every day on Tuesday, Wednesday and Friday
+    'on' => 'pï¿½', // e.g. every day on Tuesday, Wednesday and Friday
     'the_for_monthday' => 'den', // e.g. monthly on Tuesday the 1st
     'the_for_weekday' => 'den', // e.g. monthly on the 4th Monday
-    'on the' => 'på den', // e.g. every year on the 1st and 200th day
-    'of_the_month' => 'i måneden', // e.g. every year on the 2nd or 3rd of the month
-    'every %count% years' => 'hvert %count% år',
-    'every year' => 'årlig',
+    'on the' => 'pï¿½ den', // e.g. every year on the 1st and 200th day
+    'of_the_month' => 'i mï¿½neden', // e.g. every year on the 2nd or 3rd of the month
+    'every %count% years' => 'hvert %count% ï¿½r',
+    'every year' => 'ï¿½rlig',
     'every_month_list' => 'hver', // e.g. every January, May and August
-    'every %count% months' => 'hver %count% måned',
-    'every month' => 'månedlig',
+    'every %count% months' => 'hver %count% mï¿½ned',
+    'every month' => 'mï¿½nedlig',
     'every %count% weeks' => 'hver %count% uke',
     'every week' => 'ukentlig',
     'every %count% days' => 'hver %count% dag',
@@ -71,7 +71,7 @@ return array(
     'ordinal_number' => function ($str, $params) {
         $number = $params['number'];
 
-        $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
+        $ends = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
         $suffix = '';
 
         $isNegative = $number < 0;
@@ -97,4 +97,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];

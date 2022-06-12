@@ -9,12 +9,12 @@
 
 namespace Recurr\Exception;
 
-use Recurr\Exception;
+use Recurr\Exception\Exception;
 
 /**
  * @package Recurr\Exception
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class InvalidRRule extends Exception
+class InvalidRRule extends \UnexpectedValueException implements Exception
 {
 }

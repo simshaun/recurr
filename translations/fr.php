@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'dimanche',
     'lundi',
     'mardi',
@@ -9,8 +9,8 @@ $days = array(
     'jeudi',
     'vendredi',
     'samedi',
-);
-$months = array(
+];
+$months = [
     'janvier',
     'février',
     'mars',
@@ -23,9 +23,9 @@ $months = array(
     'octobre',
     'novembre',
     'décembre',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Cette règle de récurrence n\'a pas pu être convertie en texte.',
     'for %count% times' => '%count% fois',
     'for one time' => 'une fois',
@@ -100,4 +100,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];

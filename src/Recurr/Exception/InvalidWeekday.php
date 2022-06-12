@@ -9,12 +9,12 @@
 
 namespace Recurr\Exception;
 
-use Recurr\Exception;
+use Recurr\Exception\Exception;
 
 /**
  * @package Recurr\Exception
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class InvalidWeekday extends Exception
+class InvalidWeekday extends \InvalidArgumentException implements Exception
 {
 }

@@ -21,16 +21,13 @@ namespace Recurr;
  */
 class Time
 {
-    /** @var int */
-    public $hour;
+    public int $hour;
 
-    /** @var int */
-    public $minute;
+    public int $minute;
 
-    /** @var int */
-    public $second;
+    public int $second;
 
-    public function __construct($hour, $minute, $second)
+    public function __construct(int $hour, int $minute, int $second)
     {
         $this->hour   = $hour;
         $this->minute = $minute;

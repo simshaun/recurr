@@ -21,14 +21,13 @@ namespace Recurr;
  */
 class DaySet
 {
-    /** @var array */
-    public $set;
+    public array $set;
 
     /** @var int Day of year */
-    public $start;
+    public int $start;
 
     /** @var int Day of year */
-    public $end;
+    public int $end;
 
     /**
      * Constructor
@@ -37,7 +36,7 @@ class DaySet
      * @param int   $start Day of year of start day
      * @param int   $end   Day of year of end day
      */
-    public function __construct($set, $start, $end)
+    public function __construct(array $set, int $start, int $end)
     {
         $this->set   = $set;
         $this->start = $start;

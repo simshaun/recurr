@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'Pazar',
     'Pazartesi',
     'Salı',
@@ -9,8 +9,8 @@ $days = array(
     'Perşembe',
     'Cuma',
     'Cumartesi',
-);
-$months = array(
+];
+$months = [
     'Ocak',
     'Şubat',
     'Mart',
@@ -23,9 +23,9 @@ $months = array(
     'Ekim',
     'Kasım',
     'Aralık',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Bu rrule tam metne dönüştürülemiyor.',
     'for %count% times' => '%count% kez',
     'for one time' => 'bir kere',
@@ -71,7 +71,7 @@ return array(
     'ordinal_number' => function ($str, $params) {
         $number = $params['number'];
 
-        $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
+        $ends = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
         $suffix = '';
 
         $isNegative = $number < 0;
@@ -97,4 +97,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];

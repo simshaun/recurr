@@ -9,6 +9,8 @@
 
 namespace Recurr;
 
+use DateTimeInterface;
+
 /**
  * Class DateInclusion is a container for a single \DateTimeInterface.
  *
@@ -23,23 +25,21 @@ namespace Recurr;
  */
 class DateInclusion
 {
-    /** @var \DateTimeInterface */
-    public $date;
+    public DateTimeInterface $date;
 
     /** @var bool Day of year */
-    public $hasTime;
+    public bool $hasTime;
 
-    /** @var bool */
-    public $isUtcExplicit;
+    public bool $isUtcExplicit;
 
     /**
      * Constructor
      *
-     * @param \DateTimeInterface $date
+     * @param DateTimeInterface $date
      * @param bool               $hasTime
      * @param bool               $isUtcExplicit
      */
-    public function __construct(\DateTimeInterface $date, $hasTime = true, $isUtcExplicit = false)
+    public function __construct(DateTimeInterface $date, bool $hasTime = true, bool $isUtcExplicit = false)
     {
         $this->date          = $date;
         $this->hasTime       = $hasTime;

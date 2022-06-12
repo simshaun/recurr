@@ -9,6 +9,8 @@
 
 namespace Recurr;
 
+use DateTimeInterface;
+
 /**
  * Class Recurrence is responsible for storing the start and end \DateTime of
  * a specific recurrence in a RRULE.
@@ -18,72 +20,51 @@ namespace Recurr;
  */
 class Recurrence
 {
-    /** @var \DateTimeInterface */
-    protected $start;
+    protected ?DateTimeInterface $start = null;
 
-    /** @var \DateTimeInterface */
-    protected $end;
+    protected ?DateTimeInterface $end = null;
 
-    /** @var int */
-    protected $index;
+    protected int $index;
 
-    public function __construct(\DateTimeInterface $start = null, \DateTimeInterface $end = null, $index = 0)
+    public function __construct(?DateTimeInterface $start = null, ?DateTimeInterface $end = null, $index = 0)
     {
-        if ($start instanceof \DateTimeInterface) {
+        if ($start instanceof DateTimeInterface) {
             $this->setStart($start);
         }
 
-        if ($end instanceof \DateTimeInterface) {
+        if ($end instanceof DateTimeInterface) {
             $this->setEnd($end);
         }
 
         $this->index = $index;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getStart()
+    public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    /**
-     * @param \DateTime $start
-     */
-    public function setStart($start)
+    public function setStart(?DateTimeInterface $start)
     {
         $this->start = $start;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getEnd()
+    public function getEnd(): ?DateTimeInterface
     {
         return $this->end;
     }
 
-    /**
-     * @param \DateTime $end
-     */
-    public function setEnd($end)
+    public function setEnd(?DateTimeInterface $end): void
     {
         $this->end = $end;
     }
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $index
-     */
-    public function setIndex($index)
+    public function setIndex(int $index): void
     {
         $this->index = $index;
     }

@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'Κυριακή',
     'Δευτέρα',
     'Τρίτη',
@@ -9,8 +9,8 @@ $days = array(
     'Πέμπτη',
     'Παρασκευή',
     'Σάββατο',
-);
-$months = array(
+];
+$months = [
     'Ιανουάριος',
     'Φεβρουάριος',
     'Μάρτιος',
@@ -23,8 +23,8 @@ $months = array(
     'Οκτώβριος',
     'Νοέμβριος',
     'Δεκέμβριος',
-);
-$months_genitive = array(
+];
+$months_genitive = [
     'Ιανουαρίου',
     'Φεβρουαρίου',
     'Μαρτίου',
@@ -37,9 +37,9 @@ $months_genitive = array(
     'Οκτωβρίου',
     'Νοεμβρίου',
     'Δεκεμβρίου',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Αδυναμία πλήρους μετατροπής αυτού του κανόνα rrule σε κείμενο.',
     'for %count% times' => 'για %count% φορές',
     'for one time' => 'για μία φορά',
@@ -107,4 +107,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];
