@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         backupGlobals="false"
-         backupStaticAttributes="false"
          bootstrap="./tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd">
-  <testsuites>
-    <testsuite name="Recurr Test Suite">
-      <directory suffix="Test.php">./tests/Recurr/Test/</directory>
-    </testsuite>
-  </testsuites>
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+>
 
-  <filter>
-    <whitelist>
-      <directory suffix=".php">./src/Recurr/</directory>
-    </whitelist>
-  </filter>
+    <coverage>
+        <include>
+            <directory suffix=".php">./src/Recurr/</directory>
+        </include>
+    </coverage>
+
+    <testsuites>
+        <testsuite name="Recurr Test Suite">
+            <directory>./tests/Recurr/Test/</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

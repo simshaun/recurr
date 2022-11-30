@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Recurr;
+namespace Recurr\Exception;
 
 /**
  * The base Recurr exception class
  */
-class Exception extends \Exception
+interface Exception extends \Throwable
 {
 }

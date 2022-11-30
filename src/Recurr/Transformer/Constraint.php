@@ -11,10 +11,9 @@ namespace Recurr\Transformer;
 
 abstract class Constraint implements ConstraintInterface
 {
+    protected bool $stopsTransformer = true;
 
-    protected $stopsTransformer = true;
-
-    public function stopsTransformer()
+    public function stopsTransformer(): bool
     {
         return $this->stopsTransformer;
     }

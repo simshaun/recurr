@@ -17,6 +17,9 @@
 
 namespace Recurr;
 
+use DateTime;
+use DateTimeInterface;
+use DateTimeZone;
 use Recurr\Exception\InvalidArgument;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Exception\InvalidWeekday;
@@ -85,12 +88,14 @@ use Recurr\Exception\InvalidWeekday;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class Rule
+class Rule implements \Stringable
 {
-    const TZ_FIXED = 'fixed';
-    const TZ_FLOAT = 'floating';
+    public const LINE_SEPARATOR = \PHP_EOL;
+    public const DATE_FORMAT = 'Ymd\THis';
+    public const TZ_FIXED = 'fixed';
+    public const TZ_FLOAT = 'floating';
 
-    public static $freqs = array(
+    public static array $freqs = [
         'YEARLY'   => 0,
         'MONTHLY'  => 1,
         'WEEKLY'   => 2,
@@ -98,65 +103,47 @@ class Rule
         'HOURLY'   => 4,
         'MINUTELY' => 5,
         'SECONDLY' => 6,
-    );
+    ];
 
-    /** @var string */
-    protected $timezone;
+    protected string $timezone = 'UTC';
 
-    /** @var \DateTimeInterface|null */
-    protected $startDate;
+    protected ?DateTimeInterface $startDate = null;
 
-    /** @var \DateTimeInterface|null */
-    protected $endDate;
+    protected ?DateTimeInterface $endDate = null;
 
-    /** @var bool */
-    protected $isStartDateFromDtstart = false;
+    protected bool $isStartDateFromDtstart = false;
 
-    /** @var string */
-    protected $freq;
+    protected int $freq = 0;
 
-    /** @var int */
-    protected $interval = 1;
+    protected int $interval = 1;
 
-    /** @var bool */
-    protected $isExplicitInterval = false;
+    protected bool $isExplicitInterval = false;
 
-    /** @var \DateTimeInterface|null */
-    protected $until;
+    protected ?DateTimeInterface $until = null;
 
-    /** @var int|null */
-    protected $count;
+    protected ?int $count = null;
 
-    /** @var array */
-    protected $bySecond;
+    protected array $bySecond = [];
 
-    /** @var array */
-    protected $byMinute;
+    protected array $byMinute = [];
 
-    /** @var array */
-    protected $byHour;
+    protected array $byHour = [];
 
-    /** @var array */
-    protected $byDay;
+    protected array $byDay = [];
 
-    /** @var array */
-    protected $byMonthDay;
+    protected array $byMonthDay = [];
 
-    /** @var array */
-    protected $byYearDay;
+    protected array $byYearDay = [];
 
-    /** @var array */
-    protected $byWeekNumber;
+    protected array $byWeekNumber = [];
 
-    /** @var array */
-    protected $byMonth;
+    protected array $byMonth = [];
 
-    /** @var string */
-    protected $weekStart = 'MO';
-    protected $weekStartDefined = false;
+    protected string $weekStart = 'MO';
 
-    /** @var array */
-    protected $days = array(
+    protected bool $weekStartDefined = false;
+
+    protected array $days = [
         'MO' => 0,
         'TU' => 1,
         'WE' => 2,
@@ -164,91 +151,65 @@ class Rule
         'FR' => 4,
         'SA' => 5,
         'SU' => 6
-    );
+    ];
 
-    /** @var int[] */
-    protected $bySetPosition;
+    protected array $bySetPosition = [];
 
-    /** @var array */
-    protected $rDates = array();
+    /** @var array<DateInclusion> */
+    protected array $rDates = [];
 
-    /** @var array */
-    protected $exDates = array();
+    /** @var array<DateExclusion> */
+    protected array $exDates = [];
 
     /**
      * Construct a new Rule.
      *
-     * @param string                         $rrule RRULE string
-     * @param string|\DateTimeInterface|null $startDate
-     * @param string|\DateTimeInterface|null $endDate
-     * @param string                         $timezone
+     * @param string|array                  $rrule RRULE string
+     * @param string|DateTimeInterface|null $startDate
+     * @param string|DateTimeInterface|null $endDate
+     * @param ?string                       $timezone
      *
      * @throws InvalidRRule
      */
-    public function __construct($rrule = null, $startDate = null, $endDate = null, $timezone = null)
+    public function __construct(string|array $rrule = [], string|DateTimeInterface|null $startDate = null, string|DateTimeInterface|null $endDate = null, ?string $timezone = null)
     {
-        if (empty($timezone)) {
-            if ($startDate instanceof \DateTimeInterface) {
-                $timezone = $startDate->getTimezone()->getName();
-            } else {
-                $timezone = date_default_timezone_get();
-            }
-        }
+        $timezone ??= $startDate instanceof DateTimeInterface ? $startDate->getTimezone()->getName() : date_default_timezone_get();
         $this->setTimezone($timezone);
-
-        if ($startDate !== null && !$startDate instanceof \DateTimeInterface) {
-            $startDate = new \DateTime($startDate, new \DateTimeZone($timezone));
-        }
-
-        $this->setStartDate($startDate);
-
-        if ($endDate !== null && !$endDate instanceof \DateTimeInterface) {
-            $endDate = new \DateTime($endDate, new \DateTimeZone($timezone));
-        }
-
-        $this->setEndDate($endDate);
-
-        if (is_array($rrule)) {
-            $this->loadFromArray($rrule);
-        } else if (!empty($rrule)) {
-            $this->loadFromString($rrule);
-        }
+        $this->setStartDate($startDate !== null && !$startDate instanceof DateTimeInterface ? new DateTime($startDate, new DateTimeZone($timezone)) : $startDate);
+        $this->setEndDate($endDate !== null && !$endDate instanceof DateTimeInterface ? new DateTime($endDate, new DateTimeZone($timezone)) : $endDate);
+        is_string($rrule) ? $this->loadFromString($rrule) : $this->loadFromArray($rrule);
     }
 
     /**
      * Create a Rule object based on a RRULE string.
      *
-     * @param string                    $rrule RRULE string
-     * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param string                         $rrule RRULE string
+     * @param string|DateTimeInterface|null  $startDate
+     * @param string|DateTimeInterface|null  $endDate
+     * @param string|null                    $timezone
      *
      * @return Rule
      * @throws InvalidRRule
      */
-    public static function createFromString($rrule, $startDate = null, $endDate = null, $timezone = null)
+    public static function createFromString(string $rrule, string|DateTimeInterface|null $startDate = null, string|DateTimeInterface|null $endDate = null, ?string $timezone = null): static
     {
-        $rule = new static($rrule, $startDate, $endDate, $timezone);
-
-        return $rule;
+        return new static($rrule, $startDate, $endDate, $timezone);
     }
 
     /**
      * Create a Rule object based on a RRULE array.
      *
-     * @param array                     $rrule RRULE array
-     * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param array                          $rrule RRULE array
+     * @param string|DateTimeInterface|null  $startDate
+     * @param string|DateTimeInterface|null  $endDate
+     * @param string|null                    $timezone
      *
      * @return Rule
      * @throws InvalidRRule
      */
-    public static function createFromArray($rrule, $startDate = null, $endDate = null, $timezone = null)
+    public static function createFromArray(array $rrule, string|DateTimeInterface|null $startDate = null, string|DateTimeInterface|null $endDate = null, ?string $timezone = null): static
     {
-        $rule = new static($rrule, $startDate, $endDate, $timezone);
-
-        return $rule;
+        return new static($rrule, $startDate, $endDate, $timezone);
     }
 
     /**
@@ -259,20 +220,14 @@ class Rule
      * @return Rule
      * @throws InvalidRRule
      */
-    public function loadFromString($rrule)
+    public function loadFromString(string $rrule): self
     {
-        $rrule  = strtoupper($rrule);
-        $rrule  = trim($rrule, ';');
-        $rrule  = trim($rrule, "\n");
-        $rows   = explode("\n", $rrule);
-
-        $parts = array();
-
-        foreach ($rows as $rruleForRow) {
-            $parts = array_merge($parts, $this->parseString($rruleForRow));
+        $parts = [];
+        foreach (explode(static::LINE_SEPARATOR, trim(strtoupper($rrule), static::LINE_SEPARATOR . ";")) as $rruleForRow) {
+            $parts[] = $this->parseString($rruleForRow);
         }
 
-        return $this->loadFromArray($parts);
+        return $this->loadFromArray(array_merge(...$parts));
     }
 
     /**
@@ -284,36 +239,30 @@ class Rule
      *
      * @throws InvalidRRule
      */
-    public function parseString($rrule)
+    public function parseString(string $rrule): array
     {
-        if (strpos($rrule, 'DTSTART:') === 0) {
-            $pieces = explode(':', $rrule);
-
-            if (count($pieces) !== 2) {
-                throw new InvalidRRule('DSTART is not valid');
-            }
-
-            return array('DTSTART' => $pieces[1]);
+        $matches = [];
+        if (preg_match('/^(?<key>DTSTART|DTEND)(;TZID=(?<tzid>[\w\/]+))?:(?<dt>[\dT]+)Z?;?/', $rrule, $matches) === 1) {
+            return array_filter([
+                $matches['key'] => $matches['dt'],
+                $matches['key'] . '_TZID' => $matches['tzid'] ?? null
+            ]);
         }
 
-        if (strpos($rrule, 'RRULE:') === 0) {
-            $rrule = str_replace('RRULE:', '', $rrule);
-        }
+        $pieces = explode(';', preg_replace('/^RRULE:/', '', $rrule));
+        $parts  = [];
 
-        $pieces = explode(';', $rrule);
-        $parts  = array();
-
-        if (!count($pieces)) {
+        if (count($pieces) === 0) {
             throw new InvalidRRule('RRULE is empty');
         }
 
         // Split each piece of the RRULE in to KEY=>VAL
         foreach ($pieces as $piece) {
-            if (false === strpos($piece, '=')) {
+            if (!str_contains($piece, '=')) {
                 continue;
             }
 
-            list($key, $val) = explode('=', $piece);
+            [$key, $val] = explode('=', $piece);
             $parts[$key] = $val;
         }
 
@@ -323,18 +272,16 @@ class Rule
     /**
      * Populate the object based on a RRULE array.
      *
-     * @param array
-     *
      * @return Rule
      * @throws InvalidRRule
      */
-    public function loadFromArray($parts)
+    public function loadFromArray(array $parts): self
     {
         // FREQ is required
         if (!isset($parts['FREQ'])) {
             throw new InvalidRRule('FREQ is required');
         } else {
-            if (!in_array($parts['FREQ'], array_keys(self::$freqs))) {
+            if (!in_array($parts['FREQ'], array_keys(self::$freqs), true)) {
                 throw new InvalidRRule('FREQ is invalid');
             }
 
@@ -344,15 +291,17 @@ class Rule
         // DTSTART
         if (isset($parts['DTSTART'])) {
             $this->isStartDateFromDtstart = true;
-            $date = new \DateTime($parts['DTSTART']);
-            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $timezone = isset($parts['DTSTART_TZID']) ? new DateTimeZone($parts['DTSTART_TZID']) : null;
+            $date = new DateTime($parts['DTSTART'], $timezone);
+            $date = $date->setTimezone($timezone ?? new DateTimeZone($this->getTimezone()));
             $this->setStartDate($date);
         }
 
         // DTEND
         if (isset($parts['DTEND'])) {
-            $date = new \DateTime($parts['DTEND']);
-            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $timezone = isset($parts['DTEND_TZID']) ? new DateTimeZone($parts['DTEND_TZID']) : null;
+            $date = new DateTime($parts['DTEND'], $timezone);
+            $date = $date->setTimezone($timezone ?? new DateTimeZone($this->getTimezone()));
             $this->setEndDate($date);
         }
 
@@ -360,8 +309,8 @@ class Rule
         if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
             throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
         } elseif (isset($parts['UNTIL'])) {
-            $date = new \DateTime($parts['UNTIL']);
-            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = new DateTime($parts['UNTIL']);
+            $date = $date->setTimezone(new DateTimeZone($this->getTimezone()));
             $this->setUntil($date);
         } elseif (isset($parts['COUNT'])) {
             $this->setCount($parts['COUNT']);
@@ -442,14 +391,13 @@ class Rule
      *
      * @return string
      */
-    public function getString($timezoneType=self::TZ_FLOAT)
+    public function getString(string $timezoneType = self::TZ_FLOAT, bool $inlineDates = false): string
     {
-        $format = 'Ymd\THis';
-
-        $parts = array();
+        $lines  = [];
+        $parts  = [];
 
         // FREQ
-        $parts[] = 'FREQ='.$this->getFreqAsText();
+        $parts[] = 'FREQ=' . $this->getFreqAsText();
 
         // UNTIL or COUNT
         $until = $this->getUntil();
@@ -457,13 +405,13 @@ class Rule
         if (!empty($until)) {
             if ($timezoneType === self::TZ_FIXED) {
                 $u = clone $until;
-                $u = $u->setTimezone(new \DateTimeZone('UTC'));
-                $parts[] = 'UNTIL='.$u->format($format.'\Z');
+                $u = $u->setTimezone(new DateTimeZone('UTC'));
+                $parts[] = 'UNTIL=' . $u->format(static::DATE_FORMAT . '\Z');
             } else {
-                $parts[] = 'UNTIL='.$until->format($format);
+                $parts[] = 'UNTIL=' . $until->format(static::DATE_FORMAT);
             }
         } elseif (!empty($count)) {
-            $parts[] = 'COUNT='.$count;
+            $parts[] = 'COUNT=' . $count;
         }
 
         // DTSTART
@@ -471,90 +419,102 @@ class Rule
             if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getStartDate();
                 $tzid = $d->getTimezone()->getName();
-                $date = $d->format($format);
-                $parts[] = "DTSTART;TZID=$tzid:$date";
+                $date = $d->format(static::DATE_FORMAT);
+                $start = "DTSTART;TZID=$tzid:$date";
             } else {
-                $parts[] = 'DTSTART='.$this->getStartDate()->format($format);
+                $start = 'DTSTART=' . $this->getStartDate()->format(static::DATE_FORMAT);
+            }
+
+            if ($inlineDates) {
+                $parts[] = $start;
+            } else {
+                $lines[] = $start;
             }
         }
 
         // DTEND
-        if ($this->endDate instanceof \DateTime) {
+        if ($this->endDate instanceof DateTime) {
             if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getEndDate();
                 $tzid = $d->getTimezone()->getName();
-                $date = $d->format($format);
+                $date = $d->format(static::DATE_FORMAT);
 
-                $parts[] = "DTEND;TZID=$tzid:$date";
+                $end = "DTEND;TZID=$tzid:$date";
             } else {
-                $parts[] = 'DTEND='.$this->getEndDate()->format($format);
+                $end = 'DTEND=' . $this->getEndDate()->format(static::DATE_FORMAT);
+            }
+
+            if ($inlineDates) {
+                $parts[] = $end;
+            } else {
+                $lines[] = $end;
             }
         }
 
         // INTERVAL
         $interval = $this->getInterval();
         if ($this->isExplicitInterval && !empty($interval)) {
-            $parts[] = 'INTERVAL='.$interval;
+            $parts[] = 'INTERVAL=' . $interval;
         }
 
         // BYSECOND
         $bySecond = $this->getBySecond();
         if (!empty($bySecond)) {
-            $parts[] = 'BYSECOND='.implode(',', $bySecond);
+            $parts[] = 'BYSECOND=' . implode(',', $bySecond);
         }
 
         // BYMINUTE
         $byMinute = $this->getByMinute();
         if (!empty($byMinute)) {
-            $parts[] = 'BYMINUTE='.implode(',', $byMinute);
+            $parts[] = 'BYMINUTE=' . implode(',', $byMinute);
         }
 
         // BYHOUR
         $byHour = $this->getByHour();
         if (!empty($byHour)) {
-            $parts[] = 'BYHOUR='.implode(',', $byHour);
+            $parts[] = 'BYHOUR=' . implode(',', $byHour);
         }
 
         // BYDAY
         $byDay = $this->getByDay();
         if (!empty($byDay)) {
-            $parts[] = 'BYDAY='.implode(',', $byDay);
+            $parts[] = 'BYDAY=' . implode(',', $byDay);
         }
 
         // BYMONTHDAY
         $byMonthDay = $this->getByMonthDay();
         if (!empty($byMonthDay)) {
-            $parts[] = 'BYMONTHDAY='.implode(',', $byMonthDay);
+            $parts[] = 'BYMONTHDAY=' . implode(',', $byMonthDay);
         }
 
         // BYYEARDAY
         $byYearDay = $this->getByYearDay();
         if (!empty($byYearDay)) {
-            $parts[] = 'BYYEARDAY='.implode(',', $byYearDay);
+            $parts[] = 'BYYEARDAY=' . implode(',', $byYearDay);
         }
 
         // BYWEEKNO
         $byWeekNumber = $this->getByWeekNumber();
         if (!empty($byWeekNumber)) {
-            $parts[] = 'BYWEEKNO='.implode(',', $byWeekNumber);
+            $parts[] = 'BYWEEKNO=' . implode(',', $byWeekNumber);
         }
 
         // BYMONTH
         $byMonth = $this->getByMonth();
         if (!empty($byMonth)) {
-            $parts[] = 'BYMONTH='.implode(',', $byMonth);
+            $parts[] = 'BYMONTH=' . implode(',', $byMonth);
         }
 
         // BYSETPOS
         $bySetPosition = $this->getBySetPosition();
         if (!empty($bySetPosition)) {
-            $parts[] = 'BYSETPOS='.implode(',', $bySetPosition);
+            $parts[] = 'BYSETPOS=' . implode(',', $bySetPosition);
         }
 
         // WKST
         $weekStart = $this->getWeekStart();
         if ($this->weekStartDefined && !empty($weekStart)) {
-            $parts[] = 'WKST='.$weekStart;
+            $parts[] = 'WKST=' . $weekStart;
         }
 
         // RDATE
@@ -570,7 +530,7 @@ class Rule
                 }
                 $rDates[$key] = $inclusion->date->format($format);
             }
-            $parts[] = 'RDATE='.implode(',', $rDates);
+            $parts[] = 'RDATE=' . implode(',', $rDates);
         }
 
         // EXDATE
@@ -586,10 +546,12 @@ class Rule
                 }
                 $exDates[$key] = $exclusion->date->format($format);
             }
-            $parts[] = 'EXDATE='.implode(',', $exDates);
+            $parts[] = 'EXDATE=' . implode(',', $exDates);
         }
 
-        return implode(';', $parts);
+        $lines[] = 'RRULE:' . implode(';', $parts);
+
+        return implode(static::LINE_SEPARATOR, $lines);
     }
 
     /**
@@ -598,7 +560,7 @@ class Rule
      * @see http://www.php.net/manual/en/timezones.php
      * @return $this
      */
-    public function setTimezone($timezone)
+    public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
 
@@ -608,9 +570,9 @@ class Rule
     /**
      * Get timezone to use for \DateTimeInterface objects that are UTC.
      *
-     * @return null|string
+     * @return string
      */
-    public function getTimezone()
+    public function getTimezone(): string
     {
         return $this->timezone;
     }
@@ -618,26 +580,20 @@ class Rule
     /**
      * This date specifies the first instance in the recurrence set.
      *
-     * @param \DateTimeInterface|null $startDate       Date of the first instance in the recurrence
-     * @param bool|null               $includeInString If true, include as DTSTART when calling getString()
+     * @param DateTimeInterface|null $startDate       Date of the first instance in the recurrence
+     * @param bool|null              $includeInString If true, include as DTSTART when calling getString()
      *
      * @return $this
      */
-    public function setStartDate($startDate, $includeInString = null)
+    public function setStartDate(?DateTimeInterface $startDate, ?bool $includeInString = null): self
     {
         $this->startDate = $startDate;
-
-        if ($includeInString !== null) {
-            $this->isStartDateFromDtstart = (bool) $includeInString;
-        }
+        $this->isStartDateFromDtstart = $includeInString !== null ? $includeInString : $this->isStartDateFromDtstart;
 
         return $this;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getStartDate()
+    public function getStartDate(): ?DateTimeInterface
     {
         return $this->startDate;
     }
@@ -645,21 +601,18 @@ class Rule
     /**
      * This date specifies the last possible instance in the recurrence set.
      *
-     * @param \DateTimeInterface|null $endDate Date of the last possible instance in the recurrence
+     * @param DateTimeInterface|null $endDate Date of the last possible instance in the recurrence
      *
      * @return $this
      */
-    public function setEndDate($endDate)
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
 
         return $this;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
-    public function getEndDate()
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
@@ -688,7 +641,7 @@ class Rule
      * @return $this
      * @throws Exception\InvalidArgument
      */
-    public function setFreq($freq)
+    public function setFreq($freq): self
     {
         if (is_string($freq)) {
             if (!array_key_exists($freq, self::$freqs)) {
@@ -712,7 +665,7 @@ class Rule
      *
      * @return int
      */
-    public function getFreq()
+    public function getFreq(): int
     {
         return $this->freq;
     }
@@ -722,7 +675,7 @@ class Rule
      *
      * @return string
      */
-    public function getFreqAsText()
+    public function getFreqAsText(): string
     {
         return array_search($this->getFreq(), self::$freqs);
     }
@@ -741,10 +694,8 @@ class Rule
      * @return $this
      * @throws Exception\InvalidArgument
      */
-    public function setInterval($interval)
+    public function setInterval(int $interval): self
     {
-        $interval = (int) $interval;
-
         if ($interval < 1) {
             throw new InvalidArgument('Interval must be a positive integer');
         }
@@ -760,7 +711,7 @@ class Rule
      *
      * @return int
      */
-    public function getInterval()
+    public function getInterval(): int
     {
         return $this->interval;
     }
@@ -775,11 +726,11 @@ class Rule
      * Either UNTIL or COUNT may be specified, but UNTIL and COUNT MUST NOT
      * both be specified.
      *
-     * @param \DateTimeInterface $until The upper bound of the recurrence.
+     * @param DateTimeInterface $until The upper bound of the recurrence.
      *
      * @return $this
      */
-    public function setUntil(\DateTimeInterface $until)
+    public function setUntil(DateTimeInterface $until): self
     {
         $this->until = $until;
         $this->count = null;
@@ -790,18 +741,19 @@ class Rule
     /**
      * Get the \DateTimeInterface that the recurrence lasts until.
      *
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface|null
      */
-    public function getUntil()
+    public function getUntil(): ?DateTimeInterface
     {
         $date = $this->until;
 
-        if ($date instanceof \DateTime
+        if (
+            $date instanceof DateTime
             && $date->getTimezone()->getName() == 'UTC'
             && $this->getTimezone() != 'UTC'
         ) {
             $timestamp = $date->getTimestamp();
-            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+            $date = $date->setTimezone(new DateTimeZone($this->getTimezone()));
             $date = $date->setTimestamp($timestamp);
         }
 
@@ -819,9 +771,9 @@ class Rule
      *
      * @return $this
      */
-    public function setCount($count)
+    public function setCount(int $count): self
     {
-        $this->count = (int) $count;
+        $this->count = $count;
         $this->until = null;
 
         return $this;
@@ -832,7 +784,7 @@ class Rule
      *
      * @return int|null
      */
-    public function getCount()
+    public function getCount(): ?int
     {
         return $this->count;
     }
@@ -846,7 +798,7 @@ class Rule
      *
      * @return $this
      */
-    public function setBySecond(array $bySecond)
+    public function setBySecond(array $bySecond): self
     {
         $this->bySecond = $bySecond;
 
@@ -858,7 +810,7 @@ class Rule
      *
      * @return array
      */
-    public function getBySecond()
+    public function getBySecond(): array
     {
         return $this->bySecond;
     }
@@ -872,7 +824,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMinute(array $byMinute)
+    public function setByMinute(array $byMinute): self
     {
         $this->byMinute = $byMinute;
 
@@ -884,7 +836,7 @@ class Rule
      *
      * @return array
      */
-    public function getByMinute()
+    public function getByMinute(): array
     {
         return $this->byMinute;
     }
@@ -898,7 +850,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByHour(array $byHour)
+    public function setByHour(array $byHour): self
     {
         $this->byHour = $byHour;
 
@@ -910,7 +862,7 @@ class Rule
      *
      * @return array
      */
-    public function getByHour()
+    public function getByHour(): array
     {
         return $this->byHour;
     }
@@ -941,12 +893,12 @@ class Rule
      * @return $this
      * @throws InvalidRRule
      */
-    public function setByDay(array $byDay)
+    public function setByDay(array $byDay): self
     {
         if ($this->getFreq() > static::$freqs['MONTHLY'] && preg_match('/\d/', implode(',', $byDay))) {
             throw new InvalidRRule('BYDAY only supports MONTHLY and YEARLY frequencies');
         }
-        if (count($byDay) === 0 || $byDay === array('')) {
+        if (count($byDay) === 0 || $byDay === ['']) {
             throw new InvalidRRule('BYDAY must be set to at least one day');
         }
 
@@ -960,7 +912,7 @@ class Rule
      *
      * @return array
      */
-    public function getByDay()
+    public function getByDay(): array
     {
         return $this->byDay;
     }
@@ -971,19 +923,14 @@ class Rule
      * @return array of Weekdays
      * @throws InvalidWeekday
      */
-    public function getByDayTransformedToWeekdays()
+    public function getByDayTransformedToWeekdays(): array
     {
         $byDay = $this->getByDay();
-
-        if (null === $byDay || !count($byDay)) {
-            return array();
-        }
-
         foreach ($byDay as $idx => $day) {
             if (strlen($day) === 2) {
                 $byDay[$idx] = new Weekday($day, null);
             } else {
-                preg_match('/^([+-]?[0-9]+)([A-Z]{2})$/', $day, $dayParts);
+                preg_match('/^([+-]?\d+)([A-Z]{2})$/', $day, $dayParts);
                 $byDay[$idx] = new Weekday($dayParts[2], $dayParts[1]);
             }
         }
@@ -1001,7 +948,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMonthDay(array $byMonthDay)
+    public function setByMonthDay(array $byMonthDay): self
     {
         $this->byMonthDay = $byMonthDay;
 
@@ -1013,7 +960,7 @@ class Rule
      *
      * @return array
      */
-    public function getByMonthDay()
+    public function getByMonthDay(): array
     {
         return $this->byMonthDay;
     }
@@ -1029,7 +976,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByYearDay(array $byYearDay)
+    public function setByYearDay(array $byYearDay): self
     {
         $this->byYearDay = $byYearDay;
 
@@ -1041,7 +988,7 @@ class Rule
      *
      * @return array
      */
-    public function getByYearDay()
+    public function getByYearDay(): array
     {
         return $this->byYearDay;
     }
@@ -1065,7 +1012,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByWeekNumber(array $byWeekNumber)
+    public function setByWeekNumber(array $byWeekNumber): self
     {
         $this->byWeekNumber = $byWeekNumber;
 
@@ -1077,7 +1024,7 @@ class Rule
      *
      * @return array
      */
-    public function getByWeekNumber()
+    public function getByWeekNumber(): array
     {
         return $this->byWeekNumber;
     }
@@ -1091,7 +1038,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMonth(array $byMonth)
+    public function setByMonth(array $byMonth): self
     {
         $this->byMonth = $byMonth;
 
@@ -1103,16 +1050,14 @@ class Rule
      *
      * @return array
      */
-    public function getByMonth()
+    public function getByMonth(): array
     {
         return $this->byMonth;
     }
 
-    public function hasByMonth()
+    public function hasByMonth(): bool
     {
-        $val = $this->getByMonth();
-
-        return ! empty($val);
+        return $this->getByMonth() !== [];
     }
 
     /**
@@ -1131,11 +1076,11 @@ class Rule
      * @return $this
      * @throws Exception\InvalidArgument
      */
-    public function setWeekStart($weekStart)
+    public function setWeekStart(string $weekStart): self
     {
         $weekStart = strtoupper($weekStart);
 
-        if (!in_array($weekStart, array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'))) {
+        if (!in_array($weekStart, ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'], true)) {
             throw new InvalidArgument('Week Start must be one of MO, TU, WE, TH, FR, SA, SU');
         }
 
@@ -1150,7 +1095,7 @@ class Rule
      *
      * @return string
      */
-    public function getWeekStart()
+    public function getWeekStart(): string
     {
         return $this->weekStart;
     }
@@ -1161,11 +1106,9 @@ class Rule
      *
      * @return int
      */
-    public function getWeekStartAsNum()
+    public function getWeekStartAsNum(): int
     {
-        $weekStart = $this->getWeekStart();
-
-        return $this->days[$weekStart];
+        return $this->days[$this->getWeekStart()];
     }
 
     /**
@@ -1186,7 +1129,7 @@ class Rule
      *
      * @return $this
      */
-    public function setBySetPosition($bySetPosition)
+    public function setBySetPosition(array $bySetPosition): self
     {
         $this->bySetPosition = $bySetPosition;
 
@@ -1199,7 +1142,7 @@ class Rule
      *
      * @return array
      */
-    public function getBySetPosition()
+    public function getBySetPosition(): array
     {
         return $this->bySetPosition;
     }
@@ -1213,19 +1156,19 @@ class Rule
      *
      * @return $this
      */
-    public function setRDates(array $rDates)
+    public function setRDates(array $rDates): self
     {
-        $timezone = new \DateTimeZone($this->getTimezone());
+        $timezone = new DateTimeZone($this->getTimezone());
 
         foreach ($rDates as $key => $val) {
             if ($val instanceof DateInclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
             } else {
-                $date          = new \DateTime($val, $timezone);
+                $date          = new DateTime($val, $timezone);
                 $rDates[$key] = new DateInclusion(
                     $this->convertZtoUtc($date),
-                    strpos($val, 'T') !== false,
-                    strpos($val, 'Z') !== false
+                    str_contains($val, 'T'),
+                    str_contains($val, 'Z')
                 );
             }
         }
@@ -1240,7 +1183,7 @@ class Rule
      *
      * @return DateInclusion[]
      */
-    public function getRDates()
+    public function getRDates(): array
     {
         return $this->rDates;
     }
@@ -1254,19 +1197,19 @@ class Rule
      *
      * @return $this
      */
-    public function setExDates(array $exDates)
+    public function setExDates(array $exDates): self
     {
-        $timezone = new \DateTimeZone($this->getTimezone());
+        $timezone = new DateTimeZone($this->getTimezone());
 
         foreach ($exDates as $key => $val) {
             if ($val instanceof DateExclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
             } else {
-                $date          = new \DateTime($val, $timezone);
+                $date          = new DateTime($val, $timezone);
                 $exDates[$key] = new DateExclusion(
                     $this->convertZtoUtc($date),
-                    strpos($val, 'T') !== false,
-                    strpos($val, 'Z') !== false
+                    str_contains($val, 'T'),
+                    str_contains($val, 'Z')
                 );
             }
         }
@@ -1282,17 +1225,17 @@ class Rule
      *
      * This is necessary for exclusion dates to be handled properly.
      *
-     * @param \DateTimeInterface $date
+     * @param DateTimeInterface $date
      *
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    private function convertZtoUtc(\DateTimeInterface $date)
+    private function convertZtoUtc(DateTimeInterface $date): DateTimeInterface
     {
         if ($date->getTimezone()->getName() !== 'Z') {
             return $date;
         }
 
-        return $date->setTimezone(new \DateTimeZone('UTC'));
+        return $date->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**
@@ -1300,16 +1243,18 @@ class Rule
      *
      * @return DateExclusion[]
      */
-    public function getExDates()
+    public function getExDates(): array
     {
         return $this->exDates;
     }
 
-    /**
-     * @return bool
-     */
-    public function repeatsIndefinitely()
+    public function repeatsIndefinitely(): bool
     {
         return !$this->getCount() && !$this->getUntil() && !$this->getEndDate();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getString();
     }
 }

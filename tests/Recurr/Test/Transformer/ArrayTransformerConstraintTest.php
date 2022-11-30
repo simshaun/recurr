@@ -44,7 +44,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
      */
     public function testBefore($dateTimeClassName, $frequency, $count, $start, $before, $inc, $expected)
     {
-        $rule = new Rule();
+        $rule = Rule::createFromArray($this->defaults);
         $rule
             ->setFreq($frequency)
             ->setCount($count)
@@ -96,7 +96,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
      */
     public function testAfter($dateTimeClassName, $frequency, $count, $start, $after, $inc, $countConstraintFailures, $expected)
     {
-        $rule = new Rule();
+        $rule = Rule::createFromArray($this->defaults);
         $rule
             ->setFreq($frequency)
             ->setCount($count)
@@ -162,14 +162,16 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
      */
     public function testBetween($dateTimeClassName, $frequency, $start, $after, $before, $inc, $expected)
     {
-        $rule = new Rule();
+        $rule = Rule::createFromArray($this->defaults);
         $rule
             ->setFreq($frequency)
             ->setStartDate(new $dateTimeClassName($start))
         ;
 
         $constraint = new BetweenConstraint(
-            new $dateTimeClassName($after), new $dateTimeClassName($before), $inc
+            new $dateTimeClassName($after),
+            new $dateTimeClassName($before),
+            $inc
         );
         $computed = $this->transformer->transform($rule, $constraint);
 

@@ -9,17 +9,11 @@
 
 namespace Recurr\Transformer;
 
+use DateTimeInterface;
+
 interface ConstraintInterface
 {
-    /**
-     * @return bool
-     */
-    public function stopsTransformer();
+    public function stopsTransformer(): bool;
 
-    /**
-     * @param \DateTimeInterface $date
-     *
-     * @return bool
-     */
-    public function test(\DateTimeInterface $date);
+    public function test(DateTimeInterface $date): bool;
 }

@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
 {
-    public function testByWeekDay()
+    public function testByWeekDay(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=5;BYDAY=MO,TU',
@@ -23,7 +23,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-02-11'), $computed[4]->getStart());
     }
 
-    public function testByWeekDayWeeklyWithInterval2()
+    public function testByWeekDayWeeklyWithInterval2(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=5;INTERVAL=2;BYDAY=TU,WE;WKST=WE',
@@ -56,7 +56,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-03-05'), $computed[4]->getStart());
     }
 
-    public function testByWeekDayMonthlyRelativeFromStart()
+    public function testByWeekDayMonthlyRelativeFromStart(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYDAY=+1MO',
@@ -73,7 +73,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-11-04'), $computed[4]->getStart());
     }
 
-    public function testByWeekDayMonthlyRelativeFromEnd()
+    public function testByWeekDayMonthlyRelativeFromEnd(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYDAY=-1MO',
@@ -106,7 +106,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-02'), $computed[4]->getStart());
     }
 
-    public function testByWeekDayMonthlyRelativeFromStartAndEnd()
+    public function testByWeekDayMonthlyRelativeFromStartAndEnd(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=10;BYDAY=-1MO,3FR',
@@ -128,7 +128,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-10-28'), $computed[9]->getStart());
     }
 
-    public function testByWeekDayMonthlyWithSundayStartOfYear()
+    public function testByWeekDayMonthlyWithSundayStartOfYear(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=6;BYDAY=MO',
@@ -163,7 +163,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2017-03-17'), $computed[5]->getStart());
     }
 
-    public function testByWeekDayYearlyRelativeFromStart()
+    public function testByWeekDayYearlyRelativeFromStart(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYDAY=+1MO',
@@ -180,7 +180,7 @@ class ArrayTransformerByWeekDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2018-01-01'), $computed[4]->getStart());
     }
 
-    public function testByWeekDayYearlyRelativeFromEnd()
+    public function testByWeekDayYearlyRelativeFromEnd(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYDAY=-1MO',

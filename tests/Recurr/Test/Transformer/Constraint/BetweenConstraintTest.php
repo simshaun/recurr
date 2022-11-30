@@ -1,29 +1,31 @@
 <?php
 
-namespace Recurr\Test\Transformer\Filter;
+namespace Recurr\Test\Transformer\Constraint;
 
+use DateTime;
+use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\Constraint\BetweenConstraint;
 
-class BetweenConstraintTest extends \PHPUnit\Framework\TestCase
+class BetweenConstraintTest extends TestCase
 {
-    public function testBetween()
+    public function testBetween(): void
     {
-        $after  = new \DateTime('2014-06-10');
-        $before = new \DateTime('2014-06-17');
+        $after  = new DateTime('2014-06-10');
+        $before = new DateTime('2014-06-17');
 
         $constraint = new BetweenConstraint($after, $before, false);
-        $testResult = $constraint->test(new \DateTime('2014-06-17'));
+        $testResult = $constraint->test(new DateTime('2014-06-17'));
 
         $this->assertFalse($testResult);
     }
 
-    public function testBetweenInc()
+    public function testBetweenInc(): void
     {
-        $after  = new \DateTime('2014-06-10');
-        $before = new \DateTime('2014-06-17');
+        $after  = new DateTime('2014-06-10');
+        $before = new DateTime('2014-06-17');
 
         $constraint = new BetweenConstraint($after, $before, true);
-        $testResult = $constraint->test(new \DateTime('2014-06-17'));
+        $testResult = $constraint->test(new DateTime('2014-06-17'));
 
         $this->assertTrue($testResult);
     }

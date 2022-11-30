@@ -13,6 +13,8 @@
 
 namespace Recurr;
 
+use DateTimeInterface;
+
 /**
  * Class DateInfo is responsible for holding information based on a particular
  * date that is applicable to a Rule.
@@ -22,52 +24,51 @@ namespace Recurr;
  */
 class DateInfo
 {
-    /** @var \DateTime */
-    public $dt;
+    public DateTimeInterface $dt;
 
     /**
      * @var int Number of days in the month.
      */
-    public $monthLength;
+    public int $monthLength;
 
     /**
      * @var int Number of days in the year (365 normally, 366 on leap years)
      */
-    public $yearLength;
+    public int $yearLength;
 
     /**
      * @var int Number of days in the next year (365 normally, 366 on leap years)
      */
-    public $nextYearLength;
+    public int $nextYearLength;
 
     /**
      * @var array Day of year of last day of each month.
      */
-    public $mRanges;
+    public array $mRanges;
 
     /** @var int Day of week */
-    public $dayOfWeek;
+    public int $dayOfWeek;
 
     /** @var int Day of week of the year's first day */
-    public $dayOfWeekYearDay1;
+    public int $dayOfWeekYearDay1;
 
     /**
      * @var array Month number for each day of the year.
      */
-    public $mMask;
+    public array $mMask;
 
     /**
      * @var array Month-daynumber for each day of the year.
      */
-    public $mDayMask;
+    public array $mDayMask;
 
     /**
      * @var array Month-daynumber for each day of the year (in reverse).
      */
-    public $mDayMaskNeg;
+    public array $mDayMaskNeg;
 
     /**
      * @var array Day of week (0-6) for each day of the year, 0 being Monday
      */
-    public $wDayMask;
+    public array $wDayMask;
 }

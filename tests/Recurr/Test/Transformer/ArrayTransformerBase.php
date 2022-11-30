@@ -2,14 +2,16 @@
 
 namespace Recurr\Test\Transformer;
 
+use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\ArrayTransformer;
 
-class ArrayTransformerBase extends \PHPUnit\Framework\TestCase
+class ArrayTransformerBase extends TestCase
 {
-    /** @var ArrayTransformer */
-    protected $transformer;
+    protected ArrayTransformer $transformer;
 
-    protected $timezone = 'America/New_York';
+    protected string $timezone = 'America/New_York';
+
+    protected array $defaults = ['FREQ' => 'DAILY'];
 
     public function setUp(): void
     {

@@ -21,7 +21,7 @@ use Recurr\Exception\InvalidWeekday;
  * @package Recurr
  * @author  Shaun Simmons <shaun@envysphere.com>
  */
-class Weekday
+class Weekday implements \Stringable
 {
     /**
      * Weekday number.
@@ -33,15 +33,13 @@ class Weekday
      * 4 = Thursday
      * 5 = Friday
      * 6 = Saturday
-     *
-     * @var string
      */
-    public $weekday;
+    public int $weekday;
 
-    /** @var int nth occurrence of the weekday */
-    public $num;
+    /** @var int|null nth occurrence of the weekday */
+    public ?int $num = null;
 
-    protected $days = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+    protected array $days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
     /**
      * @param int|string $weekday 0-6 or MO..SU
@@ -49,7 +47,7 @@ class Weekday
      *
      * @throws InvalidWeekday
      */
-    public function __construct($weekday, $num)
+    public function __construct(int|string $weekday, ?int $num)
     {
         if (is_numeric($weekday) && $weekday > 6 || $weekday < 0) {
             throw new InvalidWeekday('Day is not a valid weekday (0-6)');
@@ -65,7 +63,7 @@ class Weekday
         $this->num = $num;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->num . $this->days[$this->weekday];
     }

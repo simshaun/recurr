@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'domingo',
     'segunda-feira',
     'terça-feira',
@@ -9,8 +9,8 @@ $days = array(
     'quinta-feira',
     'sexta-feira',
     'sábado',
-);
-$months = array(
+];
+$months = [
     'Janeiro',
     'Fevereiro',
     'Março',
@@ -23,9 +23,9 @@ $months = array(
     'Outubro',
     'Novembro',
     'Dezembro',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Não foi possível converter esta regra para texto.',
     'for %count% times' => 'por %count% vezes',
     'for one time' => 'uma vez',
@@ -84,4 +84,4 @@ return array(
 
         return $abbreviation . $suffix;
     },
-);
+];

@@ -2,68 +2,66 @@
 
 namespace Recurr\Test;
 
+use PHPUnit\Framework\TestCase;
 use Recurr\DateExclusion;
 use Recurr\DateInclusion;
+use Recurr\Exception\InvalidArgument;
+use Recurr\Exception\InvalidRRule;
 use Recurr\Frequency;
 use Recurr\Rule;
+use TypeError;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends TestCase
 {
-    /** @var Rule */
-    protected $rule;
+    private array $defaults = ['FREQ' => 'DAILY'];
 
-    public function setUp(): void
+    public function testConstructAcceptableStartDate(): void
     {
-        $this->rule = new Rule;
+        $rule = new Rule($this->defaults, null);
+        $this->assertNull($rule->getStartDate());
+
+        $rule = new Rule($this->defaults, '2018-09-19');
+        $this->assertInstanceOf(\DateTime::class, $rule->getStartDate());
+
+        $rule = new Rule($this->defaults, new \DateTime('2018-09-19'));
+        $this->assertInstanceOf(\DateTime::class, $rule->getStartDate());
     }
 
-    public function testConstructAcceptableStartDate()
+    public function testConstructAcceptableEndDate(): void
     {
-        $this->rule = new Rule(null, null);
-        $this->assertNull($this->rule->getStartDate());
+        $rule = new Rule($this->defaults, null, '2018-09-19');
+        $this->assertInstanceOf(\DateTime::class, $rule->getEndDate());
 
-        $this->rule = new Rule(null, '2018-09-19');
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
-
-        $this->rule = new Rule(null, new \DateTime('2018-09-19'));
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+        $rule = new Rule($this->defaults, null, new \DateTime('2018-09-19'));
+        $this->assertInstanceOf(\DateTime::class, $rule->getEndDate());
     }
 
-    public function testConstructAcceptableEndDate()
+    public function testDefaultTimezone(): void
     {
-        $this->rule = new Rule(null, null, '2018-09-19');
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
-
-        $this->rule = new Rule(null, null, new \DateTime('2018-09-19'));
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
+        $this->assertEquals(date_default_timezone_get(), Rule::createFromArray($this->defaults)->getTimezone());
     }
 
-    public function testDefaultTimezone()
-    {
-        $this->assertEquals(date_default_timezone_get(), $this->rule->getTimezone());
-    }
-
-    public function testTimezoneObtainedFromStartDate()
+    public function testTimezoneObtainedFromStartDate(): void
     {
         $startDate = new \DateTime('2014-01-25 05:20:30', new \DateTimeZone('America/Los_Angeles'));
 
-        $this->rule = new Rule(null, $startDate);
-        $this->assertEquals($startDate->getTimezone()->getName(), $this->rule->getTimezone());
+        $rule = new Rule($this->defaults, $startDate);
+        $this->assertEquals($startDate->getTimezone()->getName(), $rule->getTimezone());
     }
 
-    public function testLoadFromStringWithMissingFreq()
+    public function testLoadFromStringWithMissingFreq(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->loadFromString('COUNT=2');
+        $this->expectException(InvalidRRule::class);
+        Rule::createFromString('COUNT=2');
     }
 
-    public function testLoadFromStringWithBothCountAndUntil()
+    public function testLoadFromStringWithBothCountAndUntil(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->loadFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
+        $this->expectException(InvalidRRule::class);
+        Rule::createFromString('FREQ=DAILY;COUNT=2;UNTIL=20130510');
     }
 
-    public function testLoadFromString()
+    public function testLoadFromString(): void
     {
         $string = 'FREQ=YEARLY;';
         $string .= 'COUNT=2;';
@@ -81,43 +79,43 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
         $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
-        $this->assertEquals(2, $this->rule->getCount());
-        $this->assertEquals(2, $this->rule->getInterval());
-        $this->assertEquals(array(30), $this->rule->getBySecond());
-        $this->assertEquals(array(10), $this->rule->getByMinute());
-        $this->assertEquals(array(5, 15), $this->rule->getByHour());
-        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
-        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
-        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
-        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
-        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
-        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
-        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(Frequency::YEARLY, $rule->getFreq());
+        $this->assertEquals(2, $rule->getCount());
+        $this->assertEquals(2, $rule->getInterval());
+        $this->assertEquals([30], $rule->getBySecond());
+        $this->assertEquals([10], $rule->getByMinute());
+        $this->assertEquals([5, 15], $rule->getByHour());
+        $this->assertEquals(['SU', 'WE'], $rule->getByDay());
+        $this->assertEquals([16, 22], $rule->getByMonthDay());
+        $this->assertEquals([201, 203], $rule->getByYearDay());
+        $this->assertEquals([29, 32], $rule->getByWeekNumber());
+        $this->assertEquals([7, 8], $rule->getByMonth());
+        $this->assertEquals([1, 3], $rule->getBySetPosition());
+        $this->assertEquals('TU', $rule->getWeekStart());
         $this->assertEquals(
-            array(
+            [
                 new DateInclusion(new \DateTime(20151210), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
-            ),
-            $this->rule->getRDates()
+            ],
+            $rule->getRDates()
         );
         $this->assertEquals(
-            array(
+            [
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
-            ),
-            $this->rule->getExDates()
+            ],
+            $rule->getExDates()
         );
     }
 
-    public function testLoadFromStringWithDtStartDirective()
+    public function testLoadFromStringWithDtStartDirective(): void
     {
         $string = 'DTSTART:20190102';
-        $string .= "\n";
+        $string .= Rule::LINE_SEPARATOR;
         $string .= 'RRULE:';
         $string .= 'FREQ=YEARLY;';
         $string .= 'COUNT=2;';
@@ -135,41 +133,41 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
         $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
-        $this->assertEquals(new \DateTime('2019-01-02'), $this->rule->getStartDate());
-        $this->assertEquals(2, $this->rule->getCount());
-        $this->assertEquals(2, $this->rule->getInterval());
-        $this->assertEquals(array(30), $this->rule->getBySecond());
-        $this->assertEquals(array(10), $this->rule->getByMinute());
-        $this->assertEquals(array(5, 15), $this->rule->getByHour());
-        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
-        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
-        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
-        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
-        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
-        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
-        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(Frequency::YEARLY, $rule->getFreq());
+        $this->assertEquals(new \DateTime('2019-01-02'), $rule->getStartDate());
+        $this->assertEquals(2, $rule->getCount());
+        $this->assertEquals(2, $rule->getInterval());
+        $this->assertEquals([30], $rule->getBySecond());
+        $this->assertEquals([10], $rule->getByMinute());
+        $this->assertEquals([5, 15], $rule->getByHour());
+        $this->assertEquals(['SU', 'WE'], $rule->getByDay());
+        $this->assertEquals([16, 22], $rule->getByMonthDay());
+        $this->assertEquals([201, 203], $rule->getByYearDay());
+        $this->assertEquals([29, 32], $rule->getByWeekNumber());
+        $this->assertEquals([7, 8], $rule->getByMonth());
+        $this->assertEquals([1, 3], $rule->getBySetPosition());
+        $this->assertEquals('TU', $rule->getWeekStart());
         $this->assertEquals(
-            array(
+            [
                 new DateInclusion(new \DateTime(20151210), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
-            ),
-            $this->rule->getRDates()
+            ],
+            $rule->getRDates()
         );
         $this->assertEquals(
-            array(
+            [
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
-            ),
-            $this->rule->getExDates()
+            ],
+            $rule->getExDates()
         );
     }
 
-    public function testLoadFromStringWithRruleDirective()
+    public function testLoadFromStringWithRruleDirective(): void
     {
         $string = 'RRULE:';
         $string .= 'FREQ=YEARLY;';
@@ -188,264 +186,279 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $string .= 'RDATE=20151210,20151214T020000,20151215T210000Z;';
         $string .= 'EXDATE=20140607,20140620T010000,20140620T160000Z;';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
-        $this->assertEquals(2, $this->rule->getCount());
-        $this->assertEquals(2, $this->rule->getInterval());
-        $this->assertEquals(array(30), $this->rule->getBySecond());
-        $this->assertEquals(array(10), $this->rule->getByMinute());
-        $this->assertEquals(array(5, 15), $this->rule->getByHour());
-        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
-        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
-        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
-        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
-        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
-        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
-        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(Frequency::YEARLY, $rule->getFreq());
+        $this->assertEquals(2, $rule->getCount());
+        $this->assertEquals(2, $rule->getInterval());
+        $this->assertEquals([30], $rule->getBySecond());
+        $this->assertEquals([10], $rule->getByMinute());
+        $this->assertEquals([5, 15], $rule->getByHour());
+        $this->assertEquals(['SU', 'WE'], $rule->getByDay());
+        $this->assertEquals([16, 22], $rule->getByMonthDay());
+        $this->assertEquals([201, 203], $rule->getByYearDay());
+        $this->assertEquals([29, 32], $rule->getByWeekNumber());
+        $this->assertEquals([7, 8], $rule->getByMonth());
+        $this->assertEquals([1, 3], $rule->getBySetPosition());
+        $this->assertEquals('TU', $rule->getWeekStart());
         $this->assertEquals(
-            array(
+            [
                 new DateInclusion(new \DateTime(20151210), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
-            ),
-            $this->rule->getRDates()
+            ],
+            $rule->getRDates()
         );
         $this->assertEquals(
-            array(
+            [
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
-            ),
-            $this->rule->getExDates()
+            ],
+            $rule->getExDates()
         );
     }
 
-    public function testLoadFromArray()
+    public function testLoadFromArray(): void
     {
-        $this->rule->loadFromArray(array(
-            'FREQ'=>'YEARLY',
-            'COUNT'=>'2',
-            'INTERVAL'=>'2',
-            'BYSECOND'=>'30',
-            'BYMINUTE'=>'10',
-            'BYHOUR'=>'5,15',
-            'BYDAY'=>'SU,WE',
-            'BYMONTHDAY'=>'16,22',
-            'BYYEARDAY'=>'201,203',
-            'BYWEEKNO'=>'29,32',
-            'BYMONTH'=>'7,8',
-            'BYSETPOS'=>'1,3',
-            'WKST'=>'TU',
-            'RDATE'=>'20151210,20151214T020000,20151215T210000Z',
-            'EXDATE'=>'20140607,20140620T010000,20140620T160000Z',
-        ));
+        $rule = Rule::createFromArray([
+            'FREQ' => 'YEARLY',
+            'COUNT' => '2',
+            'INTERVAL' => '2',
+            'BYSECOND' => '30',
+            'BYMINUTE' => '10',
+            'BYHOUR' => '5,15',
+            'BYDAY' => 'SU,WE',
+            'BYMONTHDAY' => '16,22',
+            'BYYEARDAY' => '201,203',
+            'BYWEEKNO' => '29,32',
+            'BYMONTH' => '7,8',
+            'BYSETPOS' => '1,3',
+            'WKST' => 'TU',
+            'RDATE' => '20151210,20151214T020000,20151215T210000Z',
+            'EXDATE' => '20140607,20140620T010000,20140620T160000Z',
+        ]);
 
-        $this->assertEquals(Frequency::YEARLY, $this->rule->getFreq());
-        $this->assertEquals(2, $this->rule->getCount());
-        $this->assertEquals(2, $this->rule->getInterval());
-        $this->assertEquals(array(30), $this->rule->getBySecond());
-        $this->assertEquals(array(10), $this->rule->getByMinute());
-        $this->assertEquals(array(5, 15), $this->rule->getByHour());
-        $this->assertEquals(array('SU', 'WE'), $this->rule->getByDay());
-        $this->assertEquals(array(16, 22), $this->rule->getByMonthDay());
-        $this->assertEquals(array(201, 203), $this->rule->getByYearDay());
-        $this->assertEquals(array(29, 32), $this->rule->getByWeekNumber());
-        $this->assertEquals(array(7, 8), $this->rule->getByMonth());
-        $this->assertEquals(array(1, 3), $this->rule->getBySetPosition());
-        $this->assertEquals('TU', $this->rule->getWeekStart());
+        $this->assertEquals(Frequency::YEARLY, $rule->getFreq());
+        $this->assertEquals(2, $rule->getCount());
+        $this->assertEquals(2, $rule->getInterval());
+        $this->assertEquals([30], $rule->getBySecond());
+        $this->assertEquals([10], $rule->getByMinute());
+        $this->assertEquals([5, 15], $rule->getByHour());
+        $this->assertEquals(['SU', 'WE'], $rule->getByDay());
+        $this->assertEquals([16, 22], $rule->getByMonthDay());
+        $this->assertEquals([201, 203], $rule->getByYearDay());
+        $this->assertEquals([29, 32], $rule->getByWeekNumber());
+        $this->assertEquals([7, 8], $rule->getByMonth());
+        $this->assertEquals([1, 3], $rule->getBySetPosition());
+        $this->assertEquals('TU', $rule->getWeekStart());
         $this->assertEquals(
-            array(
+            [
                 new DateInclusion(new \DateTime(20151210), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true)
-            ),
-            $this->rule->getRDates()
+            ],
+            $rule->getRDates()
         );
         $this->assertEquals(
-            array(
+            [
                 new DateExclusion(new \DateTime(20140607), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true)
-            ),
-            $this->rule->getExDates()
+            ],
+            $rule->getExDates()
         );
     }
 
 
-    public function testLoadFromStringWithDtstart()
+    public function testLoadFromStringWithDtstart(): void
     {
         $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
 
         $string = 'FREQ=MONTHLY;DTSTART=20140222T073000';
 
-        $this->rule->setTimezone('America/Los_Angeles');
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
+        $rule->setTimezone('America/Los_Angeles');
 
         $expectedStartDate = new \DateTime('2014-02-22 05:30:00', new \DateTimeZone('America/Los_Angeles'));
 
-        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
-        $this->assertEquals($expectedStartDate, $this->rule->getStartDate());
+        $this->assertEquals(Frequency::MONTHLY, $rule->getFreq());
+        $this->assertEquals($expectedStartDate, $rule->getStartDate());
 
         date_default_timezone_set($defaultTimezone);
     }
 
-    public function testLoadFromStringWithDtend()
+    public function testLoadFromStringWithDtend(): void
     {
         $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
         $string = 'FREQ=MONTHLY;DTEND=20140422T140000';
 
-        $this->rule->setTimezone('America/Los_Angeles');
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
+        $rule->setTimezone('America/Los_Angeles');
 
         $expectedEndDate = new \DateTime('2014-04-22 12:00:00', new \DateTimeZone('America/Los_Angeles'));
 
-        $this->assertEquals(Frequency::MONTHLY, $this->rule->getFreq());
-        $this->assertEquals($expectedEndDate, $this->rule->getEndDate());
+        $this->assertEquals(Frequency::MONTHLY, $rule->getFreq());
+        $this->assertEquals($expectedEndDate, $rule->getEndDate());
 
         date_default_timezone_set($defaultTimezone);
     }
 
-    public function testLoadFromStringFails()
+    public function testLoadFromStringFails(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->loadFromString('IM AN INVALID RRULE');
+        $this->expectException(InvalidRRule::class);
+        $rule = Rule::createFromString('IM AN INVALID RRULE');
     }
 
-    public function testGetString()
+    public function testGetString(): void
     {
-        $this->rule->setFreq('YEARLY');
-        $this->rule->setCount(2);
-        $this->rule->setInterval(2);
-        $this->rule->setBySecond(array(30));
-        $this->rule->setByMinute(array(10));
-        $this->rule->setByHour(array(5, 15));
-        $this->rule->setByDay(array('SU', 'WE'));
-        $this->rule->setByMonthDay(array(16, 22));
-        $this->rule->setByYearDay(array(201, 203));
-        $this->rule->setByWeekNumber(array(29, 32));
-        $this->rule->setByMonth(array(7, 8));
-        $this->rule->setBySetPosition(array(1, 3));
-        $this->rule->setWeekStart('TU');
-        $this->rule->setRDates(array('20151210', '20151214T020000Z', '20151215T210000'));
-        $this->rule->setExDates(array('20140607', '20140620T010000Z', '20140620T010000'));
+        $rule = new Rule($this->defaults);
+        $rule->setFreq('YEARLY');
+        $rule->setCount(2);
+        $rule->setInterval(2);
+        $rule->setBySecond([30]);
+        $rule->setByMinute([10]);
+        $rule->setByHour([5, 15]);
+        $rule->setByDay(['SU', 'WE']);
+        $rule->setByMonthDay([16, 22]);
+        $rule->setByYearDay([201, 203]);
+        $rule->setByWeekNumber([29, 32]);
+        $rule->setByMonth([7, 8]);
+        $rule->setBySetPosition([1, 3]);
+        $rule->setWeekStart('TU');
+        $rule->setRDates(['20151210', '20151214T020000Z', '20151215T210000']);
+        $rule->setExDates(['20140607', '20140620T010000Z', '20140620T010000']);
 
         $this->assertEquals(
-            'FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;RDATE=20151210,20151214T020000Z,20151215T210000;EXDATE=20140607,20140620T010000Z,20140620T010000',
-            $this->rule->getString()
+            'RRULE:FREQ=YEARLY;COUNT=2;INTERVAL=2;BYSECOND=30;BYMINUTE=10;BYHOUR=5,15;BYDAY=SU,WE;BYMONTHDAY=16,22;BYYEARDAY=201,203;BYWEEKNO=29,32;BYMONTH=7,8;BYSETPOS=1,3;WKST=TU;RDATE=20151210,20151214T020000Z,20151215T210000;EXDATE=20140607,20140620T010000Z,20140620T010000',
+            $rule->getString()
         );
     }
 
-    public function testGetStringWithUTC()
+    public function testGetStringWithUTC(): void
     {
-        $this->rule->setFreq('DAILY');
-        $this->rule->setInterval(1);
-        $this->rule->setUntil(new \DateTime('2015-07-10 04:00:00', new \DateTimeZone('America/New_York')));
+        $rule = new Rule($this->defaults);
+        $rule->setFreq('DAILY');
+        $rule->setInterval(1);
+        $rule->setUntil(new \DateTime('2015-07-10 04:00:00', new \DateTimeZone('America/New_York')));
 
         $this->assertNotEquals(
-            'FREQ=DAILY;UNTIL=20150710T040000Z;INTERVAL=1',
-            $this->rule->getString()
+            'RRULE:FREQ=DAILY;UNTIL=20150710T040000Z;INTERVAL=1',
+            $rule->getString()
         );
 
         $this->assertEquals(
-            'FREQ=DAILY;UNTIL=20150710T080000Z;INTERVAL=1',
-            $this->rule->getString(Rule::TZ_FIXED)
+            'RRULE:FREQ=DAILY;UNTIL=20150710T080000Z;INTERVAL=1',
+            $rule->getString(Rule::TZ_FIXED)
         );
     }
 
-    public function testGetStringWithDtstart()
+    public function testGetStringWithDtstart(): void
     {
-        $string = 'FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';
+        $string = 'RRULE:FREQ=MONTHLY;DTSTART=20140210T163045;INTERVAL=1;WKST=MO';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals($string, $this->rule->getString());
+        $this->assertEquals($string, $rule->getString(inlineDates: true));
     }
 
-    public function testGetStringWithDtend()
+    public function testGetStringWithDtend(): void
     {
-        $string = 'FREQ=MONTHLY;DTEND=20140410T163045;INTERVAL=1;WKST=MO';
+        $string = 'RRULE:FREQ=MONTHLY;DTEND=20140410T163045;INTERVAL=1;WKST=MO';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals($string, $this->rule->getString());
+        $this->assertEquals($string, $rule->getString(inlineDates: true));
     }
 
-    public function testGetStringWithUntil()
+    public function testGetStringWithUntil(): void
     {
-        $string = 'FREQ=MONTHLY;UNTIL=20140410T163045;INTERVAL=1;WKST=MO';
+        $string = 'RRULE:FREQ=MONTHLY;UNTIL=20140410T163045;INTERVAL=1;WKST=MO';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertEquals($string, $this->rule->getString());
+        $this->assertEquals($string, $rule->getString());
     }
 
-    public function testGetStringWithUntilUsingZuluTime()
+    public function testGetStringWithUntilUsingZuluTime(): void
     {
-        $string = 'FREQ=MONTHLY;UNTIL=20170331T040000Z;INTERVAL=1;WKST=MO';
+        $string = 'RRULE:FREQ=MONTHLY;UNTIL=20170331T040000Z;INTERVAL=1;WKST=MO';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertSame($string, $this->rule->getString(Rule::TZ_FIXED));
+        $this->assertSame($string, $rule->getString(Rule::TZ_FIXED));
     }
 
-    public function testGetStringWithoutExplicitWkst()
+    public function testGetStringWithoutExplicitWkst(): void
     {
         $string = 'FREQ=MONTHLY;COUNT=2;INTERVAL=1';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertStringNotContainsString('WKST', $this->rule->getString());
+        $this->assertStringNotContainsString('WKST', $rule->getString());
     }
 
-    public function testGetStringWithExplicitWkst()
+    public function testGetStringWithExplicitWkst(): void
     {
         $string = 'FREQ=MONTHLY;COUNT=2;INTERVAL=1;WKST=TH';
 
-        $this->rule->loadFromString($string);
+        $rule = Rule::createFromString($string);
 
-        $this->assertStringContainsString('WKST=TH', $this->rule->getString());
+        $this->assertStringContainsString('WKST=TH', $rule->getString());
     }
 
-    public function testSetStartDateAffectsStringOutput()
+    public function testSetStartDateAffectsStringOutput(): void
     {
-        $this->rule->loadFromString('FREQ=MONTHLY;COUNT=2');
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+        $rule = Rule::createFromString('FREQ=MONTHLY;COUNT=2');
+        $this->assertEquals('RRULE:FREQ=MONTHLY;COUNT=2', $rule->getString());
 
-        $this->rule->setStartDate(new \DateTime('2015-12-10'));
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+        $rule->setStartDate(new \DateTime('2015-12-10'));
+        $this->assertEquals('RRULE:FREQ=MONTHLY;COUNT=2', $rule->getString());
 
-        $this->rule->setStartDate(new \DateTime('2015-12-10'), true);
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2;DTSTART=20151210T000000', $this->rule->getString());
+        $rule->setStartDate(new \DateTime('2015-12-10'), true);
+        $this->assertEquals('RRULE:FREQ=MONTHLY;COUNT=2;DTSTART=20151210T000000', $rule->getString(inlineDates: true));
 
-        $this->rule->setStartDate(new \DateTime('2015-12-10'), false);
-        $this->assertEquals('FREQ=MONTHLY;COUNT=2', $this->rule->getString());
+        $rule->setStartDate(new \DateTime('2015-12-10'), false);
+        $this->assertEquals('RRULE:FREQ=MONTHLY;COUNT=2', $rule->getString());
     }
 
-    public function testBadInterval()
+    public function testMultilineString(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidArgument::class);
-        $this->rule->setInterval('six');
+        $test = implode(PHP_EOL, [
+            'DTSTART;TZID=Australia/Perth:20220303T110948',
+            'DTEND;TZID=Australia/Perth:20220303T110948',
+            'RRULE:FREQ=MONTHLY;BYSECOND=0;BYMINUTE=45;BYHOUR=9;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-3,-2,-1;WKST=MO',
+        ]);
+        $rule = Rule::createFromString($test);
+
+        $this->assertEquals(strtoupper($test), $rule->getString(Rule::TZ_FIXED));
     }
 
-    public function testEmptyByDayThrowsException()
+
+    public function testBadInterval(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->setByDay(array());
+        $this->expectError(TypeError::class);
+        $rule->setInterval('six');
     }
 
-    public function testEmptyByDayFromStringThrowsException()
+    public function testEmptyByDayThrowsException(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->loadFromString('FREQ=WEEKLY;BYDAY=;INTERVAL=1;UNTIL=20160725');
+        $this->expectException(InvalidRRule::class);
+        Rule::createFromArray($this->defaults)->setByDay([]);
     }
 
-    public function testBadWeekStart()
+    public function testEmptyByDayFromStringThrowsException(): void
     {
-        $this->expectException(\Recurr\Exception\InvalidArgument::class);
-        $this->rule->setWeekStart('monday');
+        $this->expectException(InvalidRRule::class);
+        $rule = Rule::createFromString('FREQ=WEEKLY;BYDAY=;INTERVAL=1;UNTIL=20160725');
+    }
+
+    public function testBadWeekStart(): void
+    {
+        $this->expectException(InvalidArgument::class);
+        Rule::createFromArray($this->defaults)->setWeekStart('monday');
     }
 
     /**
@@ -453,7 +466,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testRepeatsIndefinitely($string, $expected)
     {
-        $this->assertSame($expected, $this->rule->loadFromString($string)->repeatsIndefinitely());
+        $this->assertSame($expected, $rule = Rule::createFromString($string)->repeatsIndefinitely());
     }
 
     /**
@@ -461,51 +474,51 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function exampleRruleProvider()
+    public function exampleRruleProvider(): array
     {
-        return array(
-            array('FREQ=DAILY;COUNT=10', false),
-            array('FREQ=DAILY;UNTIL=19971224T000000Z', false),
-            array('FREQ=DAILY;INTERVAL=2', true),
-            array('FREQ=DAILY;INTERVAL=10;COUNT=5', false),
-            array('FREQ=YEARLY;UNTIL=20000131T140000Z', false),
-            array('FREQ=DAILY;UNTIL=20000131T140000Z;BYMONTH=1', false),
-            array('FREQ=WEEKLY;COUNT=10', false),
-            array('FREQ=WEEKLY;UNTIL=19971224T000000Z', false),
-            array('FREQ=WEEKLY;INTERVAL=2;WKST=SU', true),
-            array('FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH', false),
-            array('FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH', false),
-            array('FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU', false),
-            array('FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH', false),
-            array('FREQ=MONTHLY;COUNT=10;BYDAY=1FR', false),
-            array('FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR', false),
-            array('FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU', false),
-            array('FREQ=MONTHLY;COUNT=6;BYDAY=-2MO', false),
-            array('FREQ=MONTHLY;BYMONTHDAY=-3', true),
-            array('FREQ=MONTHLY;COUNT=10;BYMONTHDAY=2,15', false),
-            array('FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1', false),
-            array('FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,', false),
-            array('FREQ=MONTHLY;INTERVAL=2;BYDAY=TU', true),
-            array('FREQ=YEARLY;COUNT=10;BYMONTH=6,7', false),
-            array('FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3', false),
-            array('FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200', false),
-            array('FREQ=YEARLY;BYDAY=20MO', true),
-            array('FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO', true),
-            array('FREQ=YEARLY;BYMONTH=3;BYDAY=TH', true),
-            array('FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8', true),
-            array('FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13', true),
-            array('FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13', true),
-            array('FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU', true),
-            array('FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3', false),
-            array('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2', true),
-            array('FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z', false),
-            array('FREQ=MINUTELY;INTERVAL=15;COUNT=6', false),
-            array('FREQ=MINUTELY;INTERVAL=90;COUNT=4', false),
-            array('FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40', true),
-            array('FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16', true),
-            array('FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO', false),
-            array('FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU', false),
-            array('FREQ=MONTHLY;BYMONTHDAY=15,30;COUNT=5', false),
-        );
+        return [
+            ['FREQ=DAILY;COUNT=10', false],
+            ['FREQ=DAILY;UNTIL=19971224T000000Z', false],
+            ['FREQ=DAILY;INTERVAL=2', true],
+            ['FREQ=DAILY;INTERVAL=10;COUNT=5', false],
+            ['FREQ=YEARLY;UNTIL=20000131T140000Z', false],
+            ['FREQ=DAILY;UNTIL=20000131T140000Z;BYMONTH=1', false],
+            ['FREQ=WEEKLY;COUNT=10', false],
+            ['FREQ=WEEKLY;UNTIL=19971224T000000Z', false],
+            ['FREQ=WEEKLY;INTERVAL=2;WKST=SU', true],
+            ['FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH', false],
+            ['FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH', false],
+            ['FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU', false],
+            ['FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH', false],
+            ['FREQ=MONTHLY;COUNT=10;BYDAY=1FR', false],
+            ['FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR', false],
+            ['FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU', false],
+            ['FREQ=MONTHLY;COUNT=6;BYDAY=-2MO', false],
+            ['FREQ=MONTHLY;BYMONTHDAY=-3', true],
+            ['FREQ=MONTHLY;COUNT=10;BYMONTHDAY=2,15', false],
+            ['FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1', false],
+            ['FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,', false],
+            ['FREQ=MONTHLY;INTERVAL=2;BYDAY=TU', true],
+            ['FREQ=YEARLY;COUNT=10;BYMONTH=6,7', false],
+            ['FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3', false],
+            ['FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200', false],
+            ['FREQ=YEARLY;BYDAY=20MO', true],
+            ['FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO', true],
+            ['FREQ=YEARLY;BYMONTH=3;BYDAY=TH', true],
+            ['FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8', true],
+            ['FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13', true],
+            ['FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13', true],
+            ['FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU', true],
+            ['FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3', false],
+            ['FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2', true],
+            ['FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z', false],
+            ['FREQ=MINUTELY;INTERVAL=15;COUNT=6', false],
+            ['FREQ=MINUTELY;INTERVAL=90;COUNT=4', false],
+            ['FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40', true],
+            ['FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16', true],
+            ['FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO', false],
+            ['FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU', false],
+            ['FREQ=MONTHLY;BYMONTHDAY=15,30;COUNT=5', false],
+        ];
     }
 }
