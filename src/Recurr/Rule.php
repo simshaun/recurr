@@ -210,7 +210,7 @@ class Rule
 
         if (is_array($rrule)) {
             $this->loadFromArray($rrule);
-        } else if (!empty($rrule)) {
+        } elseif (!empty($rrule)) {
             $this->loadFromString($rrule);
         }
     }
@@ -286,38 +286,78 @@ class Rule
      */
     public function parseString($rrule)
     {
-        if (strpos($rrule, 'DTSTART:') === 0) {
-            $pieces = explode(':', $rrule);
+        //rrule here can be:
+        //1) DTSTART:20200607T120200
+        //2) DTSTART;TZID=UTC:20200607T120200
+        //3) RRULE:FREQ=DAILY;INTERVAL=1
+        //4) FREQ=DAILY;DTSTART;TZID=UTC:20200607T120200;INTERVAL=1
+        //5) FREQ=DAILY;DTSTART:20200607T120200;INTERVAL=1
 
-            if (count($pieces) !== 2) {
-                throw new InvalidRRule('DSTART is not valid');
-            }
+        //SOLUTION: split by ';':
+        //1) [DTSTART:20200607T120200]
+        //2) [DTSTART, TZID=UTC:20200607T120200]
+        //3) [RRULE:FREQ=DAILY, INTERVAL=1]
+        //4) [FREQ=DAILY, DTSTART, TZID=UTC:20200607T120200, INTERVAL=1]
+        //5) [FREQ=DAILY, DTSTART:20200607T120200, INTERVAL=1]
 
-            return array('DTSTART' => $pieces[1]);
-        }
+        $fragments = explode(';', $rrule);
 
-        if (strpos($rrule, 'RRULE:') === 0) {
-            $rrule = str_replace('RRULE:', '', $rrule);
-        }
-
-        $pieces = explode(';', $rrule);
-        $parts  = array();
-
-        if (!count($pieces)) {
+        if (!count($fragments)) {
             throw new InvalidRRule('RRULE is empty');
         }
 
-        // Split each piece of the RRULE in to KEY=>VAL
-        foreach ($pieces as $piece) {
-            if (false === strpos($piece, '=')) {
-                continue;
-            }
-
-            list($key, $val) = explode('=', $piece);
-            $parts[$key] = $val;
+        $parts = array();
+        foreach ($fragments as $fragment) {
+            $this->parseFragment($parts, $fragment);
         }
 
         return $parts;
+    }
+
+    private function parseFragment(&$parts, $fragment)
+    {
+        if (strpos($fragment, 'RRULE:') === 0) {
+            $fragment = str_replace('RRULE:', '', $fragment);
+        }
+
+        if (strpos($fragment, 'DTSTART') === 0) {
+            $this->parseDTSTARTFragment($parts, $fragment);
+            return;
+        }
+
+        if (strpos($fragment, '=')) {
+            $this->parseKeyValFragment($parts, $fragment);
+        }
+    }
+
+    private function parseDTSTARTFragment(&$parts, $fragment)
+    {
+        if ($fragment === 'DTSTART') {
+            $parts['DTSTART'] = '';//to be replaced by next token
+            return;
+        }
+
+        $p = explode(':', $fragment);
+        if (count($p) !== 2) {
+            throw new InvalidRRule('DTSTART is not valid');
+        }
+
+        $parts['DTSTART'] = $p[1];
+    }
+
+    private function parseKeyValFragment(&$parts, $fragment)
+    {
+        list($key, $val) = explode('=', $fragment);
+
+        if ($key === 'TZID') {
+            $p = explode(':', $val);
+
+            $parts['TZID'] = $p[0];
+            $parts['DTSTART'] = $p[1];
+            return;
+        }
+
+        $parts[$key] = $val;
     }
 
     /**
@@ -341,11 +381,26 @@ class Rule
             $this->setFreq(self::$freqs[$parts['FREQ']]);
         }
 
+        // TZID
+        if (isset($parts['TZID'])) {
+            $this->setTimezone($parts['TZID']);
+        }
+
         // DTSTART
         if (isset($parts['DTSTART'])) {
             $this->isStartDateFromDtstart = true;
-            $date = new \DateTime($parts['DTSTART']);
-            $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
+
+            $timezone = new \DateTimeZone($this->getTimezone());
+            $date = null;
+            if (isset($parts['TZID'])) {
+                //DTSTART is datetime in TZID timezone
+                $date = new \DateTime($parts['DTSTART'], $timezone);
+            } else {
+                //DTSTART is UTC, convert to timezone coming from constructor/startDate/default
+                $date = new \DateTime($parts['DTSTART']);
+                $date = $date->setTimezone($timezone);
+            }
+
             $this->setStartDate($date);
         }
 
@@ -474,12 +529,12 @@ class Rule
                 $date = $d->format($format);
                 $parts[] = "DTSTART;TZID=$tzid:$date";
             } else {
-                $parts[] = 'DTSTART='.$this->getStartDate()->format($format);
+                $parts[] = 'DTSTART:'.$this->getStartDate()->format($format);
             }
         }
 
         // DTEND
-        if ($this->endDate instanceof \DateTime) {
+        if ($this->endDate instanceof \DateTimeInterface) {
             if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getEndDate();
                 $tzid = $d->getTimezone()->getName();
