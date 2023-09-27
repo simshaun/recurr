@@ -131,7 +131,7 @@ echo $textTransformer->transform($rule);
 Warnings
 ---------------
 
-- **Monthly recurring rules **
+- **Monthly recurring rules**
   By default, if your start date is on the 29th, 30th, or 31st, Recurr will skip following months that don't have at least that many days.
   *(e.g. Jan 31 + 1 month = March)* 
 
