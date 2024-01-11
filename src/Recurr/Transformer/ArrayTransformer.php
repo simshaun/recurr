@@ -505,6 +505,9 @@ class ArrayTransformer
                     }
                 }
 
+                // There is no significance to the order of values in a list. They may be unsorted.
+                sort($datesAdj);
+                
                 foreach ($datesAdj as $dtTmp) {
                     if (null !== $until && $dtTmp > $until) {
                         $continue = false;
