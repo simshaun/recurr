@@ -8,9 +8,12 @@ class Translator implements TranslatorInterface
 
     public function __construct($locale = 'en', $fallbackLocale = 'en')
     {
-        $this->loadLocale($fallbackLocale);
-        if ($locale !== $fallbackLocale) {
-            $this->loadLocale($locale);
+        $lowercasedLocale = strtolower($locale);
+        $lowercasedFallbackLocale = strtolower($fallbackLocale);
+
+        $this->loadLocale($lowercasedFallbackLocale);
+        if ($lowercasedLocale !== $lowercasedFallbackLocale) {
+            $this->loadLocale($lowercasedLocale);
         }
     }
 
