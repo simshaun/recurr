@@ -119,7 +119,7 @@ class DateUtil
         $start = $start->setDate($start->format('Y'), 1, 1);
 
         $diff  = $dt->diff($start);
-        $start = $diff->days;
+        $start = (int) $diff->days;
 
         $set = array();
         for ($i = $start, $k = 0; $k < 7; $k++) {
