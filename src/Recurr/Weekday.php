@@ -26,17 +26,35 @@ class Weekday
     /**
      * Weekday number.
      *
-     * 0 = Sunday
+     * 0 = Monday
+     * 1 = Tuesday
+     * 2 = Wednesday
+     * 3 = Thursday
+     * 4 = Friday
+     * 5 = Saturday
+     * 6 = Sunday
+     *
+     * @var string
+     */
+    public $weekday;
+
+    /**
+     * ISO weekday number.
+     *
+     * https://en.wikipedia.org/wiki/ISO_week_date
+     * Weekday number, a digit d from 1 through 7, beginning with Monday and ending with Sunday
+     *
      * 1 = Monday
      * 2 = Tuesday
      * 3 = Wednesday
      * 4 = Thursday
      * 5 = Friday
      * 6 = Saturday
+     * 7 = Sunday
      *
-     * @var string
+     * @var int
      */
-    public $weekday;
+    public $isoWeekDay;
 
     /** @var int nth occurrence of the weekday */
     public $num;
@@ -62,6 +80,7 @@ class Weekday
         }
 
         $this->weekday = $weekday;
+        $this->isoWeekDay = $weekday + 1;
         $this->num = $num;
     }
 
