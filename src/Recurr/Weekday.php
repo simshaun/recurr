@@ -41,7 +41,7 @@ class Weekday
     /** @var int nth occurrence of the weekday */
     public $num;
 
-    protected $days = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+    protected $days = array('SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA');
 
     /**
      * @param int|string $weekday 0-6 or MO..SU
