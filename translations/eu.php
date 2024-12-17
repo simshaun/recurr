@@ -5,6 +5,7 @@ return array(
     'for %count% times' => '%count% aldiz',
     'for %count% time' => '%count% aldia',
     '(~ approximate)' => '(~ inguru)',
+    'from %date%' => 'bertatik %date%',
     'until %date%' => '%date% arte', // e.g. every year until July 4, 2014
     'day_date' => defined('PHP_WINDOWS_VERSION_BUILD') ? '%B %#d, %Y' : '%B %e, %Y',
     'and' => 'eta',

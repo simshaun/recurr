@@ -30,6 +30,7 @@ return array(
     'for %count% times' => '%count% kez',
     'for one time' => 'bir kere',
     '(~ approximate)' => '(~ yaklaşık)',
+    'from %date%' => 'itibaren %date%',
     'until %date%' => 'kadar %date%', // e.g. 4 Temmuz 2014 e kadar her yıl
     'day_date' => function ($str, $params) use ($days, $months) { // tarih çıktıları, e.g. Temmuz 4, 2014
         return $months[date('n', $params['date']) - 1] . ' '. date('j, Y', $params['date']);
