@@ -360,7 +360,7 @@ class Rule
         if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
             throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
         } elseif (isset($parts['UNTIL'])) {
-            $date = new \DateTime($parts['UNTIL']);
+            $date = new \DateTime($parts['UNTIL'], new \DateTimeZone('UTC'));
             $date = $date->setTimezone(new \DateTimeZone($this->getTimezone()));
             $this->setUntil($date);
         } elseif (isset($parts['COUNT'])) {
