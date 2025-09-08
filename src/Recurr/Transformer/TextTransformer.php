@@ -278,9 +278,11 @@ class TextTransformer
 
     protected function addDayOfWeek(Rule $rule)
     {
-        $this->addFragment($this->translator->trans('on'));
-        $dayNames = $this->translator->trans('day_names');
-        $this->addFragment($dayNames[$rule->getStartDate()->format('w')]);
+        if ($rule->getStartDate() !== null) {
+            $this->addFragment($this->translator->trans('on'));
+            $dayNames = $this->translator->trans('day_names');
+            $this->addFragment($dayNames[$rule->getStartDate()->format('w')]);
+        }
     }
 
     public function getByMonthAsText($byMonth)
