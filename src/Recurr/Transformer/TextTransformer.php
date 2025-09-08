@@ -96,6 +96,7 @@ class TextTransformer
         $byDay = $rule->getByDay();
         $byYearDay = $rule->getByYearDay();
         $byWeekNum = $rule->getByWeekNumber();
+        $startDate = $rule->getStartDate();
 
         if (!empty($byMonth) && count($byMonth) > 1 && $interval == 1) {
             $this->addFragment($this->translator->trans('every_month_list'));
@@ -104,11 +105,11 @@ class TextTransformer
         }
 
         $hasNoOrOneByMonth = is_null($byMonth) || count($byMonth) <= 1;
-        if ($hasNoOrOneByMonth && empty($byMonthDay) && empty($byDay) && empty($byYearDay) && empty($byWeekNum)) {
+        if ($hasNoOrOneByMonth && empty($byMonthDay) && empty($byDay) && empty($byYearDay) && empty($byWeekNum) && $startDate !== null) {
             $this->addFragment($this->translator->trans('on'));
-            $monthNum = (is_array($byMonth) && count($byMonth)) ? $byMonth[0] : $rule->getStartDate()->format('n');
+            $monthNum = (is_array($byMonth) && count($byMonth)) ? $byMonth[0] : $startDate->format('n');
             $this->addFragment(
-                $this->translator->trans('day_month', array('month' => $monthNum, 'day' => $rule->getStartDate()->format('d')))
+                $this->translator->trans('day_month', array('month' => $monthNum, 'day' => $startDate->format('d')))
             );
         } elseif (!empty($byMonth)) {
             if ($interval != 1) {
