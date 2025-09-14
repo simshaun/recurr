@@ -430,16 +430,11 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->rule->setInterval('six');
     }
 
-    public function testEmptyByDayThrowsException()
+    public function testEmptyByDayFromStringIsDropped()
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
-        $this->rule->setByDay(array());
-    }
-
-    public function testEmptyByDayFromStringThrowsException()
-    {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
         $this->rule->loadFromString('FREQ=WEEKLY;BYDAY=;INTERVAL=1;UNTIL=20160725');
+        $this->assertEquals(null, $this->rule->getByDay());
+        $this->assertEquals(array(), $this->rule->getByDayTransformedToWeekdays());
     }
 
     public function testBadWeekStart()

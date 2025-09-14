@@ -314,6 +314,11 @@ class Rule
             }
 
             list($key, $val) = explode('=', $piece);
+
+            if ('' === $val) {
+                continue;
+            }
+
             $parts[$key] = $val;
         }
 
@@ -945,9 +950,6 @@ class Rule
     {
         if ($this->getFreq() > static::$freqs['MONTHLY'] && preg_match('/\d/', implode(',', $byDay))) {
             throw new InvalidRRule('BYDAY only supports MONTHLY and YEARLY frequencies');
-        }
-        if (count($byDay) === 0 || $byDay === array('')) {
-            throw new InvalidRRule('BYDAY must be set to at least one day');
         }
 
         $this->byDay = $byDay;
