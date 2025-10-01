@@ -252,6 +252,33 @@ class Rule
     }
 
     /**
+     * Create a Rule object based on natural language text.
+     *
+     * @param string                    $text Natural language description like "every day for 3 times"
+     * @param string|\DateTimeInterface $startDate
+     * @param \DateTimeInterface|null   $endDate
+     * @param string                    $timezone
+     *
+     * @return Rule
+     * @throws InvalidRRule
+     */
+    public static function createFromText($text, $startDate = null, $endDate = null, $timezone = null)
+    {
+        require_once __DIR__ . '/TextParser.php';
+        
+        $parser = new TextParser();
+        $options = $parser->parseText($text);
+        
+        if ($options === null) {
+            throw new InvalidRRule('Unable to parse text: ' . $text);
+        }
+        
+        $rule = new static($options, $startDate, $endDate, $timezone);
+
+        return $rule;
+    }
+
+    /**
      * Populate the object based on a RRULE string.
      *
      * @param string $rrule RRULE string
