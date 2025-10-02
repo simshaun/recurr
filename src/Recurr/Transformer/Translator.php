@@ -4,7 +4,7 @@ namespace Recurr\Transformer;
 
 class Translator implements TranslatorInterface
 {
-    protected $data = array();
+    protected $data = [];
 
     public function __construct($locale = 'en', $fallbackLocale = 'en')
     {
@@ -14,10 +14,10 @@ class Translator implements TranslatorInterface
         }
     }
 
-    public function loadLocale($locale, $path = null)
+    public function loadLocale(string $locale, $path = null): void
     {
         if (!$path) {
-            $path = __DIR__ . '/../../../translations/' . $locale . '.php';
+            $path = __DIR__.'/../../../translations/'.$locale.'.php';
         }
         if (!file_exists($path)) {
             throw new \InvalidArgumentException('Locale '.$locale.' could not be found in '.$path);
@@ -26,7 +26,7 @@ class Translator implements TranslatorInterface
         $this->data = array_merge($this->data, include $path);
     }
 
-    public function trans($string, array $params = array())
+    public function trans($string, array $params = [])
     {
         $res = $this->data[$string];
         if (is_object($res) && is_callable($res)) {
@@ -34,7 +34,7 @@ class Translator implements TranslatorInterface
         }
 
         foreach ($params as $key => $val) {
-            $res = str_replace('%' . $key . '%', $val, $res);
+            $res = str_replace('%'.$key.'%', $val, $res);
         }
 
         return $res;

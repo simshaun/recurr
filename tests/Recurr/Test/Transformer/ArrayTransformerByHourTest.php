@@ -7,7 +7,7 @@ use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerByHourTest extends ArrayTransformerBase
 {
-    public function testByHourHourly()
+    public function testByHourHourly(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;BYHOUR=14,15',
@@ -24,7 +24,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-15 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testByHourDaily()
+    public function testByHourDaily(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=5;BYHOUR=14,15',
@@ -41,7 +41,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-15 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testByHourWithVirtualLimit()
+    public function testByHourWithVirtualLimit(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;BYHOUR=13',
@@ -59,7 +59,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-14 13:00:00'), $computed[1]->getStart());
     }
 
-    public function testByHourWeekly()
+    public function testByHourWeekly(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=5;BYHOUR=14,15',
@@ -76,7 +76,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-07-03 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testByHourMonthly()
+    public function testByHourMonthly(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYHOUR=14,15',
@@ -93,7 +93,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-09-12 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testByHourMonthlyLeapYear()
+    public function testByHourMonthlyLeapYear(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYHOUR=14,15',
@@ -110,7 +110,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-29 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testByHourYearly()
+    public function testByHourYearly(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYHOUR=14,15',
@@ -127,7 +127,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-06-12 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testYearlyOnLeapYear()
+    public function testYearlyOnLeapYear(): void
     {
         $rule = new Rule('FREQ=YEARLY;COUNT=5;BYHOUR=14,15', new \DateTime('2016-02-29 12:00:00'));
         $computed = $this->transformer->transform($rule);
@@ -140,7 +140,7 @@ class ArrayTransformerByHourTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2024-02-29 14:00:00'), $computed[4]->getStart());
     }
 
-    public function testYearlyOnLeapYearWithLastDayOfMonthFix()
+    public function testYearlyOnLeapYearWithLastDayOfMonthFix(): void
     {
         $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();

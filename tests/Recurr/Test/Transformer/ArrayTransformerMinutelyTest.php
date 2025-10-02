@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerMinutesTest extends ArrayTransformerBase
 {
-    public function testMinutely()
+    public function testMinutely(): void
     {
         $rule = new Rule(
             'FREQ=MINUTELY;COUNT=5;',
@@ -23,7 +23,7 @@ class ArrayTransformerMinutesTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-01 00:02:00'), $computed[4]->getStart());
     }
 
-    public function testMinutelyInterval()
+    public function testMinutelyInterval(): void
     {
         $rule = new Rule(
             'FREQ=MINUTELY;COUNT=5;INTERVAL=58;',

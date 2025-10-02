@@ -13,8 +13,7 @@ namespace Recurr;
  * Class Recurrence is responsible for storing the start and end \DateTime of
  * a specific recurrence in a RRULE.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
 class Recurrence
 {
@@ -24,10 +23,10 @@ class Recurrence
     /** @var \DateTimeInterface */
     protected $end;
 
-    /** @var int */
-    protected $index;
-
-    public function __construct(?\DateTimeInterface $start = null, ?\DateTimeInterface $end = null, $index = 0)
+    /**
+     * @param int $index
+     */
+    public function __construct(?\DateTimeInterface $start = null, ?\DateTimeInterface $end = null, protected $index = 0)
     {
         if ($start instanceof \DateTimeInterface) {
             $this->setStart($start);
@@ -36,8 +35,6 @@ class Recurrence
         if ($end instanceof \DateTimeInterface) {
             $this->setEnd($end);
         }
-
-        $this->index = $index;
     }
 
     /**
@@ -51,7 +48,7 @@ class Recurrence
     /**
      * @param \DateTime $start
      */
-    public function setStart($start)
+    public function setStart($start): void
     {
         $this->start = $start;
     }
@@ -67,7 +64,7 @@ class Recurrence
     /**
      * @param \DateTime $end
      */
-    public function setEnd($end)
+    public function setEnd($end): void
     {
         $this->end = $end;
     }
@@ -83,7 +80,7 @@ class Recurrence
     /**
      * @param int $index
      */
-    public function setIndex($index)
+    public function setIndex($index): void
     {
         $this->index = $index;
     }

@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByWeekNumberTest extends ArrayTransformerBase
 {
-    public function testByWeekNumber()
+    public function testByWeekNumber(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYWEEKNO=22;WKST=SU',
@@ -23,7 +23,7 @@ class ArrayTransformerByWeekNumberTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-05-26'), $computed[4]->getStart());
     }
 
-    public function testByWeekNumberNegative()
+    public function testByWeekNumberNegative(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYWEEKNO=-44;WKST=TH',
@@ -40,7 +40,7 @@ class ArrayTransformerByWeekNumberTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-03-03'), $computed[4]->getStart());
     }
 
-    public function testByWeekNumberWeek53()
+    public function testByWeekNumberWeek53(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYWEEKNO=53;WKST=MO',
@@ -57,7 +57,7 @@ class ArrayTransformerByWeekNumberTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-01-01'), $computed[4]->getStart());
     }
 
-    public function testByWeekNumberWeek53Negative()
+    public function testByWeekNumberWeek53Negative(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYWEEKNO=-53;WKST=MO',

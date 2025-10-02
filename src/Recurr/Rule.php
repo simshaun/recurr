@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -82,23 +82,22 @@ use Recurr\Exception\InvalidWeekday;
  *
  * FREQ=DAILY;COUNT=10;INTERVAL=2
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
 class Rule
 {
-    const TZ_FIXED = 'fixed';
-    const TZ_FLOAT = 'floating';
+    public const TZ_FIXED = 'fixed';
+    public const TZ_FLOAT = 'floating';
 
-    public static $freqs = array(
-        'YEARLY'   => 0,
-        'MONTHLY'  => 1,
-        'WEEKLY'   => 2,
-        'DAILY'    => 3,
-        'HOURLY'   => 4,
+    public static $freqs = [
+        'YEARLY' => 0,
+        'MONTHLY' => 1,
+        'WEEKLY' => 2,
+        'DAILY' => 3,
+        'HOURLY' => 4,
         'MINUTELY' => 5,
         'SECONDLY' => 6,
-    );
+    ];
 
     /** @var string */
     protected $timezone;
@@ -156,32 +155,32 @@ class Rule
     protected $weekStartDefined = false;
 
     /** @var array */
-    protected $days = array(
+    protected $days = [
         'MO' => 0,
         'TU' => 1,
         'WE' => 2,
         'TH' => 3,
         'FR' => 4,
         'SA' => 5,
-        'SU' => 6
-    );
+        'SU' => 6,
+    ];
 
     /** @var int[] */
     protected $bySetPosition;
 
     /** @var array */
-    protected $rDates = array();
+    protected $rDates = [];
 
     /** @var array */
-    protected $exDates = array();
+    protected $exDates = [];
 
     /**
      * Construct a new Rule.
      *
-     * @param string                         $rrule RRULE string
+     * @param string $rrule RRULE string
      * @param string|\DateTimeInterface|null $startDate
      * @param string|\DateTimeInterface|null $endDate
-     * @param string                         $timezone
+     * @param string $timezone
      *
      * @throws InvalidRRule
      */
@@ -210,7 +209,7 @@ class Rule
 
         if (is_array($rrule)) {
             $this->loadFromArray($rrule);
-        } else if (!empty($rrule)) {
+        } elseif (!empty($rrule)) {
             $this->loadFromString($rrule);
         }
     }
@@ -218,15 +217,16 @@ class Rule
     /**
      * Create a Rule object based on a RRULE string.
      *
-     * @param string                    $rrule RRULE string
+     * @param string $rrule RRULE string
      * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param \DateTimeInterface|null $endDate
+     * @param string $timezone
      *
      * @return Rule
+     *
      * @throws InvalidRRule
      */
-    public static function createFromString($rrule, $startDate = null, $endDate = null, $timezone = null)
+    public static function createFromString($rrule, $startDate = null, $endDate = null, $timezone = null): static
     {
         $rule = new static($rrule, $startDate, $endDate, $timezone);
 
@@ -236,15 +236,16 @@ class Rule
     /**
      * Create a Rule object based on a RRULE array.
      *
-     * @param array                     $rrule RRULE array
+     * @param array $rrule RRULE array
      * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param \DateTimeInterface|null $endDate
+     * @param string $timezone
      *
      * @return Rule
+     *
      * @throws InvalidRRule
      */
-    public static function createFromArray($rrule, $startDate = null, $endDate = null, $timezone = null)
+    public static function createFromArray($rrule, $startDate = null, $endDate = null, $timezone = null): static
     {
         $rule = new static($rrule, $startDate, $endDate, $timezone);
 
@@ -257,16 +258,17 @@ class Rule
      * @param string $rrule RRULE string
      *
      * @return Rule
+     *
      * @throws InvalidRRule
      */
-    public function loadFromString($rrule)
+    public function loadFromString($rrule): static
     {
-        $rrule  = strtoupper($rrule);
-        $rrule  = trim($rrule, ';');
-        $rrule  = trim($rrule, "\n");
-        $rows   = explode("\n", $rrule);
+        $rrule = strtoupper($rrule);
+        $rrule = trim($rrule, ';');
+        $rrule = trim($rrule, "\n");
+        $rows = explode("\n", $rrule);
 
-        $parts = array();
+        $parts = [];
 
         foreach ($rows as $rruleForRow) {
             $parts = array_merge($parts, $this->parseString($rruleForRow));
@@ -280,28 +282,26 @@ class Rule
      *
      * @param string $rrule
      *
-     * @return array
-     *
      * @throws InvalidRRule
      */
-    public function parseString($rrule)
+    public function parseString($rrule): array
     {
-        if (strpos($rrule, 'DTSTART:') === 0) {
+        if (str_starts_with($rrule, 'DTSTART:')) {
             $pieces = explode(':', $rrule);
 
             if (count($pieces) !== 2) {
                 throw new InvalidRRule('DSTART is not valid');
             }
 
-            return array('DTSTART' => $pieces[1]);
+            return ['DTSTART' => $pieces[1]];
         }
 
-        if (strpos($rrule, 'RRULE:') === 0) {
+        if (str_starts_with($rrule, 'RRULE:')) {
             $rrule = str_replace('RRULE:', '', $rrule);
         }
 
         $pieces = explode(';', $rrule);
-        $parts  = array();
+        $parts = [];
 
         if (!count($pieces)) {
             throw new InvalidRRule('RRULE is empty');
@@ -309,11 +309,11 @@ class Rule
 
         // Split each piece of the RRULE in to KEY=>VAL
         foreach ($pieces as $piece) {
-            if (false === strpos($piece, '=')) {
+            if (!str_contains($piece, '=')) {
                 continue;
             }
 
-            list($key, $val) = explode('=', $piece);
+            [$key, $val] = explode('=', $piece);
             $parts[$key] = $val;
         }
 
@@ -326,9 +326,10 @@ class Rule
      * @param array
      *
      * @return Rule
+     *
      * @throws InvalidRRule
      */
-    public function loadFromArray($parts)
+    public function loadFromArray($parts): static
     {
         // FREQ is required
         if (!isset($parts['FREQ'])) {
@@ -439,14 +440,12 @@ class Rule
      * Get the RRULE as a string
      *
      * @param string $timezoneType
-     *
-     * @return string
      */
-    public function getString($timezoneType=self::TZ_FLOAT)
+    public function getString($timezoneType = self::TZ_FLOAT): string
     {
         $format = 'Ymd\THis';
 
-        $parts = array();
+        $parts = [];
 
         // FREQ
         $parts[] = 'FREQ='.$this->getFreqAsText();
@@ -596,9 +595,10 @@ class Rule
      * @param string $timezone
      *
      * @see http://www.php.net/manual/en/timezones.php
+     *
      * @return $this
      */
-    public function setTimezone($timezone)
+    public function setTimezone($timezone): static
     {
         $this->timezone = $timezone;
 
@@ -608,7 +608,7 @@ class Rule
     /**
      * Get timezone to use for \DateTimeInterface objects that are UTC.
      *
-     * @return null|string
+     * @return string|null
      */
     public function getTimezone()
     {
@@ -618,12 +618,12 @@ class Rule
     /**
      * This date specifies the first instance in the recurrence set.
      *
-     * @param \DateTimeInterface|null $startDate       Date of the first instance in the recurrence
-     * @param bool|null               $includeInString If true, include as DTSTART when calling getString()
+     * @param \DateTimeInterface|null $startDate Date of the first instance in the recurrence
+     * @param bool|null $includeInString If true, include as DTSTART when calling getString()
      *
      * @return $this
      */
-    public function setStartDate($startDate, $includeInString = null)
+    public function setStartDate($startDate, $includeInString = null): static
     {
         $this->startDate = $startDate;
 
@@ -649,7 +649,7 @@ class Rule
      *
      * @return $this
      */
-    public function setEndDate($endDate)
+    public function setEndDate($endDate): static
     {
         $this->endDate = $endDate;
 
@@ -683,12 +683,13 @@ class Rule
      *  - Frequency::YEAR to specify repeating events based on an
      *    interval of a year or more.
      *
-     * @param string|int $freq Frequency of recurrence.
+     * @param string|int $freq frequency of recurrence
      *
      * @return $this
-     * @throws Exception\InvalidArgument
+     *
+     * @throws InvalidArgument
      */
-    public function setFreq($freq)
+    public function setFreq($freq): static
     {
         if (is_string($freq)) {
             if (!array_key_exists($freq, self::$freqs)) {
@@ -722,7 +723,7 @@ class Rule
      *
      * @return string
      */
-    public function getFreqAsText()
+    public function getFreqAsText(): int|string|false
     {
         return array_search($this->getFreq(), self::$freqs);
     }
@@ -735,13 +736,14 @@ class Rule
      * every day for a DAILY rule, every week for a WEEKLY rule, every month
      * for a MONTHLY rule and every year for a YEARLY rule.
      *
-     * @param int $interval Positive integer that represents how often the
-     *                      recurrence rule repeats.
+     * @param int $interval positive integer that represents how often the
+     *                      recurrence rule repeats
      *
      * @return $this
-     * @throws Exception\InvalidArgument
+     *
+     * @throws InvalidArgument
      */
-    public function setInterval($interval)
+    public function setInterval($interval): static
     {
         $interval = (int) $interval;
 
@@ -749,7 +751,7 @@ class Rule
             throw new InvalidArgument('Interval must be a positive integer');
         }
 
-        $this->interval           = $interval;
+        $this->interval = $interval;
         $this->isExplicitInterval = true;
 
         return $this;
@@ -775,11 +777,11 @@ class Rule
      * Either UNTIL or COUNT may be specified, but UNTIL and COUNT MUST NOT
      * both be specified.
      *
-     * @param \DateTimeInterface $until The upper bound of the recurrence.
+     * @param \DateTimeInterface $until the upper bound of the recurrence
      *
      * @return $this
      */
-    public function setUntil(\DateTimeInterface $until)
+    public function setUntil(\DateTimeInterface $until): static
     {
         $this->until = $until;
         $this->count = null;
@@ -819,7 +821,7 @@ class Rule
      *
      * @return $this
      */
-    public function setCount($count)
+    public function setCount($count): static
     {
         $this->count = (int) $count;
         $this->until = null;
@@ -846,7 +848,7 @@ class Rule
      *
      * @return $this
      */
-    public function setBySecond(array $bySecond)
+    public function setBySecond(array $bySecond): static
     {
         $this->bySecond = $bySecond;
 
@@ -872,7 +874,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMinute(array $byMinute)
+    public function setByMinute(array $byMinute): static
     {
         $this->byMinute = $byMinute;
 
@@ -898,7 +900,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByHour(array $byHour)
+    public function setByHour(array $byHour): static
     {
         $this->byHour = $byHour;
 
@@ -939,14 +941,15 @@ class Rule
      * @param array $byDay Array of days of the week
      *
      * @return $this
+     *
      * @throws InvalidRRule
      */
-    public function setByDay(array $byDay)
+    public function setByDay(array $byDay): static
     {
         if ($this->getFreq() > static::$freqs['MONTHLY'] && preg_match('/\d/', implode(',', $byDay))) {
             throw new InvalidRRule('BYDAY only supports MONTHLY and YEARLY frequencies');
         }
-        if (count($byDay) === 0 || $byDay === array('')) {
+        if (count($byDay) === 0 || $byDay === ['']) {
             throw new InvalidRRule('BYDAY must be set to at least one day');
         }
 
@@ -969,21 +972,22 @@ class Rule
      * Get an array of Weekdays
      *
      * @return array of Weekdays
+     *
      * @throws InvalidWeekday
      */
-    public function getByDayTransformedToWeekdays()
+    public function getByDayTransformedToWeekdays(): array
     {
         $byDay = $this->getByDay();
 
         if (null === $byDay || !count($byDay)) {
-            return array();
+            return [];
         }
 
         foreach ($byDay as $idx => $day) {
-            if (strlen($day) === 2) {
+            if (strlen((string) $day) === 2) {
                 $byDay[$idx] = new Weekday($day, null);
             } else {
-                preg_match('/^([+-]?[0-9]+)([A-Z]{2})$/', $day, $dayParts);
+                preg_match('/^([+-]?[0-9]+)([A-Z]{2})$/', (string) $day, $dayParts);
                 $byDay[$idx] = new Weekday($dayParts[2], $dayParts[1]);
             }
         }
@@ -1001,7 +1005,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMonthDay(array $byMonthDay)
+    public function setByMonthDay(array $byMonthDay): static
     {
         $this->byMonthDay = $byMonthDay;
 
@@ -1029,7 +1033,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByYearDay(array $byYearDay)
+    public function setByYearDay(array $byYearDay): static
     {
         $this->byYearDay = $byYearDay;
 
@@ -1061,11 +1065,11 @@ class Rule
      * Note: Assuming a Monday week start, week 53 can only occur when
      *  Thursday is January 1 or if it is a leap year and Wednesday is January 1.
      *
-     * @param array $byWeekNumber Array of ordinals specifying weeks of the year.
+     * @param array $byWeekNumber array of ordinals specifying weeks of the year
      *
      * @return $this
      */
-    public function setByWeekNumber(array $byWeekNumber)
+    public function setByWeekNumber(array $byWeekNumber): static
     {
         $this->byWeekNumber = $byWeekNumber;
 
@@ -1091,7 +1095,7 @@ class Rule
      *
      * @return $this
      */
-    public function setByMonth(array $byMonth)
+    public function setByMonth(array $byMonth): static
     {
         $this->byMonth = $byMonth;
 
@@ -1108,11 +1112,11 @@ class Rule
         return $this->byMonth;
     }
 
-    public function hasByMonth()
+    public function hasByMonth(): bool
     {
         $val = $this->getByMonth();
 
-        return ! empty($val);
+        return !empty($val);
     }
 
     /**
@@ -1126,20 +1130,21 @@ class Rule
      * This is also significant when in a YEARLY RRULE when a BYWEEKNO rule
      * is specified. The default value is MO.
      *
-     * @param string $weekStart The day on which the workweek starts.
+     * @param string $weekStart the day on which the workweek starts
      *
      * @return $this
-     * @throws Exception\InvalidArgument
+     *
+     * @throws InvalidArgument
      */
-    public function setWeekStart($weekStart)
+    public function setWeekStart($weekStart): static
     {
         $weekStart = strtoupper($weekStart);
 
-        if (!in_array($weekStart, array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'))) {
+        if (!in_array($weekStart, ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'])) {
             throw new InvalidArgument('Week Start must be one of MO, TU, WE, TH, FR, SA, SU');
         }
 
-        $this->weekStart        = $weekStart;
+        $this->weekStart = $weekStart;
         $this->weekStartDefined = true;
 
         return $this;
@@ -1181,12 +1186,12 @@ class Rule
      * If present, this indicates the nth occurrence of the specific occurrence
      * within the set of events specified by the rule.
      *
-     * @param array $bySetPosition Array of values which corresponds to the nth
-     *                             occurrence within the set of events specified by the rule.
+     * @param array $bySetPosition array of values which corresponds to the nth
+     *                             occurrence within the set of events specified by the rule
      *
      * @return $this
      */
-    public function setBySetPosition($bySetPosition)
+    public function setBySetPosition($bySetPosition): static
     {
         $this->bySetPosition = $bySetPosition;
 
@@ -1208,12 +1213,12 @@ class Rule
      * This rule specifies an array of dates that will be
      * included in a recurrence set.
      *
-     * @param string[]|DateInclusion[] $rDates Array of dates that will be
-     *                                         included in the recurrence set.
+     * @param string[]|DateInclusion[] $rDates array of dates that will be
+     *                                         included in the recurrence set
      *
      * @return $this
      */
-    public function setRDates(array $rDates)
+    public function setRDates(array $rDates): static
     {
         $timezone = new \DateTimeZone($this->getTimezone());
 
@@ -1221,11 +1226,11 @@ class Rule
             if ($val instanceof DateInclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
             } else {
-                $date          = new \DateTime($val, $timezone);
+                $date = new \DateTime($val, $timezone);
                 $rDates[$key] = new DateInclusion(
                     $this->convertZtoUtc($date),
-                    strpos($val, 'T') !== false,
-                    strpos($val, 'Z') !== false
+                    str_contains($val, 'T'),
+                    str_contains($val, 'Z')
                 );
             }
         }
@@ -1249,12 +1254,12 @@ class Rule
      * This rule specifies an array of exception dates that will not be
      * included in a recurrence set.
      *
-     * @param string[]|DateExclusion[] $exDates Array of dates that will not be
-     *                                          included in the recurrence set.
+     * @param string[]|DateExclusion[] $exDates array of dates that will not be
+     *                                          included in the recurrence set
      *
      * @return $this
      */
-    public function setExDates(array $exDates)
+    public function setExDates(array $exDates): static
     {
         $timezone = new \DateTimeZone($this->getTimezone());
 
@@ -1262,11 +1267,11 @@ class Rule
             if ($val instanceof DateExclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
             } else {
-                $date          = new \DateTime($val, $timezone);
+                $date = new \DateTime($val, $timezone);
                 $exDates[$key] = new DateExclusion(
                     $this->convertZtoUtc($date),
-                    strpos($val, 'T') !== false,
-                    strpos($val, 'Z') !== false
+                    str_contains($val, 'T'),
+                    str_contains($val, 'Z')
                 );
             }
         }
@@ -1281,8 +1286,6 @@ class Rule
      * "Z" is the same as "UTC", but "Z" does not have an ID.
      *
      * This is necessary for exclusion dates to be handled properly.
-     *
-     * @param \DateTimeInterface $date
      *
      * @return \DateTimeInterface
      */
@@ -1305,10 +1308,7 @@ class Rule
         return $this->exDates;
     }
 
-    /**
-     * @return bool
-     */
-    public function repeatsIndefinitely()
+    public function repeatsIndefinitely(): bool
     {
         return !$this->getCount() && !$this->getUntil() && !$this->getEndDate();
     }

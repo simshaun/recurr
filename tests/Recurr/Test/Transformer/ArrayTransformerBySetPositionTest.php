@@ -7,7 +7,7 @@ use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
 {
-    public function testBySetPosition()
+    public function testBySetPosition(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;BYSETPOS=-1;BYDAY=MO,TU,WE,TH,FR;COUNT=5',
@@ -73,7 +73,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2018-07-29'), $computed[5]->getStart());
     }
 
-    public function testBySetPositionVirtualLimit()
+    public function testBySetPositionVirtualLimit(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;BYSETPOS=-1;BYDAY=MO,TU,WE,TH,FR',
@@ -94,7 +94,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-05-31'), $computed[4]->getStart());
     }
 
-    public function testBySetPositionWithInterval()
+    public function testBySetPositionWithInterval(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;INTERVAL=2;BYDAY=MO;BYSETPOS=2;COUNT=10',
@@ -116,7 +116,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2015-04-13'), $computed[9]->getStart());
     }
 
-    public function testNoIndexErrorOnEmptySet()
+    public function testNoIndexErrorOnEmptySet(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;UNTIL=20180102T120000Z;BYDAY=TH,FR;BYMONTH=11,12;BYSETPOS=-1,-2',
@@ -128,7 +128,7 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertCount(18, $computed);
     }
 
-    public function testBySetPositionHandlesMultipleNegatives()
+    public function testBySetPositionHandlesMultipleNegatives(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;UNTIL=20180102T120000Z;BYDAY=TH,FR;BYMONTH=11,12;BYSETPOS=-1,-2',

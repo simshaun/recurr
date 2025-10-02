@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerWeeklyTest extends ArrayTransformerBase
 {
-    public function testWeekly()
+    public function testWeekly(): void
     {
         $timezone = 'America/New_York';
         $timezoneObj = new \DateTimeZone($timezone);
@@ -28,7 +28,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-07-11 00:00:00', $timezoneObj), $computed[4]->getStart());
     }
 
-    public function testWeeklyInterval()
+    public function testWeeklyInterval(): void
     {
         $timezone = 'America/New_York';
         $timezoneObj = new \DateTimeZone($timezone);
@@ -50,7 +50,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-02-13 00:00:00', $timezoneObj), $computed[4]->getStart());
     }
 
-    public function testWeeklyIntervalLeapYear()
+    public function testWeeklyIntervalLeapYear(): void
     {
         $timezone = 'America/New_York';
         $timezoneObj = new \DateTimeZone($timezone);
@@ -74,7 +74,7 @@ class ArrayTransformerWeeklyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-14 00:00:00', $timezoneObj), $computed[6]->getStart());
     }
 
-    public function testWeeklyIntervalTouchingJan1()
+    public function testWeeklyIntervalTouchingJan1(): void
     {
         $timezone = 'America/New_York';
         $timezoneObj = new \DateTimeZone($timezone);

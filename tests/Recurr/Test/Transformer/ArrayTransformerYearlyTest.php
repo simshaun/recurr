@@ -7,7 +7,7 @@ use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerYearlyTest extends ArrayTransformerBase
 {
-    public function testYearly()
+    public function testYearly(): void
     {
         $rule = new Rule('FREQ=YEARLY;COUNT=3;INTERVAL=1', new \DateTime('2013-06-13 00:00:00'));
         $computed = $this->transformer->transform($rule);
@@ -18,7 +18,7 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2015-06-13'), $computed[2]->getStart());
     }
 
-    public function testYearlyByMonth()
+    public function testYearlyByMonth(): void
     {
         $rule = new Rule('FREQ=YEARLY;BYMONTH=9;COUNT=3', new \DateTime('2017-07-31 00:00:00'));
         $computed = $this->transformer->transform($rule);
@@ -26,9 +26,9 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
         $this->assertCount(0, $computed);
     }
 
-    public function testLeapYear()
+    public function testLeapYear(): void
     {
-        $rule     = new Rule('FREQ=YEARLY;COUNT=5;INTERVAL=1', new \DateTime('2096-02-29'));
+        $rule = new Rule('FREQ=YEARLY;COUNT=5;INTERVAL=1', new \DateTime('2096-02-29'));
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(5, $computed);
@@ -39,13 +39,13 @@ class ArrayTransformerYearlyTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2116-02-29'), $computed[4]->getStart());
     }
 
-    public function testLastDayOfMonthFixLeapYear()
+    public function testLastDayOfMonthFixLeapYear(): void
     {
         $transformerConfig = new ArrayTransformerConfig();
         $transformerConfig->enableLastDayOfMonthFix();
         $this->transformer->setConfig($transformerConfig);
 
-        $rule     = new Rule('FREQ=YEARLY;COUNT=5;INTERVAL=1', new \DateTime('2016-02-29'));
+        $rule = new Rule('FREQ=YEARLY;COUNT=5;INTERVAL=1', new \DateTime('2016-02-29'));
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(5, $computed);

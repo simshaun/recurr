@@ -2,12 +2,11 @@
 
 namespace Recurr\Test\Transformer;
 
-use Recurr\Rule;
 use Recurr\DateExclusion;
+use Recurr\Rule;
 
 class ArrayTransformerExDateTest extends ArrayTransformerBase
 {
-
     /**
      * Original timezone. Restore it upon test suite completion!
      *
@@ -30,7 +29,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         parent::tearDownAfterClass();
     }
 
-    public function testExDateNoTime()
+    public function testExDateNoTime(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=3;EXDATE=20140602',
@@ -44,7 +43,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]->getStart());
     }
 
-    public function testExDateWithTime()
+    public function testExDateWithTime(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=3;EXDATE=20140603T040000',
@@ -58,7 +57,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-02 04:00:00'), $computed[1]->getStart());
     }
 
-    public function testExDateWithUtcTime()
+    public function testExDateWithUtcTime(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=3;EXDATE=20140602T110000Z',
@@ -72,7 +71,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-03 07:00:00'), $computed[1]->getStart());
     }
 
-    public function testExDateWithMixedTimezones()
+    public function testExDateWithMixedTimezones(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=3;EXDATE=20140601T040000,20140602T080000Z',
@@ -85,16 +84,16 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-06-03 04:00:00'), $computed[0]->getStart());
     }
 
-    public function testSetExDates()
+    public function testSetExDates(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=3',
             new \DateTime('2014-06-01')
         );
 
-        $exDates = array(
+        $exDates = [
             new DateExclusion(new \DateTime('2014-06-02'), false),
-        );
+        ];
         $rule->setExDates($exDates);
 
         $computed = $this->transformer->transform($rule);

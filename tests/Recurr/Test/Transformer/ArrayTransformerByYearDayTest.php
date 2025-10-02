@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByYearDayTest extends ArrayTransformerBase
 {
-    public function testByYearDay()
+    public function testByYearDay(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=4;BYYEARDAY=125',
@@ -22,7 +22,7 @@ class ArrayTransformerByYearDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-05-04'), $computed[3]->getStart());
     }
 
-    public function testByYearDayNegative()
+    public function testByYearDayNegative(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=4;BYYEARDAY=-307',

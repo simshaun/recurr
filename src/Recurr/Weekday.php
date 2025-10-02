@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,10 +18,9 @@ use Recurr\Exception\InvalidWeekday;
 /**
  * Class Weekday is a storage container for a day of the week.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
-class Weekday
+class Weekday implements \Stringable
 {
     /**
      * Weekday number.
@@ -38,18 +37,15 @@ class Weekday
      */
     public $weekday;
 
-    /** @var int nth occurrence of the weekday */
-    public $num;
-
-    protected $days = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+    protected $days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
     /**
      * @param int|string $weekday 0-6 or MO..SU
-     * @param null|int   $num
+     * @param int|null $num
      *
      * @throws InvalidWeekday
      */
-    public function __construct($weekday, $num)
+    public function __construct($weekday, public $num)
     {
         if (is_numeric($weekday) && $weekday > 6 || $weekday < 0) {
             throw new InvalidWeekday('Day is not a valid weekday (0-6)');
@@ -62,11 +58,10 @@ class Weekday
         }
 
         $this->weekday = $weekday;
-        $this->num = $num;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->num . $this->days[$this->weekday];
+        return $this->num.$this->days[$this->weekday];
     }
 }

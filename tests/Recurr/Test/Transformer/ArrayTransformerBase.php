@@ -2,9 +2,10 @@
 
 namespace Recurr\Test\Transformer;
 
+use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\ArrayTransformer;
 
-class ArrayTransformerBase extends \PHPUnit\Framework\TestCase
+class ArrayTransformerBase extends TestCase
 {
     /** @var ArrayTransformer */
     protected $transformer;

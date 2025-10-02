@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByMonthTest extends ArrayTransformerBase
 {
-    public function testByMonth()
+    public function testByMonth(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=4;BYMONTH=2,3',
@@ -22,7 +22,7 @@ class ArrayTransformerByMonthTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-03-01'), $computed[3]->getStart());
     }
 
-    public function testByMonthLeapYear()
+    public function testByMonthLeapYear(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=4;BYMONTH=2,3',

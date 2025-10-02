@@ -11,7 +11,6 @@ namespace Recurr\Transformer;
 
 abstract class Constraint implements ConstraintInterface
 {
-
     protected $stopsTransformer = true;
 
     public function stopsTransformer()

@@ -1,0 +1,9 @@
+parameters:
+    level: 4
+
+    reportUnmatchedIgnoredErrors: false
+
+    paths:
+        - src/
+        - tests/
+        - translations/

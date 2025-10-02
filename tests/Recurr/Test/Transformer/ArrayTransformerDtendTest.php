@@ -7,7 +7,7 @@ use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerDtendTest extends ArrayTransformerBase
 {
-    public function testDtend()
+    public function testDtend(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=3;DTEND=20140316T040000',
@@ -25,7 +25,7 @@ class ArrayTransformerDtendTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-05-16 04:00:00'), $computed[2]->getEnd());
     }
 
-    public function testDtendWithoutLastDayOfMonthFix()
+    public function testDtendWithoutLastDayOfMonthFix(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;DTEND=20140201T040000',
@@ -47,7 +47,7 @@ class ArrayTransformerDtendTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-09-01 04:00:00'), $computed[4]->getEnd());
     }
 
-    public function testDtendWithLastDayOfMonthFix()
+    public function testDtendWithLastDayOfMonthFix(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;DTEND=20140201T040000',

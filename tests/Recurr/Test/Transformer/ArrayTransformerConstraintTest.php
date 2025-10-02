@@ -2,6 +2,7 @@
 
 namespace Recurr\Test\Transformer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Recurr\Frequency;
 use Recurr\Rule;
 use Recurr\Transformer\Constraint\AfterConstraint;
@@ -10,11 +11,7 @@ use Recurr\Transformer\Constraint\BetweenConstraint;
 
 class ArrayTransformerConstraintTest extends ArrayTransformerBase
 {
-    /**
-     * @param array $testCases
-     * @return array
-     */
-    private function prependDateTimeClassNames($testCases)
+    private function prependDateTimeClassNames(array $testCases): array
     {
         $data = [];
 
@@ -32,17 +29,16 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
     }
 
     /**
-     * @dataProvider beforeProvider
-     *
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int    $frequency
-     * @param int    $count
+     * @param int $frequency
+     * @param int $count
      * @param string $start
      * @param string $before
-     * @param bool   $inc
-     * @param array  $expected
+     * @param bool $inc
+     * @param array $expected
      */
-    public function testBefore($dateTimeClassName, $frequency, $count, $start, $before, $inc, $expected)
+    #[DataProvider('beforeProvider')]
+    public function testBefore($dateTimeClassName, $frequency, $count, $start, $before, $inc, $expected): void
     {
         $rule = new Rule();
         $rule
@@ -61,7 +57,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         }
     }
 
-    public function beforeProvider()
+    public function beforeProvider(): array
     {
         return $this->prependDateTimeClassNames([
             [Frequency::YEARLY, 20, '2014-03-16 04:00:00', '2017-03-16 23:59:59', true, [
@@ -83,18 +79,17 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
     }
 
     /**
-     * @dataProvider afterProvider
-     *
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int    $frequency
-     * @param int    $count
+     * @param int $frequency
+     * @param int $count
      * @param string $start
      * @param string $after
-     * @param bool   $inc
-     * @param bool   $countConstraintFailures
-     * @param array  $expected
+     * @param bool $inc
+     * @param bool $countConstraintFailures
+     * @param array $expected
      */
-    public function testAfter($dateTimeClassName, $frequency, $count, $start, $after, $inc, $countConstraintFailures, $expected)
+    #[DataProvider('afterProvider')]
+    public function testAfter($dateTimeClassName, $frequency, $count, $start, $after, $inc, $countConstraintFailures, $expected): void
     {
         $rule = new Rule();
         $rule
@@ -113,7 +108,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         }
     }
 
-    public function afterProvider()
+    public function afterProvider(): array
     {
         return $this->prependDateTimeClassNames([
             [Frequency::MONTHLY, 5, '2014-03-16 04:00:00', '2020-05-16 04:00:00', false, false, [
@@ -121,7 +116,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
                 '2020-07-16 04:00:00',
                 '2020-08-16 04:00:00',
                 '2020-09-16 04:00:00',
-                '2020-10-16 04:00:00'
+                '2020-10-16 04:00:00',
             ]],
             [Frequency::MONTHLY, 5, '2014-03-16 04:00:00', '2014-05-16 04:00:00', false, true, [
                 '2014-06-16 04:00:00',
@@ -150,17 +145,16 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
     }
 
     /**
-     * @dataProvider betweenProvider
-     *
      * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int    $frequency
+     * @param int $frequency
      * @param string $start
      * @param string $after
      * @param string $before
-     * @param bool   $inc
-     * @param array  $expected
+     * @param bool $inc
+     * @param array $expected
      */
-    public function testBetween($dateTimeClassName, $frequency, $start, $after, $before, $inc, $expected)
+    #[DataProvider('betweenProvider')]
+    public function testBetween($dateTimeClassName, $frequency, $start, $after, $before, $inc, $expected): void
     {
         $rule = new Rule();
         $rule
@@ -180,7 +174,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         }
     }
 
-    public function betweenProvider()
+    public function betweenProvider(): array
     {
         return $this->prependDateTimeClassNames([
             [Frequency::MONTHLY, '2014-03-16 04:00:00', '2014-03-16 04:00:00', '2014-07-16 04:00:00', false, [
@@ -196,7 +190,7 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
                 '2014-07-16 04:00:00',
             ]],
             [Frequency::WEEKLY, '2017-07-03 09:30:00', '2017-07-16 23:00:00', '2017-07-21 22:59:59', true, [
-                '2017-07-17 09:30:00'
+                '2017-07-17 09:30:00',
             ]],
             [Frequency::DAILY, '2017-07-24 16:15:00', '2017-07-27 00:00:00', '2017-07-30 23:59:59', true, [
                 '2017-07-27 16:15:00',

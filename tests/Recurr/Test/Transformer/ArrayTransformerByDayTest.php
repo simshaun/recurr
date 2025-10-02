@@ -2,11 +2,13 @@
 
 namespace Recurr\Test\Transformer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
 
 class ArrayTransformerByDayTest extends ArrayTransformerBase
 {
-    public function testByDayWeekly()
+    public function testByDayWeekly(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=10;INTERVAL=2;BYDAY=MO,WE,FR',
@@ -28,9 +30,9 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('1997-10-15 16:00:00'), $computed[9]->getStart());
     }
 
-    public function testByDayWeeklyAcrossUKBST()
+    public function testByDayWeeklyAcrossUKBST(): void
     {
-              $rule = new Rule(
+        $rule = new Rule(
             'FREQ=WEEKLY;COUNT=10;BYDAY=WE',
             new \DateTime('2015-03-01 16:00:00', new \DateTimeZone('Europe/London')),
             new \DateTime('2015-03-01 17:00:00', new \DateTimeZone('Europe/London')),
@@ -58,7 +60,7 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2015-04-15 15:00:00', new \DateTimeZone('UTC')), $computed[6]->getStart());
     }
 
-    public function testByDayMonthly()
+    public function testByDayMonthly(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=10;BYDAY=WE,TH',
@@ -80,7 +82,7 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2014-02-13 16:00:00'), $computed[9]->getStart());
     }
 
-    public function testByDayYearly()
+    public function testByDayYearly(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=3;BYDAY=20MO',
@@ -95,20 +97,18 @@ class ArrayTransformerByDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('1999-05-17 16:00:00'), $computed[2]->getStart());
     }
 
-    /**
-     * @dataProvider unsupportedNthByDayFrequencies
-     */
-    public function testNthByDayWithUnsupportedFrequency($frequency)
+    #[DataProvider('unsupportedNthByDayFrequencies')]
+    public function testNthByDayWithUnsupportedFrequency(string $frequency): void
     {
-        $this->expectException(\Recurr\Exception\InvalidRRule::class);
+        $this->expectException(InvalidRRule::class);
         new Rule(
             "FREQ=$frequency;COUNT=3;BYDAY=2MO",
             new \DateTime('1997-05-19 16:00:00')
         );
     }
 
-    public function unsupportedNthByDayFrequencies()
+    public function unsupportedNthByDayFrequencies(): array
     {
-        return array(array('DAILY'), array('HOURLY'), array('MINUTELY'), array('SECONDLY'));
+        return [['DAILY'], ['HOURLY'], ['MINUTELY'], ['SECONDLY']];
     }
 }

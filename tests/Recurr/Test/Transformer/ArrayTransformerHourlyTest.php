@@ -4,9 +4,9 @@ namespace Recurr\Test\Transformer;
 
 use Recurr\Rule;
 
-class ArrayTransformerHoursTest extends ArrayTransformerBase
+class ArrayTransformerHourlyTest extends ArrayTransformerBase
 {
-    public function testHourly()
+    public function testHourly(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;',
@@ -23,7 +23,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-03-01 03:00:00'), $computed[4]->getStart());
     }
 
-    public function testHourlyInterval()
+    public function testHourlyInterval(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;INTERVAL=9;',
@@ -40,7 +40,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-03-02 11:00:00'), $computed[4]->getStart());
     }
 
-    public function testHourlyLeapYear()
+    public function testHourlyLeapYear(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;',
@@ -57,7 +57,7 @@ class ArrayTransformerHoursTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-02-29 03:00:00'), $computed[4]->getStart());
     }
 
-    public function testHourlyCrossingYears()
+    public function testHourlyCrossingYears(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;',

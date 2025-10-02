@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'zondag',
     'maandag',
     'dinsdag',
@@ -9,8 +9,8 @@ $days = array(
     'donderdag',
     'vrijdag',
     'zaterdag',
-);
-$months = array(
+];
+$months = [
     'januari',
     'februari',
     'maart',
@@ -23,20 +23,20 @@ $months = array(
     'oktober',
     'november',
     'december',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Unable to fully convert this rrule to text.',
     'for %count% times' => 'voor %count% keer',
     'for one time' => 'eenmalig',
     '(~ approximate)' => '(~ ongeveer)',
     'until %date%' => 'tot en met %date%', // e.g. every year until July 4, 2014
-    'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. July 4, 2014
-        return date('j', $params['date']).' '.$months[date('n', $params['date']) - 1] . ' '. date('Y', $params['date']);
-    },
-    'day_month' => function ($str, $params) use ($days, $months) { // outputs a day month, e.g. July 4
-        return $params['day'].' '.$months[$params['month'] - 1];
-    },
+    'day_date' => fn ($str, $params): string =>
+        // outputs a day date, e.g. July 4, 2014
+        date('j', $params['date']).' '.$months[date('n', $params['date']) - 1].' '.date('Y', $params['date']),
+    'day_month' => fn ($str, $params): string =>
+        // outputs a day month, e.g. July 4
+        $params['day'].' '.$months[$params['month'] - 1],
     'day_names' => $days,
     'month_names' => $months,
     'and' => 'en',
@@ -68,10 +68,10 @@ return array(
     // if has_negatives is true in the params, it is good form to add 'day' after
     // each number, as in: 'every month on the 5th day or 2nd to the last day' or
     // it may be confusing like 'every month on the 5th or 2nd to the last day'
-    'ordinal_number' => function ($str, $params) {
+    'ordinal_number' => function ($str, $params): string {
         $number = $params['number'];
 
-        $ends = array('ste', 'de', 'de', 'de', 'de', 'de', 'de', 'de', 'de', 'de');
+        $ends = ['ste', 'de', 'de', 'de', 'de', 'de', 'de', 'de', 'de', 'de'];
         $suffix = '';
 
         $isNegative = $number < 0;
@@ -95,6 +95,6 @@ return array(
             $suffix .= ' dag';
         }
 
-        return $abbreviation . $suffix;
+        return $abbreviation.$suffix;
     },
-);
+];

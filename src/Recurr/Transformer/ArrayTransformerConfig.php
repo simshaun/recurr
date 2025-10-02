@@ -23,7 +23,7 @@ class ArrayTransformerConfig
      *
      * @return $this
      */
-    public function setVirtualLimit($virtualLimit)
+    public function setVirtualLimit($virtualLimit): static
     {
         $this->virtualLimit = (int) $virtualLimit;
 
@@ -45,18 +45,18 @@ class ArrayTransformerConfig
      *
      * Enabling this fix tells Recurr that +1 month means "last day of next month".
      */
-    public function enableLastDayOfMonthFix()
+    public function enableLastDayOfMonthFix(): void
     {
         $this->lastDayOfMonthFix = true;
     }
 
-    public function disableLastDayOfMonthFix()
+    public function disableLastDayOfMonthFix(): void
     {
         $this->lastDayOfMonthFix = false;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isLastDayOfMonthFixEnabled()
     {

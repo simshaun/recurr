@@ -7,7 +7,7 @@ use Recurr\Transformer\ArrayTransformerConfig;
 
 class ArrayTransformerTest extends ArrayTransformerBase
 {
-    public function testVirtualLimitWithCountLimit()
+    public function testVirtualLimitWithCountLimit(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=30',
@@ -26,7 +26,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertCount(30, $computed);
     }
 
-    public function testVirtualLimitWithoutCountLimit()
+    public function testVirtualLimitWithoutCountLimit(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY',
@@ -45,7 +45,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertCount(10, $computed);
     }
 
-    public function testUntil()
+    public function testUntil(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;UNTIL=20160316T040000',
@@ -60,7 +60,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-16 04:00:00'), $computed[2]->getStart());
     }
 
-    public function testRfc2445Example()
+    public function testRfc2445Example(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;COUNT=30',
@@ -102,7 +102,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2003-01-12 09:30:00'), $computed[29]->getStart());
     }
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=10',
@@ -116,7 +116,7 @@ class ArrayTransformerTest extends ArrayTransformerBase
         $this->assertEquals(10, $computed[9]->getIndex());
     }
 
-    public function testOccurrenceBySetPosOnJanuaryFirst()
+    public function testOccurrenceBySetPosOnJanuaryFirst(): void
     {
         $rule = new Rule('FREQ=MONTHLY;COUNT=4;BYSETPOS=1', new \DateTime('2018-11-01'));
         $computed = $this->transformer->transform($rule);

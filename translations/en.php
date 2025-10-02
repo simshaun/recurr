@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'Sunday',
     'Monday',
     'Tuesday',
@@ -9,8 +9,8 @@ $days = array(
     'Thursday',
     'Friday',
     'Saturday',
-);
-$months = array(
+];
+$months = [
     'January',
     'February',
     'March',
@@ -23,20 +23,20 @@ $months = array(
     'October',
     'November',
     'December',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Unable to fully convert this rrule to text.',
     'for %count% times' => 'for %count% times',
     'for one time' => 'once',
     '(~ approximate)' => '(~ approximate)',
     'until %date%' => 'until %date%', // e.g. every year until July 4, 2014
-    'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. July 4, 2014
-        return $months[date('n', $params['date']) - 1] . ' '. date('j, Y', $params['date']);
-    },
-    'day_month' => function ($str, $params) use ($days, $months) { // outputs a day month, e.g. July 4
-        return $months[$params['month'] - 1] . ' '. $params['day'];
-    },
+    'day_date' => fn ($str, $params): string =>
+        // outputs a day date, e.g. July 4, 2014
+        $months[date('n', $params['date']) - 1].' '.date('j, Y', $params['date']),
+    'day_month' => fn ($str, $params): string =>
+        // outputs a day month, e.g. July 4
+        $months[$params['month'] - 1].' '.$params['day'],
     'day_names' => $days,
     'month_names' => $months,
     'and' => 'and',
@@ -72,10 +72,10 @@ return array(
     // if has_negatives is true in the params, it is good form to add 'day' after
     // each number, as in: 'every month on the 5th day or 2nd to the last day' or
     // it may be confusing like 'every month on the 5th or 2nd to the last day'
-    'ordinal_number' => function ($str, $params) {
+    'ordinal_number' => function ($str, $params): string {
         $number = $params['number'];
 
-        $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
+        $ends = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
         $suffix = '';
 
         $isNegative = $number < 0;
@@ -99,6 +99,6 @@ return array(
             $suffix .= ' day';
         }
 
-        return $abbreviation . $suffix;
+        return $abbreviation.$suffix;
     },
-);
+];

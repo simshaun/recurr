@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByMinuteTest extends ArrayTransformerBase
 {
-    public function testByMinuteMinutely()
+    public function testByMinuteMinutely(): void
     {
         $rule = new Rule(
             'FREQ=MINUTELY;COUNT=5;BYMINUTE=14,15',
@@ -23,7 +23,7 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]->getStart());
     }
 
-    public function testByMinuteHourly()
+    public function testByMinuteHourly(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;BYMINUTE=14,15',
@@ -40,7 +40,7 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-12 18:14:00'), $computed[4]->getStart());
     }
 
-    public function testByMinuteDaily()
+    public function testByMinuteDaily(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=5;BYMINUTE=14,15',
@@ -57,7 +57,7 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-14 16:14:00'), $computed[4]->getStart());
     }
 
-    public function testByMinuteWeekly()
+    public function testByMinuteWeekly(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=5;BYMINUTE=14,15',
@@ -74,7 +74,7 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-26 16:14:00'), $computed[4]->getStart());
     }
 
-    public function testByMinuteMonthly()
+    public function testByMinuteMonthly(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYMINUTE=14,15',
@@ -91,7 +91,7 @@ class ArrayTransformerByMinuteTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-08-12 16:14:00'), $computed[4]->getStart());
     }
 
-    public function testByMinuteYearly()
+    public function testByMinuteYearly(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYMINUTE=14,15',

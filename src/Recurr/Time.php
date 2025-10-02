@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,24 +16,14 @@ namespace Recurr;
 /**
  * Class Time is a storage container for a time of day.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
 class Time
 {
-    /** @var int */
-    public $hour;
-
-    /** @var int */
-    public $minute;
-
-    /** @var int */
-    public $second;
-
-    public function __construct($hour, $minute, $second)
-    {
-        $this->hour   = $hour;
-        $this->minute = $minute;
-        $this->second = $second;
-    }
+    /**
+     * @param int $hour
+     * @param int $minute
+     * @param int $second
+     */
+    public function __construct(public $hour, public $minute, public $second) {}
 }

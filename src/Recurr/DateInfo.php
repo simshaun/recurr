@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,8 +17,7 @@ namespace Recurr;
  * Class DateInfo is responsible for holding information based on a particular
  * date that is applicable to a Rule.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
 class DateInfo
 {
@@ -26,7 +25,7 @@ class DateInfo
     public $dt;
 
     /**
-     * @var int Number of days in the month.
+     * @var int number of days in the month
      */
     public $monthLength;
 
@@ -41,7 +40,7 @@ class DateInfo
     public $nextYearLength;
 
     /**
-     * @var array Day of year of last day of each month.
+     * @var array day of year of last day of each month
      */
     public $mRanges;
 
@@ -52,17 +51,17 @@ class DateInfo
     public $dayOfWeekYearDay1;
 
     /**
-     * @var array Month number for each day of the year.
+     * @var array month number for each day of the year
      */
     public $mMask;
 
     /**
-     * @var array Month-daynumber for each day of the year.
+     * @var array month-daynumber for each day of the year
      */
     public $mDayMask;
 
     /**
-     * @var array Month-daynumber for each day of the year (in reverse).
+     * @var array month-daynumber for each day of the year (in reverse)
      */
     public $mDayMaskNeg;
 

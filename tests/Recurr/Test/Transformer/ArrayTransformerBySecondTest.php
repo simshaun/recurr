@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerBySecondTest extends ArrayTransformerBase
 {
-    public function testBySecondSecondly()
+    public function testBySecondSecondly(): void
     {
         $rule = new Rule(
             'FREQ=SECONDLY;COUNT=5;BYSECOND=36,45',
@@ -23,7 +23,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-12 16:02:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondMinutely()
+    public function testBySecondMinutely(): void
     {
         $rule = new Rule(
             'FREQ=MINUTELY;COUNT=5;BYSECOND=36,45',
@@ -40,7 +40,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-12 16:02:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondHourly()
+    public function testBySecondHourly(): void
     {
         $rule = new Rule(
             'FREQ=HOURLY;COUNT=5;BYSECOND=36,45',
@@ -57,7 +57,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-12 18:00:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondDaily()
+    public function testBySecondDaily(): void
     {
         $rule = new Rule(
             'FREQ=DAILY;COUNT=5;BYSECOND=36,45',
@@ -74,7 +74,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-14 16:00:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondWeekly()
+    public function testBySecondWeekly(): void
     {
         $rule = new Rule(
             'FREQ=WEEKLY;COUNT=5;BYSECOND=36,45',
@@ -91,7 +91,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-06-26 16:00:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondMonthly()
+    public function testBySecondMonthly(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYSECOND=36,45',
@@ -108,7 +108,7 @@ class ArrayTransformerBySecondTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-08-12 16:00:36'), $computed[4]->getStart());
     }
 
-    public function testBySecondYearly()
+    public function testBySecondYearly(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=5;BYSECOND=36,45',

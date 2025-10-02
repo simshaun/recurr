@@ -18,31 +18,21 @@ namespace Recurr;
  *
  * It also tracks whether or not the inclusion is explicitly set to UTC.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * @author  Shaun Simmons <gh@simshaun.com>
  */
 class DateInclusion
 {
     /** @var \DateTimeInterface */
     public $date;
 
-    /** @var bool Day of year */
-    public $hasTime;
-
-    /** @var bool */
-    public $isUtcExplicit;
-
     /**
      * Constructor
      *
-     * @param \DateTimeInterface $date
-     * @param bool               $hasTime
-     * @param bool               $isUtcExplicit
+     * @param bool $hasTime
+     * @param bool $isUtcExplicit
      */
-    public function __construct(\DateTimeInterface $date, $hasTime = true, $isUtcExplicit = false)
+    public function __construct(\DateTimeInterface $date, public $hasTime = true, public $isUtcExplicit = false)
     {
-        $this->date          = $date;
-        $this->hasTime       = $hasTime;
-        $this->isUtcExplicit = $isUtcExplicit;
+        $this->date = $date;
     }
 }

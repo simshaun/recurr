@@ -6,7 +6,7 @@ use Recurr\Rule;
 
 class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
 {
-    public function testByMonthDayMonthly()
+    public function testByMonthDayMonthly(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=28,29,30',
@@ -23,7 +23,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-03-30'), $computed[4]->getStart());
     }
 
-    public function testByMonthDayMonthlyNegative()
+    public function testByMonthDayMonthlyNegative(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=-10',
@@ -40,7 +40,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-10-22'), $computed[4]->getStart());
     }
 
-    public function testByMonthDayMonthlyPositiveAndNegative()
+    public function testByMonthDayMonthlyPositiveAndNegative(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=15,-1',
@@ -57,7 +57,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2013-12-15'), $computed[4]->getStart());
     }
 
-    public function testByMonthDayMonthlyLeapYear()
+    public function testByMonthDayMonthlyLeapYear(): void
     {
         $rule = new Rule(
             'FREQ=MONTHLY;COUNT=5;BYMONTHDAY=28,29,30',
@@ -74,7 +74,7 @@ class ArrayTransformerByMonthDayTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2016-03-29'), $computed[4]->getStart());
     }
 
-    public function testByMonthDayYearlyWithByMonthAndByDay()
+    public function testByMonthDayYearlyWithByMonthAndByDay(): void
     {
         $rule = new Rule(
             'FREQ=YEARLY;COUNT=3;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8',

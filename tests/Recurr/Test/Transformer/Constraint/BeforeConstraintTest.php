@@ -2,11 +2,12 @@
 
 namespace Recurr\Test\Transformer\Filter;
 
+use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\Constraint\BeforeConstraint;
 
-class BeforeConstraintTest extends \PHPUnit\Framework\TestCase
+class BeforeConstraintTest extends TestCase
 {
-    public function testBefore()
+    public function testBefore(): void
     {
         $before = new \DateTime('2014-06-17');
 
@@ -16,7 +17,7 @@ class BeforeConstraintTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($testResult);
     }
 
-    public function testBeforeInc()
+    public function testBeforeInc(): void
     {
         $before = new \DateTime('2014-06-17');
 
