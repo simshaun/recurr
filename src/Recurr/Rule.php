@@ -202,14 +202,14 @@ class Rule
         $this->setTimezone($timezone);
 
         if (\is_string($startDate)) {
-            $startDate = new \DateTimeImmutable($startDate, new \DateTimeZone($timezone));
+            $startDate = new \DateTime($startDate, new \DateTimeZone($timezone));
         }
         if ($startDate) {
             $this->setStartDate($startDate);
         }
 
         if (\is_string($endDate)) {
-            $endDate = new \DateTimeImmutable($endDate, new \DateTimeZone($timezone));
+            $endDate = new \DateTime($endDate, new \DateTimeZone($timezone));
         }
         if ($endDate) {
             $this->setEndDate($endDate);
@@ -342,14 +342,14 @@ class Rule
         // DTSTART
         if (isset($parts['DTSTART']) && \is_string($parts['DTSTART'])) {
             $this->isStartDateFromDtstart = true;
-            $date = new \DateTimeImmutable($parts['DTSTART']);
+            $date = new \DateTime($parts['DTSTART']);
             $date = $date->setTimezone($timezone);
             $this->setStartDate($date);
         }
 
         // DTEND
         if (isset($parts['DTEND']) && \is_string($parts['DTEND'])) {
-            $date = new \DateTimeImmutable($parts['DTEND']);
+            $date = new \DateTime($parts['DTEND']);
             $date = $date->setTimezone($timezone);
             $this->setEndDate($date);
         }
@@ -358,7 +358,7 @@ class Rule
         if (isset($parts['UNTIL']) && isset($parts['COUNT'])) {
             throw new InvalidRRule('UNTIL and COUNT must not exist together in the same RRULE');
         } elseif (isset($parts['UNTIL']) && \is_string($parts['UNTIL'])) {
-            $date = new \DateTimeImmutable($parts['UNTIL']);
+            $date = new \DateTime($parts['UNTIL']);
             $date = $date->setTimezone($timezone);
             $this->setUntil($date);
         } elseif (isset($parts['COUNT']) && \is_numeric($parts['COUNT'])) {
@@ -1184,7 +1184,7 @@ class Rule
                 $val->date = $this->convertZtoUtc($val->date);
                 $dates[] = $val;
             } else {
-                $date = new \DateTimeImmutable($val, $timezone);
+                $date = new \DateTime($val, $timezone);
                 $dates[] = new DateInclusion(
                     $this->convertZtoUtc($date),
                     str_contains($val, 'T'),
@@ -1219,14 +1219,15 @@ class Rule
             return $this;
         }
 
+        $timezone = new \DateTimeZone($this->getTimezone() ?: static::$defaultTimezone);
+
         $dates = [];
         foreach ($exDates as $val) {
             if ($val instanceof DateExclusion) {
                 $val->date = $this->convertZtoUtc($val->date);
                 $dates[] = $val;
             } else {
-                $date = new \DateTimeImmutable($val, new \DateTimeZone($this->getTimezone()
-                    ?: static::$defaultTimezone));
+                $date = new \DateTime($val, $timezone);
                 $dates[] = new DateExclusion(
                     $this->convertZtoUtc($date),
                     str_contains($val, 'T'),
