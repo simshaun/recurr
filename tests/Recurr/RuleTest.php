@@ -26,7 +26,7 @@ class RuleTest extends TestCase
         $this->assertNull($this->rule->getStartDate());
 
         $this->rule = new Rule(null, '2018-09-19');
-        $this->assertInstanceOf(\DateTimeImmutable::class, $this->rule->getStartDate());
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
 
         $this->rule = new Rule(null, new \DateTime('2018-09-19'));
         $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
@@ -35,7 +35,7 @@ class RuleTest extends TestCase
     public function testConstructAcceptableEndDate(): void
     {
         $this->rule = new Rule(null, null, '2018-09-19');
-        $this->assertInstanceOf(\DateTimeImmutable::class, $this->rule->getEndDate());
+        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
 
         $this->rule = new Rule(null, null, new \DateTime('2018-09-19'));
         $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());

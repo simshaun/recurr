@@ -368,8 +368,8 @@ class DateUtil
         int $dayOfYear,
         int $year,
         \DateTimeZone $timezone,
-    ): \DateTimeImmutable {
-        $dtTmp = new \DateTimeImmutable('now', $timezone);
+    ): \DateTime {
+        $dtTmp = new \DateTime('now', $timezone);
         $dtTmp = $dtTmp->setDate($year, 1, 1);
 
         return $dtTmp->modify("+$dayOfYear day");
