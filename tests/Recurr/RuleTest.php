@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test;
+namespace Tests\Recurr;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -13,8 +13,7 @@ use Recurr\Rule;
 
 class RuleTest extends TestCase
 {
-    /** @var Rule */
-    protected $rule;
+    protected Rule $rule;
 
     public function setUp(): void
     {
@@ -27,7 +26,7 @@ class RuleTest extends TestCase
         $this->assertNull($this->rule->getStartDate());
 
         $this->rule = new Rule(null, '2018-09-19');
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $this->rule->getStartDate());
 
         $this->rule = new Rule(null, new \DateTime('2018-09-19'));
         $this->assertInstanceOf(\DateTime::class, $this->rule->getStartDate());
@@ -36,7 +35,7 @@ class RuleTest extends TestCase
     public function testConstructAcceptableEndDate(): void
     {
         $this->rule = new Rule(null, null, '2018-09-19');
-        $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $this->rule->getEndDate());
 
         $this->rule = new Rule(null, null, new \DateTime('2018-09-19'));
         $this->assertInstanceOf(\DateTime::class, $this->rule->getEndDate());
@@ -102,7 +101,7 @@ class RuleTest extends TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
         $this->assertEquals(
             [
-                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151210'), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true),
             ],
@@ -110,7 +109,7 @@ class RuleTest extends TestCase
         );
         $this->assertEquals(
             [
-                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140607'), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true),
             ],
@@ -157,7 +156,7 @@ class RuleTest extends TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
         $this->assertEquals(
             [
-                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151210'), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true),
             ],
@@ -165,7 +164,7 @@ class RuleTest extends TestCase
         );
         $this->assertEquals(
             [
-                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140607'), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true),
             ],
@@ -209,7 +208,7 @@ class RuleTest extends TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
         $this->assertEquals(
             [
-                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151210'), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true),
             ],
@@ -217,7 +216,7 @@ class RuleTest extends TestCase
         );
         $this->assertEquals(
             [
-                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140607'), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true),
             ],
@@ -260,7 +259,7 @@ class RuleTest extends TestCase
         $this->assertEquals('TU', $this->rule->getWeekStart());
         $this->assertEquals(
             [
-                new DateInclusion(new \DateTime(20151210), false),
+                new DateInclusion(new \DateTime('20151210'), false),
                 new DateInclusion(new \DateTime('20151214T020000'), true),
                 new DateInclusion(new \DateTime('20151215 21:00:00 UTC'), true, true),
             ],
@@ -268,7 +267,7 @@ class RuleTest extends TestCase
         );
         $this->assertEquals(
             [
-                new DateExclusion(new \DateTime(20140607), false),
+                new DateExclusion(new \DateTime('20140607'), false),
                 new DateExclusion(new \DateTime('20140620T010000'), true),
                 new DateExclusion(new \DateTime('20140620 16:00:00 UTC'), true, true),
             ],
@@ -430,7 +429,7 @@ class RuleTest extends TestCase
     public function testBadInterval(): void
     {
         $this->expectException(InvalidArgument::class);
-        $this->rule->setInterval('six');
+        $this->rule->setInterval(0);
     }
 
     public function testEmptyByDayThrowsException(): void

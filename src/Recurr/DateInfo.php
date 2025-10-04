@@ -14,59 +14,63 @@
 namespace Recurr;
 
 /**
- * Class DateInfo is responsible for holding information based on a particular
- * date that is applicable to a Rule.
+ * Contextual information about a date used during RRULE transformation.
  *
- * @author  Shaun Simmons <gh@simshaun.com>
+ * Provides lookup masks and metadata to efficiently determine which days satisfy rule constraints.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class DateInfo
 {
-    /** @var \DateTime */
-    public $dt;
+    public \DateTime|\DateTimeImmutable $dt;
 
     /**
-     * @var int number of days in the month
+     * @var int Number of days in the current month
      */
-    public $monthLength;
+    public int $monthLength;
 
     /**
-     * @var int Number of days in the year (365 normally, 366 on leap years)
+     * @var int Number of days in the current year (365 or 366 for leap years)
      */
-    public $yearLength;
+    public int $yearLength;
 
     /**
-     * @var int Number of days in the next year (365 normally, 366 on leap years)
+     * @var int Number of days in the following year (365 or 366 for leap years)
      */
-    public $nextYearLength;
+    public int $nextYearLength;
 
     /**
-     * @var array day of year of last day of each month
+     * @var array<int, int> Day-of-year index for the end of each month (0-indexed array)
      */
-    public $mRanges;
-
-    /** @var int Day of week */
-    public $dayOfWeek;
-
-    /** @var int Day of week of the year's first day */
-    public $dayOfWeekYearDay1;
+    public array $mRanges;
 
     /**
-     * @var array month number for each day of the year
+     * @var int Day of week (0-6) for the current date, 0=Monday, 6=Sunday
      */
-    public $mMask;
+    public int $dayOfWeek;
 
     /**
-     * @var array month-daynumber for each day of the year
+     * @var int Day of week (0-6) for January 1st of the current year
      */
-    public $mDayMask;
+    public int $dayOfWeekYearDay1;
 
     /**
-     * @var array month-daynumber for each day of the year (in reverse)
+     * @var array<int, int> Maps day-of-year index to month number (1-12)
      */
-    public $mDayMaskNeg;
+    public array $mMask;
 
     /**
-     * @var array Day of week (0-6) for each day of the year, 0 being Monday
+     * @var array<int, int> Maps day-of-year index to day-of-month (1-31)
      */
-    public $wDayMask;
+    public array $mDayMask;
+
+    /**
+     * @var array<int, int> Maps day-of-year index to negative day-of-month (-31 to -1, where -1 is last day)
+     */
+    public array $mDayMaskNeg;
+
+    /**
+     * @var array<int, int> Maps day-of-year index to day-of-week (0-6), 0=Monday, 6=Sunday
+     */
+    public array $wDayMask;
 }

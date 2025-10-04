@@ -30,7 +30,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Recurr\\Test\\": "tests/Recurr/Test"
+			"Tests\\Recurr\\": "tests/Recurr/"
 		}
 	},
 	"extra": {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,13 +11,7 @@ namespace Recurr\Transformer;
 
 interface ConstraintInterface
 {
-    /**
-     * @return bool
-     */
-    public function stopsTransformer();
+    public function stopsTransformer(): bool;
 
-    /**
-     * @return bool
-     */
-    public function test(\DateTimeInterface $date);
+    public function test(\DateTimeInterface $date): bool;
 }

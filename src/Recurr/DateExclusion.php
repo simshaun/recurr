@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,29 +10,11 @@
 namespace Recurr;
 
 /**
- * Class DateExclusion is a container for a single \DateTimeInterface.
+ * Represents a date to exclude from the recurrence set (EXDATE in RFC 5545).
  *
- * The purpose of this class is to hold a flag that specifies whether
- * or not the \DateTimeInterface was created from a DATE only, or with a
- * DATETIME.
+ * Dates matching this exclusion will be removed from the generated occurrences, even if they would normally be
+ * included by the RRULE.
  *
- * It also tracks whether or not the exclusion is explicitly set to UTC.
- *
- * @author  Shaun Simmons <gh@simshaun.com>
+ * @author Shaun Simmons <gh@simshaun.com>
  */
-class DateExclusion
-{
-    /** @var \DateTimeInterface */
-    public $date;
-
-    /**
-     * Constructor
-     *
-     * @param bool $hasTime
-     * @param bool $isUtcExplicit
-     */
-    public function __construct(\DateTimeInterface $date, public $hasTime = true, public $isUtcExplicit = false)
-    {
-        $this->date = $date;
-    }
-}
+class DateExclusion extends DateContext {}

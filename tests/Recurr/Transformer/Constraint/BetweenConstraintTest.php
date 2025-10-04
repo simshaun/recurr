@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test\Transformer\Filter;
+namespace Tests\Recurr\Transformer\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\Constraint\BetweenConstraint;

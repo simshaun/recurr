@@ -10,29 +10,11 @@
 namespace Recurr;
 
 /**
- * Class DateInclusion is a container for a single \DateTimeInterface.
+ * Represents a date to explicitly include in the recurrence set (RDATE in RFC 5545).
  *
- * The purpose of this class is to hold a flag that specifies whether
- * or not the \DateTimeInterface was created from a DATE only, or with a
- * DATETIME.
+ * These dates will be added to the generated occurrences regardless of whether they match the RRULE pattern or fall
+ * outside the COUNT/UNTIL limits.
  *
- * It also tracks whether or not the inclusion is explicitly set to UTC.
- *
- * @author  Shaun Simmons <gh@simshaun.com>
+ * @author Shaun Simmons <gh@simshaun.com>
  */
-class DateInclusion
-{
-    /** @var \DateTimeInterface */
-    public $date;
-
-    /**
-     * Constructor
-     *
-     * @param bool $hasTime
-     * @param bool $isUtcExplicit
-     */
-    public function __construct(\DateTimeInterface $date, public $hasTime = true, public $isUtcExplicit = false)
-    {
-        $this->date = $date;
-    }
-}
+class DateInclusion extends DateContext {}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test\Transformer;
+namespace Tests\Recurr\Transformer;
 
 use Recurr\DateInclusion;
 use Recurr\Rule;
@@ -39,9 +39,9 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-12'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-12'), $computed[2]?->getStart());
     }
 
     public function testRDateNoTime(): void
@@ -54,9 +54,9 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-08'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-08'), $computed[2]?->getStart());
     }
 
     public function testRDateWithTime(): void
@@ -69,9 +69,9 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10 04:00:00'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11 04:00:00'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-08 01:00:00'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10 04:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11 04:00:00'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-08 01:00:00'), $computed[2]?->getStart());
     }
 
     public function testRDateWithUtcTime(): void
@@ -84,9 +84,9 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10 07:00:00'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11 07:00:00'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-08 11:00:00Z'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10 07:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11 07:00:00'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-08 11:00:00Z'), $computed[2]?->getStart());
     }
 
     public function testRDateWithMixedTimezones(): void
@@ -99,10 +99,10 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(4, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10 04:00:00'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11 04:00:00'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-08 19:00:00'), $computed[2]->getStart());
-        $this->assertEquals(new \DateTime('2015-11-25 08:00:00Z'), $computed[3]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10 04:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11 04:00:00'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-08 19:00:00'), $computed[2]?->getStart());
+        $this->assertEquals(new \DateTime('2015-11-25 08:00:00Z'), $computed[3]?->getStart());
     }
 
     public function testSetRDates(): void
@@ -120,8 +120,8 @@ class ArrayTransformerRDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(3, $computed);
-        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]->getStart());
-        $this->assertEquals(new \DateTime('2015-12-08'), $computed[2]->getStart());
+        $this->assertEquals(new \DateTime('2015-12-10'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-11'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2015-12-08'), $computed[2]?->getStart());
     }
 }

@@ -6,7 +6,11 @@ use Recurr\Rule;
 
 class TextTransformer
 {
-    protected $fragments = [];
+    /**
+     * @var string[]
+     */
+    protected array $fragments = [];
+
     protected TranslatorInterface $translator;
 
     public function __construct(?TranslatorInterface $translator = null)
@@ -14,7 +18,7 @@ class TextTransformer
         $this->translator = $translator ?: new Translator('en');
     }
 
-    public function transform(Rule $rule)
+    public function transform(Rule $rule): string
     {
         $this->fragments = [];
 
@@ -36,24 +40,24 @@ class TextTransformer
                 break;
             case 5:
             case 6:
-                return $this->translator->trans('Unable to fully convert this rrule to text.');
+                return $this->transString('Unable to fully convert this rrule to text.');
         }
 
         $until = $rule->getUntil();
         $count = $rule->getCount();
         if ($until instanceof \DateTimeInterface) {
-            $dateFormatted = $this->translator->trans('day_date', ['date' => $until->format('U')]);
-            $this->addFragment($this->translator->trans('until %date%', ['date' => $dateFormatted]));
-        } elseif (!empty($count)) {
+            $dateFormatted = $this->transString('day_date', ['date' => $until->format('U')]);
+            $this->addFragment($this->transString('until %date%', ['date' => $dateFormatted]));
+        } elseif ($count !== null) {
             if ($this->isPlural($count)) {
-                $this->addFragment($this->translator->trans('for %count% times', ['count' => $count]));
+                $this->addFragment($this->transString('for %count% times', ['count' => $count]));
             } else {
-                $this->addFragment($this->translator->trans('for one time'));
+                $this->addFragment($this->transString('for one time'));
             }
         }
 
         if (!$this->isFullyConvertible($rule)) {
-            $this->addFragment($this->translator->trans('(~ approximate)'));
+            $this->addFragment($this->transString('(~ approximate)'));
         }
 
         return implode(' ', $this->fragments);
@@ -67,7 +71,7 @@ class TextTransformer
 
         $until = $rule->getUntil();
         $count = $rule->getCount();
-        if (!empty($until) && !empty($count)) {
+        if ($until !== null && $count !== null) {
             return false;
         }
 
@@ -81,14 +85,14 @@ class TextTransformer
 
         $byWeekNum = $rule->getByWeekNumber();
         $byYearDay = $rule->getByYearDay();
-        if ($rule->getFreq() != 0 && (!empty($byWeekNum) || !empty($byYearDay))) {
+        if ($rule->getFreq() === null || $rule->getFreq() > 0 && (!empty($byWeekNum) || !empty($byYearDay))) {
             return false;
         }
 
         return true;
     }
 
-    protected function addYearly(Rule $rule)
+    protected function addYearly(Rule $rule): void
     {
         $interval = $rule->getInterval();
         $byMonth = $rule->getByMonth();
@@ -97,22 +101,27 @@ class TextTransformer
         $byYearDay = $rule->getByYearDay();
         $byWeekNum = $rule->getByWeekNumber();
 
-        if (!empty($byMonth) && count($byMonth) > 1 && $interval == 1) {
-            $this->addFragment($this->translator->trans('every_month_list'));
+        if (!empty($byMonth) && count($byMonth) > 1 && $interval === 1) {
+            $this->addFragment($this->transString('every_month_list'));
         } else {
-            $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% years' : 'every year', ['count' => $interval]));
+            $this->addFragment($this->transString(
+                $this->isPlural($interval) ? 'every %count% years' : 'every year',
+                ['count' => $interval]
+            ));
         }
 
-        $hasNoOrOneByMonth = is_null($byMonth) || count($byMonth) <= 1;
+        $hasNoOrOneByMonth = $byMonth === null || count($byMonth) <= 1;
         if ($hasNoOrOneByMonth && empty($byMonthDay) && empty($byDay) && empty($byYearDay) && empty($byWeekNum)) {
-            $this->addFragment($this->translator->trans('on'));
-            $monthNum = (is_array($byMonth) && count($byMonth)) ? $byMonth[0] : $rule->getStartDate()->format('n');
+            $this->addFragment($this->transString('on'));
             $this->addFragment(
-                $this->translator->trans('day_month', ['month' => $monthNum, 'day' => $rule->getStartDate()->format('d')])
+                $this->transString('day_month', [
+                    'month' => !empty($byMonth) ? $byMonth[0] : $rule->getStartDate()?->format('n'),
+                    'day' => $rule->getStartDate()?->format('d'),
+                ])
             );
         } elseif (!empty($byMonth)) {
             if ($interval != 1) {
-                $this->addFragment($this->translator->trans('in_month'));
+                $this->addFragment($this->transString('in_month'));
             }
 
             $this->addByMonth($rule);
@@ -120,20 +129,20 @@ class TextTransformer
 
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
-            $this->addFragment($this->translator->trans('of_the_month'));
+            $this->addFragment($this->transString('of_the_month'));
         } elseif (!empty($byDay)) {
             $this->addByDay($rule);
         }
 
         if (!empty($byYearDay)) {
-            $this->addFragment($this->translator->trans('on the'));
+            $this->addFragment($this->transString('on the'));
             $this->addFragment($this->getByYearDayAsText($byYearDay));
-            $this->addFragment($this->translator->trans('day'));
+            $this->addFragment($this->transString('day'));
         }
 
         if (!empty($byWeekNum)) {
-            $this->addFragment($this->translator->trans('in_week'));
-            $this->addFragment($this->translator->trans($this->isPlural(count($byWeekNum)) ? 'weeks' : 'week'));
+            $this->addFragment($this->transString('in_week'));
+            $this->addFragment($this->transString($this->isPlural(count($byWeekNum)) ? 'weeks' : 'week'));
             $this->addFragment($this->getByWeekNumberAsText($byWeekNum));
         }
 
@@ -142,20 +151,24 @@ class TextTransformer
         }
     }
 
-    protected function addMonthly(Rule $rule)
+    protected function addMonthly(Rule $rule): void
     {
         $interval = $rule->getInterval();
         $byMonth = $rule->getByMonth();
 
-        if (!empty($byMonth) && $interval == 1) {
-            $this->addFragment($this->translator->trans('every_month_list'));
+        if (!empty($byMonth) && $interval === 1) {
+            $this->addFragment($this->transString('every_month_list'));
         } else {
-            $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% months' : 'every month', ['count' => $interval]));
+            $this->addFragment($this->transString(
+                $this->isPlural($interval)
+                    ? 'every %count% months'
+                    : 'every month', ['count' => $interval]
+            ));
         }
 
         if (!empty($byMonth)) {
             if ($interval != 1) {
-                $this->addFragment($this->translator->trans('in_month'));
+                $this->addFragment($this->transString('in_month'));
             }
 
             $this->addByMonth($rule);
@@ -170,41 +183,49 @@ class TextTransformer
         }
     }
 
-    protected function addWeekly(Rule $rule)
+    protected function addWeekly(Rule $rule): void
     {
         $interval = $rule->getInterval();
         $byMonth = $rule->getByMonth();
         $byMonthDay = $rule->getByMonthDay();
         $byDay = $rule->getByDay();
 
-        $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% weeks' : 'every week', ['count' => $interval]));
+        $this->addFragment($this->transString(
+            $this->isPlural($interval)
+                ? 'every %count% weeks'
+                : 'every week', ['count' => $interval]
+        ));
 
         if (empty($byMonthDay) && empty($byDay)) {
             $this->addDayOfWeek($rule);
         }
 
         if (!empty($byMonth)) {
-            $this->addFragment($this->translator->trans('in_month'));
+            $this->addFragment($this->transString('in_month'));
             $this->addByMonth($rule);
         }
 
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
-            $this->addFragment($this->translator->trans('of_the_month'));
+            $this->addFragment($this->transString('of_the_month'));
         } elseif (!empty($byDay)) {
             $this->addByDay($rule);
         }
     }
 
-    protected function addDaily(Rule $rule)
+    protected function addDaily(Rule $rule): void
     {
         $interval = $rule->getInterval();
         $byMonth = $rule->getByMonth();
 
-        $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% days' : 'every day', ['count' => $interval]));
+        $this->addFragment($this->transString(
+            $this->isPlural($interval)
+                ? 'every %count% days'
+                : 'every day', ['count' => $interval]
+        ));
 
         if (!empty($byMonth)) {
-            $this->addFragment($this->translator->trans('in_month'));
+            $this->addFragment($this->transString('in_month'));
             $this->addByMonth($rule);
         }
 
@@ -212,21 +233,25 @@ class TextTransformer
         $byDay = $rule->getByDay();
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
-            $this->addFragment($this->translator->trans('of_the_month'));
+            $this->addFragment($this->transString('of_the_month'));
         } elseif (!empty($byDay)) {
             $this->addByDay($rule);
         }
     }
 
-    protected function addHourly(Rule $rule)
+    protected function addHourly(Rule $rule): void
     {
         $interval = $rule->getInterval();
         $byMonth = $rule->getByMonth();
 
-        $this->addFragment($this->translator->trans($this->isPlural($interval) ? 'every %count% hours' : 'every hour', ['count' => $interval]));
+        $this->addFragment($this->transString(
+            $this->isPlural($interval)
+                ? 'every %count% hours'
+                : 'every hour', ['count' => $interval]
+        ));
 
         if (!empty($byMonth)) {
-            $this->addFragment($this->translator->trans('in_month'));
+            $this->addFragment($this->transString('in_month'));
             $this->addByMonth($rule);
         }
 
@@ -234,13 +259,13 @@ class TextTransformer
         $byDay = $rule->getByDay();
         if (!empty($byMonthDay)) {
             $this->addByMonthDay($rule);
-            $this->addFragment($this->translator->trans('of_the_month'));
+            $this->addFragment($this->transString('of_the_month'));
         } elseif (!empty($byDay)) {
             $this->addByDay($rule);
         }
     }
 
-    protected function addByMonth(Rule $rule)
+    protected function addByMonth(Rule $rule): void
     {
         $byMonth = $rule->getByMonth();
 
@@ -251,38 +276,50 @@ class TextTransformer
         $this->addFragment($this->getByMonthAsText($byMonth));
     }
 
-    protected function addByMonthDay(Rule $rule)
+    protected function addByMonthDay(Rule $rule): void
     {
         $byMonthDay = $rule->getByMonthDay();
         $byDay = $rule->getByDay();
 
         if (!empty($byDay)) {
-            $this->addFragment($this->translator->trans('on'));
+            $this->addFragment($this->transString('on'));
             $this->addFragment($this->getByDayAsText($byDay, 'or'));
-            $this->addFragment($this->translator->trans('the_for_monthday'));
-            $this->addFragment($this->getByMonthDayAsText($byMonthDay, 'or'));
+            $this->addFragment($this->transString('the_for_monthday'));
+            $this->addFragment($this->getByMonthDayAsText($byMonthDay ?: [], 'or'));
         } else {
-            $this->addFragment($this->translator->trans('on the'));
-            $this->addFragment($this->getByMonthDayAsText($byMonthDay, 'and'));
+            $this->addFragment($this->transString('on the'));
+            $this->addFragment($this->getByMonthDayAsText($byMonthDay ?: [], 'and'));
         }
     }
 
-    protected function addByDay(Rule $rule)
+    protected function addByDay(Rule $rule): void
     {
         $byDay = $rule->getByDay();
 
-        $this->addFragment($this->translator->trans('on'));
-        $this->addFragment($this->getByDayAsText($byDay));
+        $this->addFragment($this->transString('on'));
+        $this->addFragment($this->getByDayAsText($byDay ?: []));
     }
 
-    protected function addDayOfWeek(Rule $rule)
+    protected function addDayOfWeek(Rule $rule): void
     {
-        $this->addFragment($this->translator->trans('on'));
+        if (!$rule->getStartDate()) {
+            return;
+        }
+
+        $this->addFragment($this->transString('on'));
+
+        /**
+         * @var array<int, string> $dayNames
+         */
         $dayNames = $this->translator->trans('day_names');
-        $this->addFragment($dayNames[$rule->getStartDate()->format('w')]);
+
+        $this->addFragment($dayNames[(int) $rule->getStartDate()->format('w')]);
     }
 
-    public function getByMonthAsText($byMonth)
+    /**
+     * @param int[] $byMonth
+     */
+    public function getByMonthAsText(array $byMonth): string
     {
         if (empty($byMonth)) {
             return '';
@@ -292,7 +329,11 @@ class TextTransformer
             sort($byMonth);
         }
 
+        /**
+         * @var array<int, string> $monthNames
+         */
         $monthNames = $this->translator->trans('month_names');
+
         $byMonth = array_map(
             fn ($monthInt) => $monthNames[$monthInt - 1],
             $byMonth
@@ -301,7 +342,10 @@ class TextTransformer
         return $this->getListStringFromArray($byMonth);
     }
 
-    public function getByDayAsText($byDay, $listSeparator = 'and'): string
+    /**
+     * @param string[] $byDay
+     */
+    public function getByDayAsText(array $byDay, string $listSeparator = 'and'): string
     {
         if (empty($byDay)) {
             return '';
@@ -317,27 +361,32 @@ class TextTransformer
             'SA' => null,
         ];
 
+        /**
+         * @var array<int, string> $dayNames
+         */
         $dayNames = $this->translator->trans('day_names');
-        $timestamp = mktime(1, 1, 1, 1, 12, 2014); // A Sunday
+
+        $timestamp = mktime(1, 1, 1, 1, 12, 2014) ?: -1; // A Sunday
+
         foreach (array_keys($map) as $short) {
-            $long = $dayNames[date('w', $timestamp)];
+            $long = $dayNames[(int) date('w', $timestamp)];
             $map[$short] = $long;
             $timestamp += 86400;
         }
 
         $numOrdinals = 0;
         foreach ($byDay as $key => $short) {
-            $day = strtoupper((string) $short);
+            $day = strtoupper($short);
             $string = '';
 
-            if (preg_match('/([+-]?)([0-9]*)([A-Z]+)/', (string) $short, $parts)) {
+            if (preg_match('/([+-]?)(\d*)([A-Z]+)/', $short, $parts)) {
                 $symbol = $parts[1];
                 $nth = $parts[2];
                 $day = $parts[3];
 
-                if (!empty($nth)) {
+                if ($nth !== '' && $nth !== '0') {
                     ++$numOrdinals;
-                    $string .= $this->getOrdinalNumber($symbol == '-' ? -$nth : $nth);
+                    $string .= $this->getOrdinalNumber((int) ($symbol === '-' ? -$nth : $nth));
                 }
             }
 
@@ -345,15 +394,15 @@ class TextTransformer
                 throw new \RuntimeException("byDay $short could not be transformed");
             }
 
-            if (!empty($string)) {
+            if ($string !== '' && $string !== '0') {
                 $string .= ' ';
             }
 
             $byDay[$key] = ltrim($string.$map[$day]);
         }
 
-        $output = $numOrdinals ? $this->translator->trans('the_for_weekday').' ' : '';
-        if ($output == ' ') {
+        $output = $numOrdinals !== 0 ? $this->transString('the_for_weekday').' ' : '';
+        if ($output === ' ') {
             $output = '';
         }
         $output .= $this->getListStringFromArray($byDay, $listSeparator);
@@ -361,14 +410,17 @@ class TextTransformer
         return $output;
     }
 
-    public function getByMonthDayAsText($byMonthDay, $listSeparator = 'and')
+    /**
+     * @param int[] $byMonthDay
+     */
+    public function getByMonthDayAsText(array $byMonthDay, string $listSeparator = 'and'): string
     {
         if (empty($byMonthDay)) {
             return '';
         }
 
         // sort negative indices in reverse order so we get e.g. 1st, 2nd, 4th, 3rd last, last day
-        usort($byMonthDay, function ($a, $b): int|float {
+        usort($byMonthDay, function ($a, $b): int {
             if (($a < 0 && $b < 0) || ($a >= 0 && $b >= 0)) {
                 return $a - $b;
             }
@@ -393,7 +445,7 @@ class TextTransformer
             }
             if ($day < 0) {
                 if ($hadPositives && !$hadNegatives && $listSeparator === 'and') {
-                    $prefix = $this->translator->trans('on the').' ';
+                    $prefix = $this->transString('on the').' ';
                 }
                 $hadNegatives = true;
             }
@@ -403,14 +455,17 @@ class TextTransformer
         return $this->getListStringFromArray($byMonthDay, $listSeparator);
     }
 
-    public function getByYearDayAsText($byYearDay)
+    /**
+     * @param int[] $byYearDay
+     */
+    public function getByYearDayAsText(array $byYearDay): string
     {
         if (empty($byYearDay)) {
             return '';
         }
 
         // sort negative indices in reverse order so we get e.g. 1st, 2nd, 4th, 3rd last, last day
-        usort($byYearDay, function ($a, $b): int|float {
+        usort($byYearDay, function ($a, $b): int {
             if (($a < 0 && $b < 0) || ($a >= 0 && $b >= 0)) {
                 return $a - $b;
             }
@@ -427,7 +482,10 @@ class TextTransformer
         return $this->getListStringFromArray($byYearDay);
     }
 
-    public function getByWeekNumberAsText($byWeekNum)
+    /**
+     * @param int[] $byWeekNum
+     */
+    public function getByWeekNumberAsText(array $byWeekNum): string
     {
         if (empty($byWeekNum)) {
             return '';
@@ -440,7 +498,7 @@ class TextTransformer
         return $this->getListStringFromArray($byWeekNum);
     }
 
-    protected function addFragment($fragment)
+    protected function addFragment(string $fragment): void
     {
         if ($fragment && $fragment !== ' ') {
             $this->fragments[] = $fragment;
@@ -452,41 +510,54 @@ class TextTransformer
         $this->fragments = [];
     }
 
-    protected function isPlural($number): bool
+    /**
+     * Get a string translation (helper to satisfy PHPStan when we know the result is a string)
+     *
+     * @param array<string, string|int|float|bool|null> $params
+     */
+    protected function transString(string $key, array $params = []): string
+    {
+        $result = $this->translator->trans($key, $params);
+        assert(is_string($result));
+
+        return $result;
+    }
+
+    protected function isPlural(int $number): bool
     {
         return $number % 100 != 1;
     }
 
-    protected function getOrdinalNumber($number, $hasNegatives = false, $dayInMonth = false)
-    {
+    protected function getOrdinalNumber(
+        string|int $number,
+        bool $hasNegatives = false,
+        bool $dayInMonth = false,
+    ): string {
         if (!preg_match('{^-?\d+$}D', (string) $number)) {
             throw new \RuntimeException('$number must be a whole number');
         }
 
-        return $this->translator->trans('ordinal_number', ['number' => $number, 'has_negatives' => $hasNegatives, 'day_in_month' => $dayInMonth]);
+        return $this->transString('ordinal_number', ['number' => $number, 'has_negatives' => $hasNegatives, 'day_in_month' => $dayInMonth]);
     }
 
-    protected function getListStringFromArray($values, $separator = 'and')
+    /**
+     * @param array<string|int|float> $values
+     */
+    protected function getListStringFromArray(array $values, string $separator = 'and'): string
     {
-        $separator = $this->translator->trans($separator);
-
-        if (!is_array($values)) {
-            throw new \RuntimeException('$values must be an array.');
-        }
+        $separator = $this->transString($separator);
 
         $numValues = count($values);
 
-        if (!$numValues) {
+        if ($numValues === 0) {
             return '';
         }
 
-        if ($numValues == 1) {
-            reset($values);
-
-            return current($values);
+        if ($numValues === 1) {
+            return (string) reset($values);
         }
 
-        if ($numValues == 2) {
+        if ($numValues === 2) {
             return implode(" $separator ", $values);
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test\Transformer;
+namespace Tests\Recurr\Transformer;
 
 use Recurr\DateExclusion;
 use Recurr\Rule;
@@ -39,8 +39,8 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(2, $computed);
-        $this->assertEquals(new \DateTime('2014-06-01'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-01'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]?->getStart());
     }
 
     public function testExDateWithTime(): void
@@ -53,8 +53,8 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(2, $computed);
-        $this->assertEquals(new \DateTime('2014-06-01 04:00:00'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2014-06-02 04:00:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-01 04:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2014-06-02 04:00:00'), $computed[1]?->getStart());
     }
 
     public function testExDateWithUtcTime(): void
@@ -67,8 +67,8 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(2, $computed);
-        $this->assertEquals(new \DateTime('2014-06-01 07:00:00'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2014-06-03 07:00:00'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-01 07:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2014-06-03 07:00:00'), $computed[1]?->getStart());
     }
 
     public function testExDateWithMixedTimezones(): void
@@ -81,7 +81,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(1, $computed);
-        $this->assertEquals(new \DateTime('2014-06-03 04:00:00'), $computed[0]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-03 04:00:00'), $computed[0]?->getStart());
     }
 
     public function testSetExDates(): void
@@ -99,7 +99,7 @@ class ArrayTransformerExDateTest extends ArrayTransformerBase
         $computed = $this->transformer->transform($rule);
 
         $this->assertCount(2, $computed);
-        $this->assertEquals(new \DateTime('2014-06-01'), $computed[0]->getStart());
-        $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]->getStart());
+        $this->assertEquals(new \DateTime('2014-06-01'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2014-06-03'), $computed[1]?->getStart());
     }
 }

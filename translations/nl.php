@@ -84,11 +84,9 @@ return [
                 $suffix = ' na laatste';
             }
 
-            if (($number % 100) >= 11 && ($number % 100) <= 13) {
-                $abbreviation = $number.'ste';
-            } else {
-                $abbreviation = $number.$ends[$number % 10];
-            }
+            $abbreviation = $number % 100 >= 11 && $number % 100 <= 13
+                ? $number.'ste'
+                : $number.$ends[$number % 10];
         }
 
         if (!empty($params['has_negatives'])) {

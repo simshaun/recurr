@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 9
 
     reportUnmatchedIgnoredErrors: false
 
@@ -7,3 +7,8 @@ parameters:
         - src/
         - tests/
         - translations/
+
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+            path: tests/*

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,77 +10,54 @@
 namespace Recurr;
 
 /**
- * Class Recurrence is responsible for storing the start and end \DateTime of
- * a specific recurrence in a RRULE.
- *
- * @author  Shaun Simmons <gh@simshaun.com>
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class Recurrence
 {
-    /** @var \DateTimeInterface */
-    protected $start;
+    protected \DateTime|\DateTimeImmutable $start;
 
-    /** @var \DateTimeInterface */
-    protected $end;
+    protected \DateTime|\DateTimeImmutable $end;
 
-    /**
-     * @param int $index
-     */
-    public function __construct(?\DateTimeInterface $start = null, ?\DateTimeInterface $end = null, protected $index = 0)
-    {
-        if ($start instanceof \DateTimeInterface) {
+    public function __construct(
+        \DateTime|\DateTimeImmutable|null $start = null,
+        \DateTime|\DateTimeImmutable|null $end = null,
+        protected int $index = 0,
+    ) {
+        if ($start) {
             $this->setStart($start);
         }
 
-        if ($end instanceof \DateTimeInterface) {
+        if ($end) {
             $this->setEnd($end);
         }
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getStart()
+    public function getStart(): \DateTime|\DateTimeImmutable
     {
         return $this->start;
     }
 
-    /**
-     * @param \DateTime $start
-     */
-    public function setStart($start): void
+    public function setStart(\DateTime|\DateTimeImmutable $start): void
     {
         $this->start = $start;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getEnd()
+    public function getEnd(): \DateTime|\DateTimeImmutable
     {
         return $this->end;
     }
 
-    /**
-     * @param \DateTime $end
-     */
-    public function setEnd($end): void
+    public function setEnd(\DateTime|\DateTimeImmutable $end): void
     {
         $this->end = $end;
     }
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $index
-     */
-    public function setIndex($index): void
+    public function setIndex(int $index): void
     {
         $this->index = $index;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test\Transformer;
+namespace Tests\Recurr\Transformer;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Recurr\Frequency;
@@ -11,55 +11,57 @@ use Recurr\Transformer\Constraint\BetweenConstraint;
 
 class ArrayTransformerConstraintTest extends ArrayTransformerBase
 {
-    private function prependDateTimeClassNames(array $testCases): array
+    private static function prependDateTimeClassNames(array $testCases): array
     {
         $data = [];
 
-        foreach ($testCases as $n => $testCase) {
+        foreach (array_keys($testCases) as $n) {
             $immutable = $testCases[$n];
             array_unshift($immutable, \DateTimeImmutable::class);
 
             $mutable = $testCases[$n];
             array_unshift($mutable, \DateTime::class);
-
-            array_push($data, $immutable, $mutable);
+            $data[] = $immutable;
+            $data[] = $mutable;
         }
 
         return $data;
     }
 
-    /**
-     * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int $frequency
-     * @param int $count
-     * @param string $start
-     * @param string $before
-     * @param bool $inc
-     * @param array $expected
-     */
     #[DataProvider('beforeProvider')]
-    public function testBefore($dateTimeClassName, $frequency, $count, $start, $before, $inc, $expected): void
-    {
+    public function testBefore(
+        string $dateTimeClassName,
+        int $frequency,
+        int $count,
+        string $start,
+        string $before,
+        bool $inc,
+        array $expected,
+    ): void {
+        /** @var \DateTime|\DateTimeImmutable $start */
+        $start = new $dateTimeClassName($start);
+        /** @var \DateTimeInterface $before */
+        $before = new $dateTimeClassName($before);
+
         $rule = new Rule();
         $rule
             ->setFreq($frequency)
             ->setCount($count)
-            ->setStartDate(new $dateTimeClassName($start))
-        ;
+            ->setStartDate($start);
 
-        $constraint = new BeforeConstraint(new $dateTimeClassName($before), $inc);
+        $constraint = new BeforeConstraint($before, $inc);
         $computed = $this->transformer->transform($rule, $constraint);
 
         self::assertCount(count($expected), $computed);
 
         foreach ($expected as $n => $expectedDate) {
-            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]->getStart());
+            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]?->getStart());
         }
     }
 
-    public function beforeProvider(): array
+    public static function beforeProvider(): array
     {
-        return $this->prependDateTimeClassNames([
+        return self::prependDateTimeClassNames([
             [Frequency::YEARLY, 20, '2014-03-16 04:00:00', '2017-03-16 23:59:59', true, [
                 '2014-03-16 04:00:00',
                 '2015-03-16 04:00:00',
@@ -78,39 +80,41 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         ]);
     }
 
-    /**
-     * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int $frequency
-     * @param int $count
-     * @param string $start
-     * @param string $after
-     * @param bool $inc
-     * @param bool $countConstraintFailures
-     * @param array $expected
-     */
     #[DataProvider('afterProvider')]
-    public function testAfter($dateTimeClassName, $frequency, $count, $start, $after, $inc, $countConstraintFailures, $expected): void
-    {
+    public function testAfter(
+        string $dateTimeClassName,
+        int $frequency,
+        int $count,
+        string $start,
+        string $after,
+        bool $inc,
+        bool $countConstraintFailures,
+        array $expected,
+    ): void {
+        /** @var \DateTime|\DateTimeImmutable $start */
+        $start = new $dateTimeClassName($start);
+        /** @var \DateTimeInterface $after */
+        $after = new $dateTimeClassName($after);
+
         $rule = new Rule();
         $rule
             ->setFreq($frequency)
             ->setCount($count)
-            ->setStartDate(new $dateTimeClassName($start))
-        ;
+            ->setStartDate($start);
 
-        $constraint = new AfterConstraint(new $dateTimeClassName($after), $inc);
+        $constraint = new AfterConstraint($after, $inc);
         $computed = $this->transformer->transform($rule, $constraint, $countConstraintFailures);
 
         self::assertCount(count($expected), $computed);
 
         foreach ($expected as $n => $expectedDate) {
-            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]->getStart());
+            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]?->getStart());
         }
     }
 
-    public function afterProvider(): array
+    public static function afterProvider(): array
     {
-        return $this->prependDateTimeClassNames([
+        return self::prependDateTimeClassNames([
             [Frequency::MONTHLY, 5, '2014-03-16 04:00:00', '2020-05-16 04:00:00', false, false, [
                 '2020-06-16 04:00:00',
                 '2020-07-16 04:00:00',
@@ -144,39 +148,41 @@ class ArrayTransformerConstraintTest extends ArrayTransformerBase
         ]);
     }
 
-    /**
-     * @param string $dateTimeClassName \DateTimeImmutable or \DateTime
-     * @param int $frequency
-     * @param string $start
-     * @param string $after
-     * @param string $before
-     * @param bool $inc
-     * @param array $expected
-     */
     #[DataProvider('betweenProvider')]
-    public function testBetween($dateTimeClassName, $frequency, $start, $after, $before, $inc, $expected): void
-    {
+    public function testBetween(
+        string $dateTimeClassName,
+        int $frequency,
+        string $start,
+        string $after,
+        string $before,
+        bool $inc,
+        array $expected,
+    ): void {
+        /** @var \DateTime|\DateTimeImmutable $start */
+        $start = new $dateTimeClassName($start);
+        /** @var \DateTimeInterface $after */
+        $after = new $dateTimeClassName($after);
+        /** @var \DateTimeInterface $before */
+        $before = new $dateTimeClassName($before);
+
         $rule = new Rule();
         $rule
             ->setFreq($frequency)
-            ->setStartDate(new $dateTimeClassName($start))
-        ;
+            ->setStartDate($start);
 
-        $constraint = new BetweenConstraint(
-            new $dateTimeClassName($after), new $dateTimeClassName($before), $inc
-        );
+        $constraint = new BetweenConstraint(after: $after, before: $before, inc: $inc);
         $computed = $this->transformer->transform($rule, $constraint);
 
         self::assertCount(count($expected), $computed);
 
         foreach ($expected as $n => $expectedDate) {
-            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]->getStart());
+            self::assertEquals(new $dateTimeClassName($expectedDate), $computed[$n]?->getStart());
         }
     }
 
-    public function betweenProvider(): array
+    public static function betweenProvider(): array
     {
-        return $this->prependDateTimeClassNames([
+        return self::prependDateTimeClassNames([
             [Frequency::MONTHLY, '2014-03-16 04:00:00', '2014-03-16 04:00:00', '2014-07-16 04:00:00', false, [
                 '2014-04-16 04:00:00',
                 '2014-05-16 04:00:00',

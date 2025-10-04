@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test\Transformer;
+namespace Tests\Recurr\Transformer;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +14,7 @@ class TextTransformerTest extends TestCase
     private static array $languages = [];
 
     #[DataProvider('generateTests')]
-    public function testFormatting($lang, $rule, $expected): void
+    public function testFormatting(string $lang, string $rule, string $expected): void
     {
         // Sunday, March 16th is our reference start date
         $dateTime = new \DateTime('2014-03-16 04:00:00');
@@ -24,9 +24,6 @@ class TextTransformerTest extends TestCase
         $this->assertEquals(self::$languages[$lang][$expected], $transformer->transform($rule));
     }
 
-    /**
-     * @return mixed[]
-     */
     public static function generateTests(): array
     {
         $baseTests = [
@@ -301,9 +298,9 @@ class TextTransformerTest extends TestCase
         ];
 
         $tests = [];
-        foreach (glob(__DIR__.'/Translations/*.yml') as $file) {
+        foreach (glob(__DIR__.'/Translations/*.yml') ?: [] as $file) {
             $lang = basename($file, '.yml');
-            self::$languages[$lang] = Yaml::parse(file_get_contents($file));
+            self::$languages[$lang] = Yaml::parse(file_get_contents($file) ?: '');
             $tests = array_merge($tests, array_map(function (array $test) use ($lang): array {
                 array_unshift($test, $lang);
 

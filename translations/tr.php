@@ -84,11 +84,9 @@ return [
                 $suffix = ' sonuna kadar';
             }
 
-            if (($number % 100) >= 11 && ($number % 100) <= 13) {
-                $abbreviation = $number.'th';
-            } else {
-                $abbreviation = $number.$ends[$number % 10];
-            }
+            $abbreviation = $number % 100 >= 11 && $number % 100 <= 13
+                ? $number.'th'
+                : $number.$ends[$number % 10];
         }
 
         if (!empty($params['has_negatives'])) {

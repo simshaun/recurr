@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,25 +9,35 @@
 
 namespace Recurr;
 
-use Doctrine\Common\Collections\ArrayCollection as BaseCollection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @author  Shaun Simmons <gh@simshaun.com>
+ * Collection of Recurrence objects with chainable date filtering methods.
  *
- * @template T
+ * Extends Doctrine's ArrayCollection to provide convenient methods for filtering
+ * recurrences by their start and end dates. All filter methods return a new
+ * RecurrenceCollection, allowing method chaining.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
+ *
+ * @extends ArrayCollection<int, Recurrence>
  */
-class RecurrenceCollection extends BaseCollection
+class RecurrenceCollection extends ArrayCollection
 {
     /**
-     * @param bool $inc include $after or $before if they happen to be a recurrence
+     * Filter recurrences with start dates between two dates.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $after Start of date range
+     * @param \DateTime|\DateTimeImmutable $before End of date range
+     * @param bool $inc Include recurrences that start exactly on $after or $before (default: false)
      */
-    public function startsBetween(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
-    {
+    public function startsBetween(
+        \DateTime|\DateTimeImmutable $after,
+        \DateTime|\DateTimeImmutable $before,
+        bool $inc = false,
+    ): RecurrenceCollection {
         return $this->filter(
-            function ($recurrence) use ($after, $before, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($after, $before, $inc): bool {
                 $start = $recurrence->getStart();
 
                 if ($inc) {
@@ -40,15 +50,15 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param bool $inc include $before if it is a recurrence
+     * Filter recurrences with start dates before a specific date.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $before Cutoff date
+     * @param bool $inc Include recurrences that start exactly on $before (default: false)
      */
-    public function startsBefore(\DateTimeInterface $before, $inc = false)
+    public function startsBefore(\DateTime|\DateTimeImmutable $before, bool $inc = false): RecurrenceCollection
     {
         return $this->filter(
-            function ($recurrence) use ($before, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($before, $inc): bool {
                 $start = $recurrence->getStart();
 
                 if ($inc) {
@@ -61,15 +71,15 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param bool $inc include $after if it a recurrence
+     * Filter recurrences with start dates after a specific date.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $after Cutoff date
+     * @param bool $inc Include recurrences that start exactly on $after (default: false)
      */
-    public function startsAfter(\DateTimeInterface $after, $inc = false)
+    public function startsAfter(\DateTime|\DateTimeImmutable $after, bool $inc = false): RecurrenceCollection
     {
         return $this->filter(
-            function ($recurrence) use ($after, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($after, $inc): bool {
                 $start = $recurrence->getStart();
 
                 if ($inc) {
@@ -82,15 +92,19 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param bool $inc include $after or $before if they happen to be a recurrence
+     * Filter recurrences with end dates between two dates.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $after Start of date range
+     * @param \DateTime|\DateTimeImmutable $before End of date range
+     * @param bool $inc Include recurrences that end exactly on $after or $before (default: false)
      */
-    public function endsBetween(\DateTimeInterface $after, \DateTimeInterface $before, $inc = false)
-    {
+    public function endsBetween(
+        \DateTime|\DateTimeImmutable $after,
+        \DateTime|\DateTimeImmutable $before,
+        bool $inc = false,
+    ): RecurrenceCollection {
         return $this->filter(
-            function ($recurrence) use ($after, $before, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($after, $before, $inc): bool {
                 $end = $recurrence->getEnd();
 
                 if ($inc) {
@@ -103,15 +117,15 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param bool $inc include $before if it is a recurrence
+     * Filter recurrences with end dates before a specific date.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $before Cutoff date
+     * @param bool $inc Include recurrences that end exactly on $before (default: false)
      */
-    public function endsBefore(\DateTimeInterface $before, $inc = false)
+    public function endsBefore(\DateTime|\DateTimeImmutable $before, bool $inc = false): RecurrenceCollection
     {
         return $this->filter(
-            function ($recurrence) use ($before, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($before, $inc): bool {
                 $end = $recurrence->getEnd();
 
                 if ($inc) {
@@ -124,15 +138,15 @@ class RecurrenceCollection extends BaseCollection
     }
 
     /**
-     * @param bool $inc include $after if it a recurrence
+     * Filter recurrences with end dates after a specific date.
      *
-     * @return RecurrenceCollection<T>
+     * @param \DateTime|\DateTimeImmutable $after Cutoff date
+     * @param bool $inc Include recurrences that end exactly on $after (default: false)
      */
-    public function endsAfter(\DateTimeInterface $after, $inc = false)
+    public function endsAfter(\DateTime|\DateTimeImmutable $after, bool $inc = false): RecurrenceCollection
     {
         return $this->filter(
-            function ($recurrence) use ($after, $inc): bool {
-                /** @var Recurrence $recurrence */
+            function (Recurrence $recurrence) use ($after, $inc): bool {
                 $end = $recurrence->getEnd();
 
                 if ($inc) {

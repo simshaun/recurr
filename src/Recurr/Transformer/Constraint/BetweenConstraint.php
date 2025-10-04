@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,12 +13,16 @@ use Recurr\Transformer\Constraint;
 
 class BetweenConstraint extends Constraint
 {
-    protected $stopsTransformer = false;
+    protected bool $stopsTransformer = false;
 
     /**
-     * @param bool $inc include date if it equals $after or $before
+     * @param bool $inc If comparison should be inclusive. (Include date if it equals $before or $after)
      */
-    public function __construct(protected \DateTimeInterface $after, protected \DateTimeInterface $before, protected $inc = false) {}
+    public function __construct(
+        protected \DateTimeInterface $after,
+        protected \DateTimeInterface $before,
+        protected bool $inc = false,
+    ) {}
 
     /**
      * Passes if $date is between $after and $before
@@ -49,9 +53,14 @@ class BetweenConstraint extends Constraint
     }
 
     /**
-     * @return bool
+     * @deprecated Since v6. Use isInclusive()
      */
-    public function isInc()
+    public function isInc(): bool
+    {
+        return $this->isInclusive();
+    }
+
+    public function isInclusive(): bool
     {
         return $this->inc;
     }

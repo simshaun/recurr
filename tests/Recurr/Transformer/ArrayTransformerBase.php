@@ -1,16 +1,15 @@
 <?php
 
-namespace Recurr\Test\Transformer;
+namespace Tests\Recurr\Transformer;
 
 use PHPUnit\Framework\TestCase;
 use Recurr\Transformer\ArrayTransformer;
 
 class ArrayTransformerBase extends TestCase
 {
-    /** @var ArrayTransformer */
-    protected $transformer;
+    protected ArrayTransformer $transformer;
 
-    protected $timezone = 'America/New_York';
+    protected string $timezone = 'America/New_York';
 
     public function setUp(): void
     {

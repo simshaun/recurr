@@ -32,11 +32,9 @@ return [
 
         $ends = ['garren', 'go', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren', 'garren'];
 
-        if (($number % 100) >= 11 && ($number % 100) <= 13) {
-            $abbreviation = $number.'garren';
-        } else {
-            $abbreviation = $number.$ends[$number % 10];
-        }
+        $abbreviation = $number % 100 >= 11 && $number % 100 <= 13
+            ? $number.'garren'
+            : $number.$ends[$number % 10];
 
         return $abbreviation;
     },

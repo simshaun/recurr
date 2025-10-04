@@ -1,6 +1,6 @@
 <?php
 
-namespace Recurr\Test;
+namespace Tests\Recurr;
 
 use PHPUnit\Framework\TestCase;
 use Recurr\Recurrence;
@@ -8,8 +8,7 @@ use Recurr\RecurrenceCollection;
 
 class RecurrenceCollectionTest extends TestCase
 {
-    /** @var RecurrenceCollection */
-    protected $collection;
+    protected RecurrenceCollection $collection;
 
     public function setUp(): void
     {

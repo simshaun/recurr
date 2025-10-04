@@ -14,16 +14,23 @@
 namespace Recurr;
 
 /**
- * Class Time is a storage container for a time of day.
+ * Represents a time of day (hour, minute, second) without date context.
  *
- * @author  Shaun Simmons <gh@simshaun.com>
+ * Used during RRULE transformation to generate all time combinations for a given day based on
+ * BYHOUR, BYMINUTE, and BYSECOND rule parts.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class Time
 {
     /**
-     * @param int $hour
-     * @param int $minute
-     * @param int $second
+     * @param int $hour Hour in 24-hour format (0-23)
+     * @param int $minute Minute (0-59)
+     * @param int $second Second (0-59)
      */
-    public function __construct(public $hour, public $minute, public $second) {}
+    public function __construct(
+        public int $hour,
+        public int $minute,
+        public int $second,
+    ) {}
 }
