@@ -1300,6 +1300,9 @@ class Rule
         );
     }
 
+    /**
+     * @return int[]|null
+     */
     private function parseCommaSeparatedInts(mixed $value): ?array
     {
         if (!(\is_string($value) || \is_numeric($value))) {
