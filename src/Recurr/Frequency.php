@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2014 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,12 +14,13 @@
 
 namespace Recurr;
 
-class Frequency {
-    const YEARLY   = 0;
-    const MONTHLY  = 1;
-    const WEEKLY   = 2;
-    const DAILY    = 3;
-    const HOURLY   = 4;
-    const MINUTELY = 5;
-    const SECONDLY = 6;
+class Frequency
+{
+    public const int YEARLY = 0;
+    public const int MONTHLY = 1;
+    public const int WEEKLY = 2;
+    public const int DAILY = 3;
+    public const int HOURLY = 4;
+    public const int MINUTELY = 5;
+    public const int SECONDLY = 6;
 }

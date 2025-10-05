@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,12 +16,15 @@ namespace Recurr;
 use Recurr\Exception\InvalidWeekday;
 
 /**
- * Class Weekday is a storage container for a day of the week.
+ * Represents a day of the week, optionally with positional modifier for BYDAY rule part.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * Can represent either a simple weekday (MO, TU) or a positional weekday (1MO, -1FR).
+ * Positional weekdays are used with MONTHLY and YEARLY frequencies to specify occurrences
+ * like "first Monday" (1MO) or "last Friday" (-1FR).
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
-class Weekday
+class Weekday implements \Stringable
 {
     /**
      * Weekday number.
@@ -33,40 +36,37 @@ class Weekday
      * 4 = Thursday
      * 5 = Friday
      * 6 = Saturday
-     *
-     * @var string
      */
-    public $weekday;
-
-    /** @var int nth occurrence of the weekday */
-    public $num;
-
-    protected $days = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+    public int $weekday;
 
     /**
-     * @param int|string $weekday 0-6 or MO..SU
-     * @param null|int   $num
+     * @var string[] Two-letter weekday codes indexed by weekday number (0-6)
+     */
+    protected static array $days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+
+    /**
+     * @param int|string $weekday Weekday as integer (0-6) or two-letter code (MO, TU, WE, TH, FR, SA, SU)
+     * @param int|null $num Position modifier for MONTHLY/YEARLY frequencies (e.g., 1 = first, -1 = last, null = any)
      *
      * @throws InvalidWeekday
      */
-    public function __construct($weekday, $num)
+    public function __construct(int|string $weekday, public ?int $num)
     {
         if (is_numeric($weekday) && $weekday > 6 || $weekday < 0) {
             throw new InvalidWeekday('Day is not a valid weekday (0-6)');
-        } elseif (!is_numeric($weekday) && !in_array($weekday, $this->days)) {
+        } elseif (!is_numeric($weekday) && !in_array($weekday, static::$days)) {
             throw new InvalidWeekday('Day is not a valid weekday (SU, MO, ...)');
         }
 
         if (!is_numeric($weekday)) {
-            $weekday = array_search($weekday, $this->days);
+            $weekday = array_search($weekday, static::$days);
         }
 
-        $this->weekday = $weekday;
-        $this->num = $num;
+        $this->weekday = (int) $weekday;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->num . $this->days[$this->weekday];
+        return $this->num.static::$days[$this->weekday];
     }
 }

@@ -1,41 +1,49 @@
 name: tests
 
 permissions:
-  contents: read
+    contents: read
 
 on:
-  push:
-  pull_request:
-  schedule:
-    - cron: '0 0 15 * *'
+    push:
+    pull_request:
+    schedule:
+        -   cron: '0 0 15 * *'
 
 jobs:
-  test:
+    phpstan:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: php-actions/composer@v6
 
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        php: [7.2, 7.3, 7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
+            -   name: PHPStan Static Analysis
+                uses: php-actions/phpstan@v3
+                with:
+                    configuration: phpstan.neon
 
-    name: php v${{ matrix.php }}
+    test:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [8.4]
+        name: php v${{ matrix.php }}
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo
+                    tools: composer:v2
+                    coverage: pcov
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo
-          tools: composer:v2
-          coverage: pcov
+            -   name: Install dependencies
+                run: composer install --no-interaction --no-progress
 
-      - name: Install dependencies
-        run: composer install --no-interaction --no-progress
-
-      - name: Execute tests
-        run: composer test
+            -   name: Execute tests
+                run: composer test
 

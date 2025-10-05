@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,33 +14,23 @@
 namespace Recurr;
 
 /**
- * Class DaySet is a container for a set and its meta.
+ * Represents a set of day-of-year values for a given time period (day, week, month, or year).
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * Used during RRULE transformation to determine which days in a period should be evaluated
+ * for potential occurrences based on the rule's frequency.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class DaySet
 {
-    /** @var array */
-    public $set;
-
-    /** @var int Day of year */
-    public $start;
-
-    /** @var int Day of year */
-    public $end;
-
     /**
-     * Constructor
-     *
-     * @param array $set   Set of days
-     * @param int   $start Day of year of start day
-     * @param int   $end   Day of year of end day
+     * @param int[] $set Array of day-of-year indices (0-365) representing each day in the period
+     * @param int $start Day-of-year index where the period starts
+     * @param int $end Day-of-year index where the period ends
      */
-    public function __construct($set, $start, $end)
-    {
-        $this->set   = $set;
-        $this->start = $start;
-        $this->end   = $end;
-    }
+    public function __construct(
+        public array $set,
+        public int $start,
+        public int $end,
+    ) {}
 }
