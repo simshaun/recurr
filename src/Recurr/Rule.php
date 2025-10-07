@@ -253,6 +253,37 @@ class Rule
     }
 
     /**
+     * Create a Rule object based on natural language text.
+     *
+     * @param string $text Natural language description like "every day for 3 times"
+     * @param \DateTime|\DateTimeImmutable|string|null $startDate Start date for the recurrence
+     * @param \DateTime|\DateTimeImmutable|string|null $endDate End date for the recurrence
+     * @param string|null $timezone Timezone identifier
+     *
+     * @return self
+     *
+     * @throws InvalidRRule If the text cannot be parsed
+     */
+    public static function createFromText(
+        string $text,
+        \DateTime|\DateTimeImmutable|string|null $startDate = null,
+        \DateTime|\DateTimeImmutable|string|null $endDate = null,
+        ?string $timezone = null,
+    ): self {
+        $parser = new TextParser();
+        $options = $parser->parseText($text);
+        
+        if ($options === null) {
+            throw new InvalidRRule('Unable to parse text: ' . $text);
+        }
+        
+        return new self($options, $startDate, $endDate, $timezone);
+    }
+
+    /**
+     * Populate the object based on a RRULE string.
+     *
+     * @param string $rrule RRULE string
      * Populate the model from a RRULE string.
      *
      * @throws InvalidRRule
