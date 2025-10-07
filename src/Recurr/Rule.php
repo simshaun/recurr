@@ -285,7 +285,7 @@ class Rule
             $pieces = explode(':', $rrule);
 
             if (count($pieces) !== 2) {
-                throw new InvalidRRule('DSTART is not valid');
+                throw new InvalidRRule('DTSTART is not valid');
             }
 
             return ['DTSTART' => $pieces[1]];
@@ -434,7 +434,7 @@ class Rule
     }
 
     /**
-     * Conver the model to an RRULE string.
+     * Convert the model to an RRULE string.
      */
     public function getString(string $timezoneType = self::TZ_FLOAT): string
     {
