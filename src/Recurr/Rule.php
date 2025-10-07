@@ -270,8 +270,6 @@ class Rule
         \DateTime|\DateTimeImmutable|string|null $endDate = null,
         ?string $timezone = null,
     ): self {
-        require_once __DIR__ . '/TextParser.php';
-        
         $parser = new TextParser();
         $options = $parser->parseText($text);
         
