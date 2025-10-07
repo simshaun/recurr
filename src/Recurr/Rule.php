@@ -255,16 +255,21 @@ class Rule
     /**
      * Create a Rule object based on natural language text.
      *
-     * @param string                    $text Natural language description like "every day for 3 times"
-     * @param string|\DateTimeInterface $startDate
-     * @param \DateTimeInterface|null   $endDate
-     * @param string                    $timezone
+     * @param string $text Natural language description like "every day for 3 times"
+     * @param \DateTime|\DateTimeImmutable|string|null $startDate Start date for the recurrence
+     * @param \DateTime|\DateTimeImmutable|string|null $endDate End date for the recurrence
+     * @param string|null $timezone Timezone identifier
      *
-     * @return Rule
-     * @throws InvalidRRule
+     * @return self
+     *
+     * @throws InvalidRRule If the text cannot be parsed
      */
-    public static function createFromText($text, $startDate = null, $endDate = null, $timezone = null)
-    {
+    public static function createFromText(
+        string $text,
+        \DateTime|\DateTimeImmutable|string|null $startDate = null,
+        \DateTime|\DateTimeImmutable|string|null $endDate = null,
+        ?string $timezone = null,
+    ): self {
         require_once __DIR__ . '/TextParser.php';
         
         $parser = new TextParser();
@@ -274,9 +279,7 @@ class Rule
             throw new InvalidRRule('Unable to parse text: ' . $text);
         }
         
-        $rule = new self($options, $startDate, $endDate, $timezone);
-
-        return $rule;
+        return new self($options, $startDate, $endDate, $timezone);
     }
 
     /**
