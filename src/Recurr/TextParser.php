@@ -1,19 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * Copyright 2025 Shaun Simmons
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * Based on rrule.js text parsing functionality
+ * Copyright 2010, Jakub Roztocil and Lars Schoning
+ * https://github.com/jkbr/rrule/blob/master/LICENCE
+ */
+
 namespace Recurr;
 
 use Recurr\Exception\InvalidArgument;
 
 /**
- * TextParser - Parses natural language text into Rule options
- * 
- * Based on the rrule.js text parsing functionality
+ * Parses natural language text into Rule options.
+ *
+ * Based on the rrule.js text parsing functionality.
  * Supports phrases like:
  * - "every day"
- * - "every 2 weeks" 
+ * - "every 2 weeks"
  * - "every day for 3 times"
  * - "every Monday"
  * - "every month on the 15th"
+ *
+ * @author Fabiano Lothor <fabiano.lothor@gmail.com>
  */
 class TextParser
 {
@@ -44,9 +59,10 @@ class TextParser
     }
     
     /**
-     * Parse natural language text into Rule options array
-     * 
+     * Parse natural language text into Rule options array.
+     *
      * @param string $text Natural language text describing recurrence
+     *
      * @return array<string, mixed>|null Options array suitable for Rule constructor
      */
     public function parseText(string $text): ?array
@@ -69,6 +85,9 @@ class TextParser
         }
     }
     
+    /**
+     * Initialize the token patterns for text parsing.
+     */
     private function initializeTokens(): void
     {
         $this->tokens = [
@@ -115,6 +134,11 @@ class TextParser
         ];
     }
     
+    /**
+     * Move to the next symbol in the text.
+     *
+     * @return bool True if a symbol was found, false if parsing is complete
+     */
     private function nextSymbol(): bool
     {
         $this->symbol = null;
@@ -158,8 +182,11 @@ class TextParser
     }
     
     /**
-     * @param string $name
-     * @return array<string>|false
+     * Accept a specific symbol if it matches the current symbol.
+     *
+     * @param string $name Symbol name to match
+     *
+     * @return array<string>|false Matched symbol data or false if no match
      */
     private function accept(string $name): array|false
     {
@@ -172,8 +199,13 @@ class TextParser
     }
     
     /**
-     * @param string $name
-     * @return bool
+     * Expect a specific symbol and throw exception if not found.
+     *
+     * @param string $name Symbol name to expect
+     *
+     * @return bool Always returns true if symbol is found
+     *
+     * @throws InvalidArgument If expected symbol is not found
      */
     private function expect(string $name): bool
     {
@@ -184,18 +216,32 @@ class TextParser
     }
     
     /**
-     * @return array<string>|false
+     * Accept a number symbol.
+     *
+     * @return array<string>|false Number data or false if current symbol is not a number
      */
     private function acceptNumber(): array|false
     {
         return $this->accept('number');
     }
     
+    /**
+     * Check if parsing is complete.
+     *
+     * @return bool True if parsing is done
+     */
     private function isDone(): bool
     {
         return $this->done && $this->symbol === null;
     }
     
+    /**
+     * Parse a complete recurrence statement.
+     *
+     * Handles patterns like "every [n] frequency [for count times]".
+     *
+     * @throws InvalidArgument If statement cannot be parsed
+     */
     private function parseStatement(): void
     {
         // every [n]
