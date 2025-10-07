@@ -54,7 +54,7 @@ return [
     'every %count% months' => 'hver %count% måned',
     'every month' => 'månedsvis',
     'every %count% weeks' => 'hver %count% uge',
-    'every week' => 'ugenligt',
+    'every week' => 'ugentligt',
     'every %count% days' => 'hver %count% dag',
     'every day' => 'dagligt',
     'last' => 'sidste', // e.g. 2nd last Friday
