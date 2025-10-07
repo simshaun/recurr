@@ -193,7 +193,7 @@ class TextParser
         if ($this->symbol === $name) {
             $value = $this->value;
             $this->nextSymbol();
-            return $value;
+            return $value ?? false;
         }
         return false;
     }
@@ -309,7 +309,9 @@ class TextParser
                     'saturday' => 'SA',
                     'sunday' => 'SU'
                 ];
-                $this->options['BYDAY'] = $dayMap[$this->symbol];
+                if ($this->symbol !== null && isset($dayMap[$this->symbol])) {
+                    $this->options['BYDAY'] = $dayMap[$this->symbol];
+                }
                 $this->nextSymbol();
                 break;
                 
@@ -331,7 +333,9 @@ class TextParser
                     'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
                     'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
                 ];
-                $this->options['BYMONTH'] = $monthMap[$this->symbol];
+                if ($this->symbol !== null && isset($monthMap[$this->symbol])) {
+                    $this->options['BYMONTH'] = $monthMap[$this->symbol];
+                }
                 $this->nextSymbol();
                 break;
                 
