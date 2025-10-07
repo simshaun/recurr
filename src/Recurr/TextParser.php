@@ -49,7 +49,7 @@ class TextParser
     private bool $done = true;
     
     /**
-     * @var array<string, mixed>
+     * @var array<string, string>
      */
     private array $options = [];
     
@@ -63,7 +63,7 @@ class TextParser
      *
      * @param string $text Natural language text describing recurrence
      *
-     * @return array<string, mixed>|null Options array suitable for Rule constructor
+     * @return array<string, string>|null Options array suitable for Rule constructor
      */
     public function parseText(string $text): ?array
     {
@@ -248,7 +248,7 @@ class TextParser
         $this->expect('every');
         $n = $this->acceptNumber();
         if ($n) {
-            $this->options['INTERVAL'] = intval($n[0]);
+            $this->options['INTERVAL'] = (string) intval($n[0]);
         }
         
         if ($this->isDone()) {
@@ -334,7 +334,7 @@ class TextParser
                     'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
                 ];
                 if ($this->symbol !== null && isset($monthMap[$this->symbol])) {
-                    $this->options['BYMONTH'] = $monthMap[$this->symbol];
+                    $this->options['BYMONTH'] = (string) $monthMap[$this->symbol];
                 }
                 $this->nextSymbol();
                 break;
@@ -348,7 +348,7 @@ class TextParser
             $this->nextSymbol();
             $count = $this->acceptNumber();
             if ($count) {
-                $this->options['COUNT'] = intval($count[0]);
+                $this->options['COUNT'] = (string) intval($count[0]);
                 $this->accept('times'); // optional "times" after number
             }
         } elseif ($this->symbol === 'until') {
