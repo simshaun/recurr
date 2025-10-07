@@ -17,12 +17,26 @@ use Recurr\Exception\InvalidArgument;
  */
 class TextParser
 {
-    private $tokens = [];
-    private $text = '';
-    private $symbol = null;
-    private $value = null;
-    private $done = true;
-    private $options = [];
+    /**
+     * @var array<string, string>
+     */
+    private array $tokens = [];
+    
+    private string $text = '';
+    
+    private ?string $symbol = null;
+    
+    /**
+     * @var array<string>|null
+     */
+    private ?array $value = null;
+    
+    private bool $done = true;
+    
+    /**
+     * @var array<string, mixed>
+     */
+    private array $options = [];
     
     public function __construct()
     {
@@ -33,9 +47,9 @@ class TextParser
      * Parse natural language text into Rule options array
      * 
      * @param string $text Natural language text describing recurrence
-     * @return array Options array suitable for Rule constructor
+     * @return array<string, mixed>|null Options array suitable for Rule constructor
      */
-    public function parseText($text)
+    public function parseText(string $text): ?array
     {
         $this->options = [];
         $this->text = strtolower(trim($text));
@@ -55,7 +69,7 @@ class TextParser
         }
     }
     
-    private function initializeTokens()
+    private function initializeTokens(): void
     {
         $this->tokens = [
             'SKIP' => '/^[ \r\n\t]+|^\.$/i',
@@ -101,7 +115,7 @@ class TextParser
         ];
     }
     
-    private function nextSymbol()
+    private function nextSymbol(): bool
     {
         $this->symbol = null;
         $this->value = null;
@@ -143,7 +157,11 @@ class TextParser
         return true;
     }
     
-    private function accept($name)
+    /**
+     * @param string $name
+     * @return array<string>|false
+     */
+    private function accept(string $name): array|false
     {
         if ($this->symbol === $name) {
             $value = $this->value;
@@ -153,7 +171,11 @@ class TextParser
         return false;
     }
     
-    private function expect($name)
+    /**
+     * @param string $name
+     * @return bool
+     */
+    private function expect(string $name): bool
     {
         if ($this->accept($name)) {
             return true;
@@ -161,17 +183,20 @@ class TextParser
         throw new InvalidArgument("Expected $name but found " . $this->symbol);
     }
     
-    private function acceptNumber()
+    /**
+     * @return array<string>|false
+     */
+    private function acceptNumber(): array|false
     {
         return $this->accept('number');
     }
     
-    private function isDone()
+    private function isDone(): bool
     {
         return $this->done && $this->symbol === null;
     }
     
-    private function parseStatement()
+    private function parseStatement(): void
     {
         // every [n]
         $this->expect('every');

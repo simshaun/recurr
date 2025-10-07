@@ -274,7 +274,7 @@ class Rule
             throw new InvalidRRule('Unable to parse text: ' . $text);
         }
         
-        $rule = new static($options, $startDate, $endDate, $timezone);
+        $rule = new self($options, $startDate, $endDate, $timezone);
 
         return $rule;
     }
