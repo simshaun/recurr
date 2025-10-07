@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'domenica',
     'lunedì',
     'martedì',
@@ -9,8 +9,8 @@ $days = array(
     'giovedì',
     'venerdì',
     'sabato',
-);
-$months = array(
+];
+$months = [
     'gennaio',
     'febbraio',
     'marzo',
@@ -23,20 +23,20 @@ $months = array(
     'ottobre',
     'novembre',
     'dicembre',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Non è possibile convertire questo rrule in testo.',
     'for %count% times' => 'per %count% volte',
     'for one time' => 'per una volta',
     '(~ approximate)' => '(~ approssimato)',
     'until %date%' => 'fino al %date%', // e.g. every year until July 4, 2014
-    'day_date' => function ($str, $params) use ($days, $months) { // outputs a day date, e.g. 4 luglio, 2014
-        return date('j ', $params['date']) . $months[date('n', $params['date']) - 1] . date(', Y', $params['date']);
-    },
-    'day_month' => function ($str, $params) use ($days, $months) { // outputs a day month, e.g. July 4
-        return $params['day'].' '.$months[$params['month'] - 1];
-    },
+    'day_date' => fn ($str, $params): string =>
+        // outputs a day date, e.g. 4 luglio, 2014
+        date('j ', $params['date']).$months[date('n', $params['date']) - 1].date(', Y', $params['date']),
+    'day_month' => fn ($str, $params): string =>
+        // outputs a day month, e.g. July 4
+        $params['day'].' '.$months[$params['month'] - 1],
     'day_names' => $days,
     'month_names' => $months,
     'and' => 'e',
@@ -72,7 +72,7 @@ return array(
     // if has_negatives is true in the params, it is good form to add 'day' after
     // each number, as in: 'every month on the 5th day or 2nd to the last day' or
     // it may be confusing like 'every month on the 5th or 2nd to the last day'
-    'ordinal_number' => function ($str, $params) {
+    'ordinal_number' => function ($str, $params): string {
         $number = $params['number'];
 
         $suffix = '';
@@ -102,7 +102,7 @@ return array(
             $abbreviation = 'undici ultimo';
         } elseif ($isNegative) {
             $number = abs($number);
-            $abbreviation = $number . ' ultimo';
+            $abbreviation = $number.' ultimo';
         } else {
             $abbreviation = $number;
         }
@@ -111,6 +111,6 @@ return array(
             $suffix .= ' giorno';
         }
 
-        return $abbreviation . $suffix;
+        return $abbreviation.$suffix;
     },
-);
+];

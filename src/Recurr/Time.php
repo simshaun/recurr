@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,26 +14,23 @@
 namespace Recurr;
 
 /**
- * Class Time is a storage container for a time of day.
+ * Represents a time of day (hour, minute, second) without date context.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * Used during RRULE transformation to generate all time combinations for a given day based on
+ * BYHOUR, BYMINUTE, and BYSECOND rule parts.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class Time
 {
-    /** @var int */
-    public $hour;
-
-    /** @var int */
-    public $minute;
-
-    /** @var int */
-    public $second;
-
-    public function __construct($hour, $minute, $second)
-    {
-        $this->hour   = $hour;
-        $this->minute = $minute;
-        $this->second = $second;
-    }
+    /**
+     * @param int $hour Hour in 24-hour format (0-23)
+     * @param int $minute Minute (0-59)
+     * @param int $second Second (0-59)
+     */
+    public function __construct(
+        public int $hour,
+        public int $minute,
+        public int $second,
+    ) {}
 }

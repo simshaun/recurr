@@ -4,20 +4,26 @@ namespace Recurr\Transformer;
 
 class Translator implements TranslatorInterface
 {
-    protected $data = array();
+    /**
+     * @var array<string, string|callable>
+     */
+    protected array $data = [];
 
-    public function __construct($locale = 'en', $fallbackLocale = 'en')
+    public function __construct(string $locale = 'en', string $fallbackLocale = 'en')
     {
-        $this->loadLocale($fallbackLocale);
-        if ($locale !== $fallbackLocale) {
-            $this->loadLocale($locale);
+        $lowercasedLocale = strtolower($locale);
+        $lowercasedFallbackLocale = strtolower($fallbackLocale);
+
+        $this->loadLocale($lowercasedFallbackLocale);
+        if ($lowercasedLocale !== $lowercasedFallbackLocale) {
+            $this->loadLocale($lowercasedLocale);
         }
     }
 
-    public function loadLocale($locale, $path = null)
+    public function loadLocale(string $locale, ?string $path = null): void
     {
         if (!$path) {
-            $path = __DIR__ . '/../../../translations/' . $locale . '.php';
+            $path = __DIR__.'/../../../translations/'.$locale.'.php';
         }
         if (!file_exists($path)) {
             throw new \InvalidArgumentException('Locale '.$locale.' could not be found in '.$path);
@@ -26,15 +32,17 @@ class Translator implements TranslatorInterface
         $this->data = array_merge($this->data, include $path);
     }
 
-    public function trans($string, array $params = array())
+    public function trans(string $string, array $params = []): string|array
     {
         $res = $this->data[$string];
-        if (is_object($res) && is_callable($res)) {
+        if (is_callable($res)) {
             $res = $res($string, $params);
         }
 
-        foreach ($params as $key => $val) {
-            $res = str_replace('%' . $key . '%', $val, $res);
+        if (\is_string($res)) {
+            foreach ($params as $key => $val) {
+                $res = str_replace('%'.$key.'%', (string) $val, $res);
+            }
         }
 
         return $res;

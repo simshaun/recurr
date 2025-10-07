@@ -1,7 +1,7 @@
 <?php
 
 // sunday first as date('w') is zero-based on sunday
-$days = array(
+$days = [
     'Κυριακή',
     'Δευτέρα',
     'Τρίτη',
@@ -9,8 +9,8 @@ $days = array(
     'Πέμπτη',
     'Παρασκευή',
     'Σάββατο',
-);
-$months = array(
+];
+$months = [
     'Ιανουάριος',
     'Φεβρουάριος',
     'Μάρτιος',
@@ -23,8 +23,8 @@ $months = array(
     'Οκτώβριος',
     'Νοέμβριος',
     'Δεκέμβριος',
-);
-$months_genitive = array(
+];
+$months_genitive = [
     'Ιανουαρίου',
     'Φεβρουαρίου',
     'Μαρτίου',
@@ -37,20 +37,20 @@ $months_genitive = array(
     'Οκτωβρίου',
     'Νοεμβρίου',
     'Δεκεμβρίου',
-);
+];
 
-return array(
+return [
     'Unable to fully convert this rrule to text.' => 'Αδυναμία πλήρους μετατροπής αυτού του κανόνα rrule σε κείμενο.',
     'for %count% times' => 'για %count% φορές',
     'for one time' => 'για μία φορά',
     '(~ approximate)' => '(~ κατά προσέγγιση)',
     'until %date%' => 'μέχρι %date%', // e.g. every year until July 4, 2014
-    'day_date' => function ($str, $params) use ($days, $months_genitive) { // outputs a day date, e.g. 4 Ιουλίου 2014
-        return date('j', $params['date']) . ' ' . $months_genitive[date('n', $params['date']) - 1] . ' '. date('Y', $params['date']);
-    },
-    'day_month' => function ($str, $params) use ($days, $months_genitive) { // outputs a day month, e.g. 4 Ιουλίου
-        return $params['day'] . ' ' . $months_genitive[$params['month'] - 1];
-    },
+    'day_date' => fn ($str, $params): string =>
+        // outputs a day date, e.g. 4 Ιουλίου 2014
+        date('j', $params['date']).' '.$months_genitive[date('n', $params['date']) - 1].' '.date('Y', $params['date']),
+    'day_month' => fn ($str, $params): string =>
+        // outputs a day month, e.g. 4 Ιουλίου
+        $params['day'].' '.$months_genitive[$params['month'] - 1],
     'day_names' => $days,
     'month_names' => $months,
     'and' => 'και',
@@ -82,7 +82,7 @@ return array(
     // if has_negatives is true in the params, it is good form to add 'day' after
     // each number, as in: 'every month on the 5th day or 2nd to the last day' or
     // it may be confusing like 'every month on the 5th or 2nd to the last day'
-    'ordinal_number' => function ($str, $params) {
+    'ordinal_number' => function ($str, $params): string {
         $number = $params['number'];
 
         $ends = 'η';
@@ -98,13 +98,13 @@ return array(
                 $suffix = ' μέχρι την τελευταία';
             }
 
-            $abbreviation = $number . $ends;
+            $abbreviation = $number.$ends;
         }
 
         if (!empty($params['has_negatives'])) {
             $suffix .= ' ημέρα';
         }
 
-        return $abbreviation . $suffix;
+        return $abbreviation.$suffix;
     },
-);
+];

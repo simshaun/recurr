@@ -101,7 +101,7 @@ print_r($transformer->transform($rule, $constraint));
     2014-06-01 startsBetween(2014-06-01, 2014-06-20) // false
     2014-06-01 startsBetween(2014-06-01, 2014-06-20, true) // true
 
-> Note: `RecurrenceCollection` extends the Doctrine project's [ArrayCollection](https://github.com/doctrine/collections/blob/master/lib/Doctrine/Common/Collections/ArrayCollection.php) class.
+> Note: `RecurrenceCollection` extends the Doctrine project's [ArrayCollection](https://github.com/doctrine/collections/blob/2.3.x/src/ArrayCollection.php) class.
 
 RRULE to Text
 --------------------------

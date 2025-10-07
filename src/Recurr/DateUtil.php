@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Shaun Simmons
+ * Copyright 2025 Shaun Simmons
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,24 +18,41 @@
 namespace Recurr;
 
 /**
- * Class DateUtil is responsible for providing utilities applicable to Rules.
+ * Utility class providing helper methods for RRULE transformation.
  *
- * @package Recurr
- * @author  Shaun Simmons <shaun@envysphere.com>
+ * Contains static methods for generating date/time masks, day sets, and performing
+ * calendar calculations needed during recurrence evaluation.
+ *
+ * @author Shaun Simmons <gh@simshaun.com>
  */
 class DateUtil
 {
-    public static $leapBug = null;
+    /**
+     * Day-of-year values for the end of each month in leap years (366 days).
+     *
+     * @var int[]
+     */
+    public static array $monthEndDoY366 = [
+        0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366,
+    ];
 
-    public static $monthEndDoY366 = array(
-        0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
-    );
+    /**
+     * Day-of-year values for the end of each month in non-leap years (365 days).
+     *
+     * @var int[]
+     */
+    public static array $monthEndDoY365 = [
+        0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365,
+    ];
 
-    public static $monthEndDoY365 = array(
-        0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
-    );
-
-    public static $wDayMask = array(
+    /**
+     * Repeating pattern of day-of-week values (0-6) for up to 373 days, 0=Monday, 6=Sunday.
+     *
+     * Used as a template that gets sliced based on the year's starting weekday.
+     *
+     * @var array<int, int>
+     */
+    public static array $wDayMask = [
         0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6,
         0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6,
         0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6,
@@ -55,39 +72,28 @@ class DateUtil
         0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6,
         0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6,
         0, 1, 2, 3, 4, 5, 6,
-    );
+    ];
 
-    /**
-     * Get an object containing info for a particular date
-     *
-     * @param \DateTimeInterface $dt
-     *
-     * @return DateInfo
-     */
-    public static function getDateInfo(\DateTimeInterface $dt)
+    public static function getDateInfo(\DateTime|\DateTimeImmutable $dt): DateInfo
     {
-        $i              = new DateInfo();
-        $i->dt          = $dt;
-        $i->dayOfWeek   = self::getDayOfWeek($dt);
-        $i->monthLength = $dt->format('t');
-        $i->yearLength  = self::getYearLength($dt);
+        $i = new DateInfo();
+        $i->dt = $dt;
+        $i->dayOfWeek = self::getDayOfWeek($dt);
+        $i->monthLength = (int) $dt->format('t');
+        $i->yearLength = self::getYearLength($dt);
 
-        $i->mMask       = self::getMonthMask($dt);
-        $i->mDayMask    = self::getMonthDaysMask($dt);
+        $i->mMask = self::getMonthMask($dt);
+        $i->mDayMask = self::getMonthDaysMask($dt);
         $i->mDayMaskNeg = self::getMonthDaysMask($dt, true);
 
-        if ($i->yearLength == 365) {
-            $i->mRanges = self::$monthEndDoY365;
-        } else {
-            $i->mRanges = self::$monthEndDoY366;
-        }
+        $i->mRanges = $i->yearLength == 365 ? self::$monthEndDoY365 : self::$monthEndDoY366;
 
         $tmpDt = clone $dt;
-        $tmpDt = $tmpDt->setDate($dt->format('Y') + 1, 1, 1);
+        $tmpDt = $tmpDt->setDate((int) $dt->format('Y') + 1, 1, 1);
         $i->nextYearLength = self::getYearLength($tmpDt);
 
         $tmpDt = clone $dt;
-        $tmpDt = $tmpDt->setDate($dt->format('Y'), 1, 1);
+        $tmpDt = $tmpDt->setDate((int) $dt->format('Y'), 1, 1);
         $i->dayOfWeekYearDay1 = self::getDayOfWeek($tmpDt);
 
         $i->wDayMask = array_slice(
@@ -98,160 +104,97 @@ class DateUtil
         return $i;
     }
 
-    /**
-     * Get an array of DOY (Day of Year) for each day in a particular week.
-     *
-     * @param \DateTimeInterface     $dt
-     * @param \DateTimeInterface     $start
-     * @param null|Rule              $rule
-     * @param null|DateInfo          $dtInfo
-     *
-     * @return DaySet
-     */
-    public static function getDaySetOfWeek(
-        \DateTimeInterface $dt,
-        \DateTimeInterface $start,
-        ?Rule $rule = null,
-        ?DateInfo $dtInfo = null
-    )
+    public static function getDaySet(Rule $rule, \DateTime|\DateTimeImmutable $dt, DateInfo $dtInfo): DaySet
     {
-        $start = clone $dt;
-        $start = $start->setDate($start->format('Y'), 1, 1);
+        return match ($rule->getFreq()) {
+            Frequency::SECONDLY, Frequency::MINUTELY, Frequency::HOURLY, Frequency::DAILY => self::getDaySetOfDay($dt),
+            Frequency::WEEKLY => self::getDaySetOfWeek($dt, $rule, $dtInfo),
+            Frequency::MONTHLY => self::getDaySetOfMonth($dt),
+            Frequency::YEARLY => self::getDaySetOfYear($dt),
+            default => throw new \RuntimeException('Invalid freq.'),
+        };
+    }
 
-        $diff  = $dt->diff($start);
-        $start = $diff->days;
+    public static function getDaySetOfYear(\DateTime|\DateTimeImmutable $dt): DaySet
+    {
+        $yearLen = self::getYearLength($dt);
+        $set = range(0, $yearLen - 1);
 
-        $set = array();
-        for ($i = $start, $k = 0; $k < 7; $k++) {
-            $set[] = $i;
-            ++$i;
+        return new DaySet(set: $set, start: 0, end: $yearLen);
+    }
 
-            if (null !== $dtInfo && null !== $rule && $dtInfo->wDayMask[$i] == $rule->getWeekStartAsNum()) {
+    public static function getDaySetOfMonth(\DateTime|\DateTimeImmutable $dt): DaySet
+    {
+        $dateInfo = self::getDateInfo($dt);
+        $monthNum = (int) $dt->format('n');
+
+        $start = $dateInfo->mRanges[$monthNum - 1];
+        $end = $dateInfo->mRanges[$monthNum];
+
+        $days = range(0, (int) $dt->format('t') - 1);
+        $set = range($start, $end - 1);
+        $set = array_combine($days, $set);
+
+        return new DaySet(set: $set, start: $start, end: $end - 1);
+    }
+
+    public static function getDaySetOfWeek(
+        \DateTime|\DateTimeImmutable $dt,
+        ?Rule $rule = null,
+        ?DateInfo $dtInfo = null,
+    ): DaySet {
+        $yearStart = clone $dt;
+        $yearStart = $yearStart->setDate((int) $yearStart->format('Y'), 1, 1);
+
+        $diff = $dt->diff($yearStart);
+        $startDayOfYear = (int) $diff->days;
+
+        $set = [];
+        for ($dayOfYear = $startDayOfYear, $k = 0; $k < 7; ++$k) {
+            $set[] = $dayOfYear;
+            ++$dayOfYear;
+
+            if ($dtInfo instanceof DateInfo && $rule instanceof Rule && $dtInfo->wDayMask[$dayOfYear] === $rule->getWeekStartAsNum()) {
                 break;
             }
         }
 
-        $obj = new DaySet($set, $start, $i);
-
-        return $obj;
+        return new DaySet(set: $set, start: $startDayOfYear, end: $dayOfYear);
     }
 
-    /**
-     * @param Rule               $rule
-     * @param \DateTimeInterface $dt
-     * @param DateInfo           $dtInfo
-     * @param \DateTimeInterface $start
-     *
-     * @return DaySet
-     */
-    public static function getDaySet(Rule $rule, \DateTimeInterface $dt, DateInfo $dtInfo, $start)
+    public static function getDaySetOfDay(\DateTime|\DateTimeImmutable $dt): DaySet
     {
-        switch ($rule->getFreq()) {
-            case Frequency::SECONDLY:
-                return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
-                break;
-            case Frequency::MINUTELY:
-                return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
-                break;
-            case Frequency::HOURLY:
-                return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
-                break;
-            case Frequency::DAILY:
-                return self::getDaySetOfDay($dt, $start, $rule, $dtInfo);
-                break;
-            case Frequency::WEEKLY:
-                return self::getDaySetOfWeek($dt, $start, $rule, $dtInfo);
-            case Frequency::MONTHLY:
-                return self::getDaySetOfMonth($dt, $start, $rule, $dtInfo);
-            case Frequency::YEARLY:
-                return self::getDaySetOfYear($dt, $start, $rule, $dtInfo);
-        }
+        $dayOfYear = (int) $dt->format('z');
 
-        throw new \RuntimeException('Invalid freq.');
-    }
-
-    /**
-     * Get an array of DOY (Day of Year) for each day in a particular year.
-     *
-     * @param \DateTimeInterface $dt The datetime
-     *
-     * @return DaySet
-     */
-    public static function getDaySetOfYear(\DateTimeInterface $dt)
-    {
-        $yearLen = self::getYearLength($dt);
-        $set     = range(0, $yearLen - 1);
-
-        return new DaySet($set, 0, $yearLen);
-    }
-
-    /**
-     * Get an array of DOY (Day of Year) for each day in a particular month.
-     *
-     * @param \DateTimeInterface $dt The datetime
-     *
-     * @return DaySet
-     */
-    public static function getDaySetOfMonth(\DateTimeInterface $dt)
-    {
-        $dateInfo = self::getDateInfo($dt);
-        $monthNum = $dt->format('n');
-
-        $start = $dateInfo->mRanges[$monthNum - 1];
-        $end   = $dateInfo->mRanges[$monthNum];
-
-        $days = range(0, $dt->format('t') - 1);
-        $set  = range($start, $end - 1);
-        $set  = array_combine($days, $set);
-        $obj  = new DaySet($set, $start, $end - 1);
-
-        return $obj;
-    }
-
-    /**
-     * Get an array of DOY (Day of Year) for each day in a particular month.
-     *
-     * @param \DateTimeInterface $dt The datetime
-     *
-     * @return DaySet
-     */
-    public static function getDaySetOfDay(\DateTimeInterface $dt)
-    {
-        $dayOfYear = $dt->format('z');
-
-        if (self::isLeapYearDate($dt) && self::hasLeapYearBug() && $dt->format('nj') > 229) {
-            $dayOfYear -= 1;
+        if (self::isLeapYearDate($dt) && self::hasLeapYearBug() && (int) $dt->format('nj') > 229) {
+            --$dayOfYear;
         }
 
         $start = $dayOfYear;
-        $end   = $dayOfYear;
+        $end = $dayOfYear;
 
         $set = range($start, $end);
-        $obj = new DaySet($set, $start, $end + 1);
 
-        return $obj;
+        return new DaySet(set: $set, start: $start, end: $end + 1);
     }
 
     /**
-     * @param Rule               $rule
-     * @param \DateTimeInterface $dt
-     *
-     * @return array
+     * @return Time[]
      */
-    public static function getTimeSetOfHour(Rule $rule, \DateTimeInterface $dt)
+    public static function getTimeSetOfHour(Rule $rule, \DateTime|\DateTimeImmutable $dt): array
     {
-        $set = array();
+        $set = [];
 
-        $hour     = $dt->format('G');
+        $hour = (int) $dt->format('G');
         $byMinute = $rule->getByMinute();
         $bySecond = $rule->getBySecond();
 
         if (empty($byMinute)) {
-            $byMinute = array($dt->format('i'));
+            $byMinute = [(int) $dt->format('i')];
         }
 
         if (empty($bySecond)) {
-            $bySecond = array($dt->format('s'));
+            $bySecond = [(int) $dt->format('s')];
         }
 
         foreach ($byMinute as $minute) {
@@ -264,21 +207,18 @@ class DateUtil
     }
 
     /**
-     * @param Rule               $rule
-     * @param \DateTimeInterface $dt
-     *
-     * @return array
+     * @return Time[]
      */
-    public static function getTimeSetOfMinute(Rule $rule, \DateTimeInterface $dt)
+    public static function getTimeSetOfMinute(Rule $rule, \DateTime|\DateTimeImmutable $dt): array
     {
-        $set = array();
+        $set = [];
 
-        $hour     = $dt->format('G');
-        $minute   = $dt->format('i');
+        $hour = (int) $dt->format('G');
+        $minute = (int) $dt->format('i');
         $bySecond = $rule->getBySecond();
 
         if (empty($bySecond)) {
-            $bySecond = array($dt->format('s'));
+            $bySecond = [(int) $dt->format('s')];
         }
 
         foreach ($bySecond as $second) {
@@ -289,43 +229,38 @@ class DateUtil
     }
 
     /**
-     * @param \DateTimeInterface $dt
-     *
-     * @return array
+     * @return Time[]
      */
-    public static function getTimeSetOfSecond(\DateTimeInterface $dt)
+    public static function getTimeSetOfSecond(\DateTime|\DateTimeImmutable $dt): array
     {
-        return array(new Time($dt->format('G'), $dt->format('i'), $dt->format('s')));
+        return [new Time((int) $dt->format('G'), (int) $dt->format('i'), (int) $dt->format('s'))];
     }
 
     /**
-     * @param Rule               $rule
-     * @param \DateTimeInterface $dt
-     *
-     * @return array
+     * @return Time[]
      */
-    public static function getTimeSet(Rule $rule, \DateTimeInterface $dt)
+    public static function getTimeSet(Rule $rule, \DateTime|\DateTimeImmutable $dt): array
     {
-        $set = array();
+        $set = [];
 
-        if (null === $rule || $rule->getFreq() >= Frequency::HOURLY) {
+        if ($rule->getFreq() >= Frequency::HOURLY) {
             return $set;
         }
 
-        $byHour   = $rule->getByHour();
+        $byHour = $rule->getByHour();
         $byMinute = $rule->getByMinute();
         $bySecond = $rule->getBySecond();
 
         if (empty($byHour)) {
-            $byHour = array($dt->format('G'));
+            $byHour = [(int) $dt->format('G')];
         }
 
         if (empty($byMinute)) {
-            $byMinute = array($dt->format('i'));
+            $byMinute = [(int) $dt->format('i')];
         }
 
         if (empty($bySecond)) {
-            $bySecond = array($dt->format('s'));
+            $bySecond = [(int) $dt->format('s')];
         }
 
         foreach ($byHour as $hour) {
@@ -340,14 +275,13 @@ class DateUtil
     }
 
     /**
-     * Get a reference array with the day number for each day of each month.
+     * Generate a lookup array mapping day-of-year index to day-of-month.
      *
-     * @param \DateTimeInterface $dt The datetime
-     * @param bool               $negative
+     * @param bool $negative If true, returns negative day-of-month values (-31 to -1)
      *
-     * @return array
+     * @return array<int, int> Day-of-month values (1-31 or -31 to -1) indexed by day-of-year
      */
-    public static function getMonthDaysMask(\DateTimeInterface $dt, $negative = false)
+    public static function getMonthDaysMask(\DateTime|\DateTimeImmutable $dt, bool $negative = false): array
     {
         if ($negative) {
             $m29 = range(-29, -1);
@@ -372,27 +306,28 @@ class DateUtil
             $m31, // Oct (31)
             $m30, // Nov (30)
             $m31, // Dec (31)
-            array_slice(
-                $m31,
-                0,
-                7
-            )
+            array_slice($m31, 0, 7)
         );
 
         if (self::isLeapYearDate($dt)) {
             return $mask;
-        } else {
-            if ($negative) {
-                $mask = array_merge(array_slice($mask, 0, 31), array_slice($mask, 32));
-            } else {
-                $mask = array_merge(array_slice($mask, 0, 59), array_slice($mask, 60));
-            }
-
-            return $mask;
         }
+
+        if ($negative) {
+            $mask = array_merge(array_slice($mask, 0, 31), array_slice($mask, 32));
+        } else {
+            $mask = array_merge(array_slice($mask, 0, 59), array_slice($mask, 60));
+        }
+
+        return $mask;
     }
 
-    public static function getMonthMask(\DateTimeInterface $dt)
+    /**
+     * Generate a lookup array mapping day-of-year index to month number.
+     *
+     * @return array<int, int> Month numbers (1-12) indexed by day-of-year
+     */
+    public static function getMonthMask(\DateTime|\DateTimeImmutable $dt): array
     {
         if (self::isLeapYearDate($dt)) {
             return array_merge(
@@ -429,18 +364,24 @@ class DateUtil
         }
     }
 
-    public static function getDateTimeByDayOfYear($dayOfYear, $year, \DateTimeZone $timezone)
-    {
+    public static function getDateTimeByDayOfYear(
+        int $dayOfYear,
+        int $year,
+        \DateTimeZone $timezone,
+    ): \DateTime {
         $dtTmp = new \DateTime('now', $timezone);
         $dtTmp = $dtTmp->setDate($year, 1, 1);
-        $dtTmp = $dtTmp->modify("+$dayOfYear day");
 
-        return $dtTmp;
+        return $dtTmp->modify("+$dayOfYear day");
     }
 
-    public static function hasLeapYearBug()
+    public static function hasLeapYearBug(): bool
     {
         $leapBugTest = \DateTime::createFromFormat('Y-m-d', '2016-03-21');
+        if ($leapBugTest === false) {
+            return false;
+        }
+
         return $leapBugTest->format('z') != '80';
     }
 
@@ -455,14 +396,14 @@ class DateUtil
      * correct modulo behavior, which is useful for certain applications such as
      * calculating an offset index in a circular list.
      *
-     * @param int $a The dividend.
-     * @param int $b The divisor.
+     * @param int $a the dividend
+     * @param int $b the divisor
      *
      * @return int $a % $b where the result is between 0 and $b
-     *   (either 0 <= x < $b
-     *     or $b < x <= 0, depending on the sign of $b).
+     *             (either 0 <= x < $b
+     *             or $b < x <= 0, depending on the sign of $b)
      */
-    public static function pymod($a, $b)
+    public static function pymod(int $a, int $b): int
     {
         $x = $a % $b;
 
@@ -470,30 +411,16 @@ class DateUtil
         return ($x * $b < 0) ? $x + $b : $x;
     }
 
-    /**
-     * Alias method to determine if a date falls within a leap year.
-     *
-     * @param \DateTimeInterface $dt
-     *
-     * @return bool
-     */
-    public static function isLeapYearDate(\DateTimeInterface $dt)
+    public static function isLeapYearDate(\DateTime|\DateTimeImmutable $dt): bool
     {
-        return $dt->format('L') ? true : false;
+        return (bool) $dt->format('L');
     }
 
-    /**
-     * Alias method to determine if a year is a leap year.
-     *
-     * @param int $year
-     *
-     * @return bool
-     */
-    public static function isLeapYear($year)
+    public static function isLeapYear(int $year): bool
     {
-        $isDivisBy4   = $year % 4 == 0 ? true : false;
-        $isDivisBy100 = $year % 100 == 0? true : false;
-        $isDivisBy400 = $year % 400 == 0 ? true : false;
+        $isDivisBy4 = $year % 4 == 0;
+        $isDivisBy100 = $year % 100 == 0;
+        $isDivisBy400 = $year % 400 == 0;
 
         // http://en.wikipedia.org/wiki/February_29
         if ($isDivisBy100 && !$isDivisBy400) {
@@ -504,21 +431,11 @@ class DateUtil
     }
 
     /**
-     * Method to determine the day of the week from MO-SU.
+     * Get the day of the week as a two-letter code (MO-SU).
      *
-     * MO = Monday
-     * TU = Tuesday
-     * WE = Wednesday
-     * TH = Thursday
-     * FR = Friday
-     * SA = Saturday
-     * SU = Sunday
-     *
-     * @param \DateTimeInterface $dt
-     *
-     * @return string
+     * @return string MO, TU, WE, TH, FR, SA, or SU
      */
-    public static function getDayOfWeekAsText(\DateTimeInterface $dt)
+    public static function getDayOfWeekAsText(\DateTime|\DateTimeImmutable $dt): string
     {
         $dayOfWeek = $dt->format('w') - 1;
 
@@ -526,29 +443,19 @@ class DateUtil
             $dayOfWeek = 6;
         }
 
-        $map = array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU');
+        $map = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
         return $map[$dayOfWeek];
     }
 
     /**
-     * Alias method to determine the day of the week from 0-6.
+     * Get the day of the week as an integer (0-6).
      *
-     * 0 = Monday
-     * 1 = Tuesday
-     * 2 = Wednesday
-     * 3 = Thursday
-     * 4 = Friday
-     * 5 = Saturday
-     * 6 = Sunday
-     *
-     * @param \DateTimeInterface $dt
-     *
-     * @return int
+     * @return int 0=Monday, 6=Sunday
      */
-    public static function getDayOfWeek(\DateTimeInterface $dt)
+    public static function getDayOfWeek(\DateTime|\DateTimeImmutable $dt): int
     {
-        $dayOfWeek = $dt->format('w') - 1;
+        $dayOfWeek = ((int) $dt->format('w')) - 1;
 
         if ($dayOfWeek < 0) {
             $dayOfWeek = 6;
@@ -558,13 +465,9 @@ class DateUtil
     }
 
     /**
-     * Get the number of days in a year.
-     *
-     * @param \DateTimeInterface $dt
-     *
-     * @return int
+     * Get the number of days in a year (365 or 366).
      */
-    public static function getYearLength(\DateTimeInterface $dt)
+    public static function getYearLength(\DateTime|\DateTimeImmutable $dt): int
     {
         return self::isLeapYearDate($dt) ? 366 : 365;
     }
