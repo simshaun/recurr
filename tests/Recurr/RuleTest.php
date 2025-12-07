@@ -456,6 +456,118 @@ class RuleTest extends TestCase
         $this->assertSame($expected, $this->rule->loadFromString($string)->repeatsIndefinitely());
     }
 
+    public function testCreateFromTextSimple(): void
+    {
+        $rule = Rule::createFromText('every day');
+        $this->assertEquals('DAILY', $rule->getFreqAsText());
+    }
+
+    public function testCreateFromTextWithInterval(): void
+    {
+        $rule = Rule::createFromText('every 2 weeks');
+        $this->assertEquals('WEEKLY', $rule->getFreqAsText());
+        $this->assertEquals(2, $rule->getInterval());
+    }
+
+    public function testCreateFromTextWithCount(): void
+    {
+        $rule = Rule::createFromText('every day for 3 times');
+        $this->assertEquals('DAILY', $rule->getFreqAsText());
+        $this->assertEquals(3, $rule->getCount());
+    }
+
+    public function testCreateFromTextWithWeekday(): void
+    {
+        $rule = Rule::createFromText('every monday');
+        $this->assertEquals('WEEKLY', $rule->getFreqAsText());
+        $this->assertEquals(['MO'], $rule->getByDay());
+    }
+
+    public function testCreateFromTextWithMonth(): void
+    {
+        $rule = Rule::createFromText('every january');
+        $this->assertEquals('YEARLY', $rule->getFreqAsText());
+        $this->assertEquals([1], $rule->getByMonth());
+    }
+
+    public function testCreateFromTextWeekdays(): void
+    {
+        $rule = Rule::createFromText('every weekday');
+        $this->assertEquals('WEEKLY', $rule->getFreqAsText());
+        $this->assertEquals(['MO', 'TU', 'WE', 'TH', 'FR'], $rule->getByDay());
+    }
+
+    public function testCreateFromTextWithStartDate(): void
+    {
+        $startDate = new \DateTime('2025-01-01');
+        $rule = Rule::createFromText('every day', $startDate);
+        $this->assertEquals('DAILY', $rule->getFreqAsText());
+        $this->assertEquals($startDate, $rule->getStartDate());
+    }
+
+    public function testCreateFromTextWithEndDate(): void
+    {
+        $startDate = new \DateTime('2025-01-01');
+        $endDate = new \DateTime('2025-12-31');
+        $rule = Rule::createFromText('every day', $startDate, $endDate);
+        $this->assertEquals('DAILY', $rule->getFreqAsText());
+        $this->assertEquals($endDate, $rule->getEndDate());
+    }
+
+    public function testCreateFromTextWithTimezone(): void
+    {
+        $rule = Rule::createFromText('every day', null, null, 'America/New_York');
+        $this->assertEquals('DAILY', $rule->getFreqAsText());
+        $this->assertEquals('America/New_York', $rule->getTimezone());
+    }
+
+    public function testCreateFromTextInvalid(): void
+    {
+        $this->expectException(InvalidRRule::class);
+        Rule::createFromText('this is not a valid recurrence text');
+    }
+
+    public function testCreateFromTextEmpty(): void
+    {
+        $this->expectException(InvalidRRule::class);
+        Rule::createFromText('');
+    }
+
+    #[DataProvider('validTextProvider')]
+    public function testCreateFromTextValid(string $text, string $expectedFreq, ?int $expectedInterval, ?int $expectedCount): void
+    {
+        $rule = Rule::createFromText($text);
+        $this->assertEquals($expectedFreq, $rule->getFreqAsText());
+        
+        if ($expectedInterval !== null) {
+            $this->assertEquals($expectedInterval, $rule->getInterval());
+        }
+        
+        if ($expectedCount !== null) {
+            $this->assertEquals($expectedCount, $rule->getCount());
+        }
+    }
+
+    public static function validTextProvider(): array
+    {
+        return [
+            ['every day', 'DAILY', null, null],
+            ['every 3 days', 'DAILY', 3, null],
+            ['every week', 'WEEKLY', null, null],
+            ['every 2 weeks', 'WEEKLY', 2, null],
+            ['every month', 'MONTHLY', null, null],
+            ['every 6 months', 'MONTHLY', 6, null],
+            ['every year', 'YEARLY', null, null],
+            ['every 2 years', 'YEARLY', 2, null],
+            ['every hour', 'HOURLY', null, null],
+            ['every 4 hours', 'HOURLY', 4, null],
+            ['every minute', 'MINUTELY', null, null],
+            ['every 15 minutes', 'MINUTELY', 15, null],
+            ['every day for 5 times', 'DAILY', null, 5],
+            ['every 2 weeks for 10 times', 'WEEKLY', 2, 10],
+        ];
+    }
+
     /**
      * Taken from https://tools.ietf.org/html/rfc5545#section-3.8.5.3
      */
