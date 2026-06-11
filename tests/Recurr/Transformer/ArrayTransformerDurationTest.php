@@ -39,10 +39,12 @@ class ArrayTransformerDurationTest extends ArrayTransformerBase
     }
 
     /**
-     * DURATION=P1W specifies a nominal one-week duration. One week is always
-     * exactly 604,800 seconds (7 × 86,400), so like PT2H this agrees with a
-     * fixed-seconds calculation; it serves as a sanity check for multi-day
-     * durations expressed without calendar-month ambiguity.
+     * DURATION=P1W specifies a nominal duration of 7 calendar days. This test
+     * uses UTC to keep the arithmetic straightforward. Note that in a
+     * DST-observing timezone, P1W is NOT always 604,800 seconds: any week that
+     * contains a clock change will be 604,800 ± 3,600 seconds in wall-clock
+     * terms. Calendar arithmetic (->add()) handles this correctly; a
+     * fixed-seconds implementation would not.
      */
     public function testDurationInWeeks(): void
     {
@@ -52,7 +54,7 @@ class ArrayTransformerDurationTest extends ArrayTransformerBase
             'FREQ=MONTHLY;COUNT=3;DURATION=P1W',
             new \DateTime('2014-01-10 09:00:00', $tz),
             null,
-            'UTC'ed[1]?->getStart());ed[1]?->getStart());
+            'UTC'
         );
 
         $computed = $this->transformer->transform($rule);
@@ -83,7 +85,7 @@ class ArrayTransformerDurationTest extends ArrayTransformerBase
      * every subsequent occurrence — landing on Mar 4 instead of Mar 1 for the
      * February occurrence. DURATION must use calendar arithmetic instead.
      */
-    public function testDurationInMonthsUsesCalendarArithmetic(): voided[1]?->getStart());
+    public function testDurationInMonthsUsesCalendarArithmetic(): void
     {
         $tz = new \DateTimeZone('UTC');
 
