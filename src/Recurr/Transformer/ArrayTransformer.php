@@ -88,7 +88,12 @@ class ArrayTransformer
             $end = $start;
         }
 
-        $durationInterval = $start->diff($end);
+        // DTEND defines an absolute end point in time, so the event duration is
+        // the fixed number of seconds between DTSTART and DTEND. We must NOT use
+        // DateTime::diff() here, as that produces a calendar-unit DateInterval
+        // (e.g. "P1M") which gives wrong results when applied to occurrences
+        // spanning months of different lengths or DST clock-changes.
+        $durationSeconds = $end->getTimestamp() - $start->getTimestamp();
 
         $startDay = (int) $start->format('j');
         $startMonthLength = (int) $start->format('t');
@@ -647,7 +652,7 @@ class ArrayTransformer
 
             $recurrences[] = new Recurrence(
                 start: $start,
-                end: $end->add($durationInterval),
+                end: $end->modify("+{$durationSeconds} seconds"),
                 index: $key
             );
         }
