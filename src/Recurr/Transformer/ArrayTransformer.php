@@ -88,7 +88,21 @@ class ArrayTransformer
             $end = $start;
         }
 
-        $durationInterval = $start->diff($end);
+        // Determine how to compute each occurrence's end date.
+        //
+        // DURATION (e.g. "P1M") uses calendar arithmetic: ->add() applies the
+        // interval relative to each occurrence's own start, so "one month" means
+        // one calendar month regardless of how many seconds that is. This is the
+        // correct semantics for DURATION per RFC 5545 §3.8.2.5.
+        //
+        // DTEND (or no end specification) uses a fixed-seconds offset: the number
+        // of seconds between DTSTART and DTEND is computed once and applied to
+        // every occurrence. This preserves the absolute duration of the event
+        // across months of different lengths and DST transitions.
+        $durationInterval = $rule->getDurationAsDateInterval();
+        $durationSeconds = $durationInterval === null
+            ? $end->getTimestamp() - $start->getTimestamp()
+            : null;
 
         $startDay = (int) $start->format('j');
         $startMonthLength = (int) $start->format('t');
@@ -644,10 +658,15 @@ class ArrayTransformer
         $recurrences = [];
         foreach ($dates as $key => $start) {
             $end = clone $start;
+            if ($durationInterval !== null) {
+                $end->add($durationInterval);
+            } else {
+                $end->modify("+{$durationSeconds} seconds");
+            }
 
             $recurrences[] = new Recurrence(
                 start: $start,
-                end: $end->add($durationInterval),
+                end: $end,
                 index: $key
             );
         }

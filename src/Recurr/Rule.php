@@ -94,6 +94,12 @@ class Rule
     protected bool $isStartDateFromDtstart = false;
 
     /**
+     * ISO 8601 duration string (e.g. "PT2H", "P1M", "P1W").
+     * Mutually exclusive with $endDate.
+     */
+    protected ?string $duration = null;
+
+    /**
      * @see Rule::$freqs
      */
     protected ?int $freq = null;
@@ -347,11 +353,20 @@ class Rule
             $this->setStartDate($date);
         }
 
+        // DTEND and DURATION are mutually exclusive (RFC 5545 §3.6.1)
+        if (isset($parts['DTEND']) && isset($parts['DURATION'])) {
+            throw new InvalidRRule('DTEND and DURATION must not exist together in the same RRULE');
+        }
         // DTEND
         if (isset($parts['DTEND']) && \is_string($parts['DTEND'])) {
             $date = new \DateTime($parts['DTEND']);
             $date = $date->setTimezone($timezone);
             $this->setEndDate($date);
+        }
+
+        // DURATION
+        if (isset($parts['DURATION']) && \is_string($parts['DURATION'])) {
+            $this->setDuration($parts['DURATION']);
         }
 
         // UNTIL or COUNT
@@ -472,8 +487,10 @@ class Rule
             }
         }
 
-        // DTEND
-        if ($this->getEndDate()) {
+        // DTEND or DURATION — mutually exclusive
+        if ($this->getDuration() !== null) {
+            $parts[] = 'DURATION='.$this->getDuration();
+        } elseif ($this->getEndDate()) {
             if ($timezoneType === self::TZ_FIXED) {
                 $d = $this->getEndDate();
                 $tzid = $d->getTimezone()->getName();
@@ -626,10 +643,18 @@ class Rule
     }
 
     /**
-     * The date of the last possible occurrence in the set.
+     * The absolute end point of the first occurrence, from which a fixed-second
+     * duration is derived and applied to all subsequent occurrences.
+     *
+     * Mutually exclusive with DURATION. Throws if a DURATION has already been set.
+     *
+     * @throws InvalidRRule
      */
     public function setEndDate(\DateTime|\DateTimeImmutable|null $endDate): static
     {
+        if ($endDate !== null && $this->duration !== null) {
+            throw new InvalidRRule('DTEND and DURATION must not exist together in the same RRULE');
+        }
         $this->endDate = $endDate;
 
         return $this;
@@ -638,6 +663,62 @@ class Rule
     public function getEndDate(): \DateTime|\DateTimeImmutable|null
     {
         return $this->endDate;
+    }
+
+    /**
+     * Set the nominal calendar-unit duration for each occurrence (e.g. "PT2H",
+     * "P1M", "P1W"). The value must be a valid ISO 8601 duration string.
+     *
+     * DURATION is mutually exclusive with DTEND/endDate: each occurrence's end
+     * is computed by applying this interval via calendar arithmetic to that
+     * occurrence's start, which means the elapsed seconds may vary across
+     * occurrences (e.g. P1M spans a different number of seconds in February
+     * than in January).
+     *
+     * @throws InvalidRRule if the string is not a valid ISO 8601 duration, or
+     *                      if an endDate has already been set
+     */
+    public function setDuration(?string $duration): static
+    {
+        if ($duration === null) {
+            $this->duration = null;
+
+            return $this;
+        }
+
+        if ($this->endDate !== null) {
+            throw new InvalidRRule('DTEND and DURATION must not exist together in the same RRULE');
+        }
+
+        try {
+            new \DateInterval($duration);
+        } catch (\Exception $e) {
+            throw new InvalidRRule("DURATION is not a valid ISO 8601 duration string: \"$duration\"");
+        }
+
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * Returns the raw ISO 8601 duration string, or null if not set.
+     */
+    public function getDuration(): ?string
+    {
+        return $this->duration;
+    }
+
+    /**
+     * Returns the duration as a \DateInterval, or null if not set.
+     */
+    public function getDurationAsDateInterval(): ?\DateInterval
+    {
+        if ($this->duration === null) {
+            return null;
+        }
+
+        return new \DateInterval($this->duration);
     }
 
     /**
