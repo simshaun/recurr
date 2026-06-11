@@ -137,9 +137,9 @@ class ArrayTransformerDtendTest extends ArrayTransformerBase
         // Real duration = 25 hours = 90,000 seconds
         // diff() wall-clock = P1DT2H (26 hours) — inflated by the lost DST hour
         $rule = new Rule(
-            'FREQ=MONTHLY;COUNT=2;DTEND=20140309T030000',
+            'FREQ=MONTHLY;COUNT=2',
             new \DateTime('2014-03-08 01:00:00', $tz),
-            null,
+            new \DateTime('2014-03-09 03:00:00', $tz),
             'America/New_York'
         );
 
