@@ -421,7 +421,7 @@ class ArrayTransformer
                 }
             }
 
-            if (!empty($bySetPos) && !empty($daySet)) {
+            if (!empty($bySetPos) && !empty($daySet) && !empty($timeSet)) {
                 $datesAdj = [];
                 $tmpDaySet = array_combine($daySet, $daySet);
 
