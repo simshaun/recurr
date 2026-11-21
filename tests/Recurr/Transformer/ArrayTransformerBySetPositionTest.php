@@ -157,4 +157,35 @@ class ArrayTransformerBySetPositionTest extends ArrayTransformerBase
         $this->assertEquals(new \DateTime('2017-12-28'), $computed[17]?->getStart());
         $this->assertEquals(new \DateTime('2017-12-29'), $computed[16]?->getStart());
     }
+
+    public function testBySetPositionWithSubDailyFrequencyLimitedByTime(): void
+    {
+        // Hours outside BYHOUR have no time to pick from, which used to
+        // throw DivisionByZeroError (#152).
+        $rule = new Rule(
+            'FREQ=HOURLY;BYSETPOS=-1;BYHOUR=12;COUNT=3',
+            new \DateTime('2013-01-24 09:30:00')
+        );
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(3, $computed);
+        $this->assertEquals(new \DateTime('2013-01-24 12:30:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2013-01-25 12:30:00'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2013-01-26 12:30:00'), $computed[2]?->getStart());
+
+        // --------------------------------------
+
+        $rule = new Rule(
+            'FREQ=MINUTELY;BYSETPOS=1;BYHOUR=9;BYMINUTE=0,30;COUNT=3',
+            new \DateTime('2013-01-24 08:59:00')
+        );
+
+        $computed = $this->transformer->transform($rule);
+
+        $this->assertCount(3, $computed);
+        $this->assertEquals(new \DateTime('2013-01-24 09:00:00'), $computed[0]?->getStart());
+        $this->assertEquals(new \DateTime('2013-01-24 09:30:00'), $computed[1]?->getStart());
+        $this->assertEquals(new \DateTime('2013-01-25 09:00:00'), $computed[2]?->getStart());
+    }
 }
